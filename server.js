@@ -1,31 +1,30 @@
-// http://127.0.0.1:8080/  - Use to access in browser
 const http = require('http'),
-  url = require('url'),
-  fs = require('fs');
-http
-  .createServer((request, response) => {
-    var addr = request.url;
-    var q = url.parse(addr, true);
-    var filePath = '';
+  fs = require('fs'),
+  url = require('url');
+
+  http.createServer((request, response) => {
+    var addr = request.url,
+    q = url.parse(addr, true),
+    filepath = ' ';
+
     if (q.pathname.includes('documentation')) {
       filePath = (__dirname + '/documentation.html');
     } else {
-      filePath = 'index.html';
+      filePath = 'index.html'
     }
-
-    fs.appendFile('log.txt', 'URL: ' + addr + '\nTimestamp: ' + new Date() + '\n\n', function(err) {
+    fs.appendFile('log.txt', 'URL: ' + addr + '\nTimestamp' + new Date() + '\n\n', function(err) {
       if (err) {
         console.log(err);
       } else {
-
-        // *** QUESTION Do I need to have this console here? I noticed this function is logging 2 timestamps to log.txt
-        console.log(addr + Date);
+        console.log('Added to log.');
       }
-    })
-
-    response.writeHead(200, {
-      'Content-Type': 'text/plain'
     });
-    response.end('Hello Punk!\n');
-  })
-  .listen(8080);
+    fs.readFile(filePath, function(err, data) {
+      if (err) {
+        throw err;
+      }
+      response.writeHead(200, {'Content-Type': 'text/html' });
+
+      response.end("duh")
+    });
+  }).listen(8080);
