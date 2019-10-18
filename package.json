@@ -3,19 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elizabethsn7/myFlix.git"
   },
   "keywords": [],
-  "author": "Liz Kipp",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/elizabethsn7/myFlix/issues"
@@ -24,9 +20,6 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "lodash": "^4.17.15"
-  },
-  "devDependencies": {
-    "eslint": "^6.5.1"
+    "morgan": "^1.9.1"
   }
 }
