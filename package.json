@@ -1,0 +1,32 @@
+{
+  "name": "aMovieApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elizabethsn7/myFlix.git"
+  },
+  "keywords": [],
+  "author": "Liz Kipp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elizabethsn7/myFlix/issues"
+  },
+  "homepage": "https://github.com/elizabethsn7/myFlix#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1"
+  }
+}
