@@ -85,8 +85,8 @@ app.get("/movies/:title/:genre", (req, res) => {
 
 // GET data about a specific movies director
 app.get("/movies/:title/:director", (req, res) => {
-  res.json(Movies.find((directors) => {
-    return directors.director === req.params.director
+  res.json(Movies.find((movie) => {
+    return movie.director === req.params.director
   }))
 
 });
