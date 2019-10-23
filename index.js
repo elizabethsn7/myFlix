@@ -1,56 +1,100 @@
 const express = require('express'),
-  morgan = require('morgan');
+  bodyParser = require('body-parser'),
+  uuid = require('uuid');
 
 const app = express();
+app.use(bodyParser.json());
 
-app.use(morgan('common'));
+// let Users = [ {
+//   name: "",
+//   username: "",
+//   email: "",
+//   password: "",
+//   dob: "",
+//   favorites: ""
+// }];
 
-let topMovies = [ {
-  title: 'Life is Beautiful',
-  staring: 'Roberto Benibgni & Nicoletta Braschi'
-},
-{ title: 'The Pirate Movie',
-staring: 'Christopher Atkins & Kristy McNichol'
-},
-{ title: 'Steel Magnolia\'s',
-staring: 'Sally Field, Dolly Parton, Shirley  MacLaine, Daryl Hannah, 	Olympia Dukakis & Julia Roberts'
-},
-{ title: 'Apocolypto',
-staring: 'Rudy Youngblood, Raoul Trujillo, Mayra Serbulo & Dalia Hernandez'
-},
-{ title: 'Moana',
-staring: 'Auli\'i Cravalho Dwayne Johnson'
-},
-{ title: 'Alice in Wonderland',
-staring: 'Kathryn Beaumont & Ed Wynn'
-},
-{title: 'Bohemiam Rhapsody',
-staring: 'Rami Malek & Lucy Boynton'
-},
-{title: 'Hunt for the Wilderpeople',
-staring: 'Julian Dennison, Sam Neill, & Rima Te Wiata'},
-{title: 'A Star is born',
-staring: 'Lady Gaga & Bradly Cooper'
-},
-{title: 'The Princess Bride',
-staring: 'Billy Crystal, Robin Wright, & André the Giant'}
+let Movies = [{
+    title: "Life is Beautiful",
+    director: "Roberto Benigni",
+    genre: "Drama"
+  },
+  {
+    title: "The Pirate Movie",
+    director: "Ken Annakin",
+    genre: "Comedy"
+  },
+  {
+    title: "Steel Magnolia\'s",
+    director: "Herbert Ross",
+    genre: "Drama"
+  },
+  {
+    title: "Apocalypto",
+    director: "Mel Gibson",
+    genre: "Action"
+  },
+  {
+    title: "Moana",
+    director: " Ron Clements, John Musker",
+    genre: "Animation"
+  },
+  {
+    title: "One Crazy Summer",
+    director: "Savage Steve Holland",
+    genre: "Comedy"
+  },
+  {
+    title: "Bohemiam Rhapsody",
+    director: "Bryan Singer",
+    genre: "Biography"
+  },
+  {
+    title: "Hunt for the Wilderpeople",
+    director: "Taika Waititi",
+    genre: "Adventure"
+  },
+  {
+    title: "A Star is born (2018)",
+    director: "Bradly Cooper",
+    genre: "Drama"
+  },
+  {
+    title: "The Never Ending Story",
+    director: "Wolfgang Petersen",
+    genre: "Adventure"
+  }
 ]
-// GET requests
-app.get('/movies', function(req, res) {
-  res.json(topMovies)
+
+// GET data to list All movies
+app.get("/movies", (req, res) => {
+  res.json(Movies);
 });
-app.get('/', function(req, res) {
-  res.send('These are the few movies I\'ll watch more than once!')
+// GET data about a single movie by title
+app.get("/movies/:title", (req, res) => {
+  res.json(Movies.find((movie) => {
+    return movie.title === req.params.title
+  }));
+});
+// GET data about genre by title
+app.get("/movies/:title/:genre", (req, res) => {
+  res.json(Movies.find((movie) => {
+      return movie.genre === req.params.genre
+  }));
 });
 
-app.use(express.static('public'));
+// GET data about a specific movies director
+app.get("/movies/:title/:director", (req, res) => {
+  res.json(Movies.find((movie) => {
+    return movie.director === req.params.director
+  }))
 
-app.use(function (err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).send('Something Broke!');
 });
+// POST -Allow a new user to register
+
+
 
 // Listen for requests
 app.listen(8080, () =>
-console.log('Your app is listening on port 8080.')
+  console.log("Your app is listening on port 8080.")
 );
