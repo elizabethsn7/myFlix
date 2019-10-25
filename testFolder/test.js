@@ -53,7 +53,7 @@ app.post('/students', (req, res) => {
     const message = 'Missing name in request body';
     res.status(400).send(message);
   } else {
-    newStudent.id = uuis.v4();
+    newStudent.id = uuid.v4();
     Students.push(newStudent);
     res.status(201).send(newStudent);
   }

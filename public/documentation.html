@@ -28,7 +28,7 @@
         <th scope="row">Get a list of all movies</th>
         <td>/movies</td>
         <td>GET</td>
-        <td>/movies/:title</td>
+        <td>/movies</td>
         <td>None</td>
         <td>A JSON object holding titles of all of the movies</td>
       </tr>
@@ -41,7 +41,7 @@
         <td>A JSON object with the genre of the specific movie</td>
       </tr>
       <tr>
-        <th scope="row">Get the genre of a single movie</th>
+        <th scope="row">Return data about a genre by title</th>
         <td>/movies</td>
         <td>GET</td>
         <td>/movies/:genre</td>
@@ -49,10 +49,10 @@
         <td>A JSON object with the genre of the specific movie</td>
       </tr>
       <tr>
-        <th scope="row">Get the director of a single movie</th>
+        <th scope="row">Return data about a director by title</th>
         <td>/movies</td>
         <td>GET</td>
-        <td>/movies/:director</td>
+        <td>/director/:name</td>
         <td>None</td>
         <td>A JSON object with the director of the specific movie.</td>
       </tr>
@@ -78,7 +78,7 @@
         <th scope="row">User Update Profile</th>
         <td>/users</td>
         <td>PUT</td>
-        <td>/users/:id/:password</td>
+        <td>/users/:name/:username/:email/favorites</td>
         <td>None</td>
         <td>A JSON object holding data
           about the user that was
@@ -88,7 +88,7 @@
         <th scope="row">User Add a Movie to Favorites</th>
         <td>/users</td>
         <td>POST</td>
-        <td>/users/:id/:favorites</td>
+        <td>/users/:name/:username/:email/favorites</td>
         <td>A JSON object holding data about the movie a user wants to add to their favorites.</td>
         <td>A JSON object holding data
           about the movie that was
@@ -98,7 +98,7 @@
         <th scope="row">User Remove a Movie from Favorites</th>
         <td>/users</td>
         <td>DELETE</td>
-        <td>/users/:id/:favorites/:title</td>
+        <td>/users/:favorites/title</td>
         <td>NONE</td>
         <td>A text message letting the user know the movie was removed from their favorites list.</td>
       </tr>
@@ -106,7 +106,7 @@
         <th scope="row">Existing User Deregister</th>
         <td>/users</td>
         <td>DELETE</td>
-        <td>/users</td>
+        <td>/users/:name/:username/:email/:favorites</td>
         <td>None</td>
         <td>A text message letting the user know they are no longer registered.</td>
       </tr>
