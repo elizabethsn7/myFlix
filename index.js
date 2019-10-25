@@ -5,7 +5,6 @@ const express = require('express'),
 const app = express();
 app.use(bodyParser.json());
 
-<<<<<<< HEAD
 let Movies = [{
     title: "Life is Beautiful",
     director: {
@@ -49,45 +48,10 @@ let Movies = [{
       bio: "Created a movie with accurate dipictions of a Polynesian culture."
     },
     imgUrl: "images/moana.jpg",
-=======
-// let Users = [ {
-//   name: "",
-//   username: "",
-//   email: "",
-//   password: "",
-//   dob: "",
-//   favorites: ""
-// }];
-
-let Movies = [{
-    title: "Life is Beautiful",
-    director: "Roberto Benigni",
-    genre: "Drama"
-  },
-  {
-    title: "The Pirate Movie",
-    director: "Ken Annakin",
-    genre: "Comedy"
-  },
-  {
-    title: "Steel Magnolia\'s",
-    director: "Herbert Ross",
-    genre: "Drama"
-  },
-  {
-    title: "Apocalypto",
-    director: "Mel Gibson",
-    genre: "Action"
-  },
-  {
-    title: "Moana",
-    director: " Ron Clements, John Musker",
->>>>>>> bb7182b6d1f56bb58c2434f572f34b41d64438bf
     genre: "Animation"
   },
   {
     title: "One Crazy Summer",
-<<<<<<< HEAD
     director: {
       name: "Savage Steve Holland",
       bio: "Made one of the most hilarious movies ever!"
@@ -140,64 +104,27 @@ let Users = [ {
   favorites: ""
 }];
 
-=======
-    director: "Savage Steve Holland",
-    genre: "Comedy"
-  },
-  {
-    title: "Bohemiam Rhapsody",
-    director: "Bryan Singer",
-    genre: "Biography"
-  },
-  {
-    title: "Hunt for the Wilderpeople",
-    director: "Taika Waititi",
-    genre: "Adventure"
-  },
-  {
-    title: "A Star is born (2018)",
-    director: "Bradly Cooper",
-    genre: "Drama"
-  },
-  {
-    title: "The Never Ending Story",
-    director: "Wolfgang Petersen",
-    genre: "Adventure"
-  }
-]
-
->>>>>>> bb7182b6d1f56bb58c2434f572f34b41d64438bf
 // GET data to list All movies
 app.get("/movies", (req, res) => {
   res.json(Movies);
 });
-<<<<<<< HEAD
 
-=======
->>>>>>> bb7182b6d1f56bb58c2434f572f34b41d64438bf
 // GET data about a single movie by title
 app.get("/movies/:title", (req, res) => {
   res.json(Movies.find((movie) => {
     return movie.title === req.params.title
   }));
 });
-<<<<<<< HEAD
 
 // GET data about genre by title
 app.get("/title/:genre", (req, res) => {
   res.json(Movies.find((movie) => {
     res.send('These are genre\'s');
-=======
-// GET data about genre by title
-app.get("/movies/:title/:genre", (req, res) => {
-  res.json(Movies.find((movie) => {
->>>>>>> bb7182b6d1f56bb58c2434f572f34b41d64438bf
       return movie.genre === req.params.genre
   }));
 });
 
 // GET data about a specific movies director
-<<<<<<< HEAD
 app.get("/director/:name", (req, res) => {
   res.json(Movies.find((movie) => {
     res.send("I am a director of a movie!");
@@ -245,18 +172,6 @@ app.delete("/users/:favorites/title", (req, res) => {
 app.delete("/users/:name/:username/:email/:favorites", (req, res) => {
   res.send('I have deregistered a user.');
 });
-=======
-app.get("/movies/:title/:director", (req, res) => {
-  res.json(Movies.find((movie) => {
-    return movie.director === req.params.director
-  }))
-
-});
-// POST -Allow a new user to register
-
-
-
->>>>>>> bb7182b6d1f56bb58c2434f572f34b41d64438bf
 // Listen for requests
 app.listen(8080, () =>
   console.log("Your app is listening on port 8080.")
