@@ -98,7 +98,6 @@ let Movies = [{
 ]
 
 let Users = [ {
-  name: "",
   username: "",
   email: "",
   favorites: ""
