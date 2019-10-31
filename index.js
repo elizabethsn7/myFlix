@@ -1,177 +1,125 @@
-const express = require('express'),
-  bodyParser = require('body-parser'),
-  uuid = require('uuid');
+const mongoose = require("mongoose");
+const Models = require("./models.js");
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect("mongodb://localhost:27017/myFlixDB", {
+  useNewUrlParser: true
+});
+
+const express = require("express"),
+  bodyParser = require("body-parser"),
+  uuid = require("uuid");
 
 const app = express();
 app.use(bodyParser.json());
+// findOneAndUpdate depreciation override
+// mongoose.set("useFindAndModify", false);
 
-let Movies = [{
-    title: "Life is Beautiful",
-    director: {
-      name: "Roberto Benigni",
-      bio: "A true artist with the ability to showcase honest human emotion"
-    },
-    genre: "Drama",
-    imgUrl: "images/lifeIsBeaut.jpg"
-  },
-  {
-    title: "The Pirate Movie",
-    director: {
-      name: "Ken Annakin",
-      bio: "He created this cult classic if you consider my sister and myself a cult."
-    },
-    genre: "Comedy",
-    imgUrl: "images/thePirateMovie.jpg"
-  },
-  {
-    title: "Steel Magnolia\'s",
-    director: {
-      name: "Herbert Ross",
-      bio: "A male who is clearly in touch with female relationship dynamics"
-    },
-    genre: "Drama",
-    imgUrl: "images/steelMagnolias.jpg"
-  },
-  {
-    title: "Apocalypto",
-    director: {
-      name: "Mel Gibson",
-      bio: "It eventually came out that this guy is a bigot but this movie is super cool."
-    },
-    genre: "Action",
-    imgUrl: "images/apocalypto.jpg"
-  },
-  {
-    title: "Moana",
-    director: {
-      name: "Ron Clements, John Musker",
-      bio: "Created a movie with accurate dipictions of a Polynesian culture."
-    },
-    imgUrl: "images/moana.jpg",
-    genre: "Animation"
-  },
-  {
-    title: "One Crazy Summer",
-    director: {
-      name: "Savage Steve Holland",
-      bio: "Made one of the most hilarious movies ever!"
-    },
-    genre: "Comedy",
-    image: "images/oneCrazySummer.jpg"
-  },
-  {
-    title: "Bohemian Rhapsody",
-    director: {
-      name: "Bryan Singer",
-      bio: "His name says he picked the right movie to direct"
-    },
-    genre: "Biography",
-    imgUrl: "images/bohemianRhapsody.jpg"
-  },
-  {
-    title: "Hunt for the Wilderpeople",
-    director: {
-      name: "Taika Waititi",
-      bio: "From New Zealand and has a cool name!"
-    },
-    genre: "Adventure",
-    imgUrl: "images/huntForTheWilder.jpg"
-  },
-  {
-    title: "A Star is born (2018)",
-    director:  {
-      name: "Bradly Cooper",
-      bio: "A big giant superstar!"
-    },
-    genre: "Drama",
-    imgUrl: "images/aStarIsBorn.jpg"
-  },
-  {
-    title: "The Never Ending Story",
-    director: {
-      name: "Wolfgang Petersen",
-      bio: "A creative genious"
-    },
-    genre: "Adventure",
-    imgUrl: "images/theNeverEndingStory.jpg"
-  }
-]
-
-let Users = [ {
-  username: "",
-  email: "",
-  favorites: ""
-}];
-
-// GET data to list All movies
-app.get("/movies", (req, res) => {
-  res.json(Movies);
+// GET all users
+app.get("/users", function(req, res) {
+  Users.find()
+    .then(function(users) {
+      res.status(201).json(users);
+    })
+    .catch(function(err) {
+      console.error(err);
+      res.status(500).send("THIS IS AN ERROR " + err);
+    });
 });
 
-// GET data about a single movie by title
-app.get("/movies/:title", (req, res) => {
-  res.json(Movies.find((movie) => {
-    return movie.title === req.params.title
-  }));
+// CREATE in Mongoose  - i.e. POST
+app.post("/users", function(req, res) {
+  Users.findOne({
+    Username: req.body.Username
+  })
+    .then(function(user) {
+      if (user) {
+        return res.status(400).send(req.body.Username + " already exists");
+      } else {
+        Users.create({
+          Username: req.body.Username,
+          Password: req.body.Password,
+          Email: req.body.Email,
+          Birthday: req.body.Birthday,
+          Favorites: req.body.Favorites
+        })
+          .then(function(user) {
+            res.status(201).json(user);
+          })
+          .catch(function(error) {
+            console.error(error);
+            res.status(500).send("Error: " + error);
+          });
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      res.status(500).semd("Error: " + error);
+    });
 });
 
-// GET data about genre by title
-app.get("/title/:genre", (req, res) => {
-  res.json(Movies.find((movie) => {
-    res.send('These are genre\'s');
-      return movie.genre === req.params.genre
-  }));
+// READ in Mongoose to GET a  user by username
+app.get("/users/:Username", function(req, res) {
+  Users.findOne(
+    {
+      Username: req.params.Username
+    },
+    function(err, users) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      } else {
+        res.json(users);
+      }
+    }
+  );
 });
 
-// GET data about a specific movies director
-app.get("/director/:name", (req, res) => {
-  res.json(Movies.find((movie) => {
-    res.send("I am a director of a movie!");
-    return movie.director === req.params.director;
-  }));
+// Update by Username
+app.put("/users/:Username", function(req, res) {
+  Users.findOneAndUpdate(
+    {
+      Username: req.params.Username
+    },
+    {
+      $set: {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      }
+    },
+    {
+      new: true
+    }, // ^The line above makes sure that the updated document is returned - not needed in READ
+    function(err, updateUser) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      } else {
+        res.json(updateUser);
+      }
+    }
+  );
 });
 
-// POST -Allow a new user to register
-app.post("/users", (req, res) => {
-  let newUser = req.body;
-  if(!newUser.name) {
-    const message = 'Missing "name" in request body';
-    res.status(400).send(message);
-  } else {
-    newUser.id = uuid.v4();
-    Users.push(newUser);
-    res.status(201).send(newUser);
-  }
+// DELETE a user by username
+app.delete("/users/:username", function(req, res) {
+  Users.findOneAndRemove({ Username: req.params.Username })
+    .then(function(user) {
+      if (!user) {
+        res.status(400).send(req.params.Username + " was not found");
+      } else {
+        res.status(200).send(req.params.Username + " was deleted.");
+      }
+    })
+    .catch(function(err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-// Update user info
-app.put("/users/:name/:username/:email/favorites", (req, res) => {
-  res.send('Got a put request at /users');
-});
-
-// POST - Add a movie to favorites
-app.post("/users/:name/:username/:email/favorites", (req, res) => {
-  let newFavorite = req.body;
-  if (!newFavorite.favorites) {
-    const message = 'List your favorite, fool!';
-    res.status(400).send(message);
-  } else {
-    newFavorite.id = uuid.v4();
-    Users.push(newFavorite);
-    res.status(201).send(newFavorite);
-  }
-});
-
-// DELETE - Remove a movie from favorites
-app.delete("/users/:favorites/title", (req, res) => {
-  res.send('I have deleted one of my favorites.');
-});
-
-//DELETE - deregister a user
-app.delete("/users/:name/:username/:email/:favorites", (req, res) => {
-  res.send('I have deregistered a user.');
-});
 // Listen for requests
-app.listen(8080, () =>
-  console.log("Your app is listening on port 8080.")
-);
+app.listen(8080, () => console.log("Your app is listening on port 8080."));
