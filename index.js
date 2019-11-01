@@ -8,14 +8,14 @@ mongoose.connect("mongodb://localhost:27017/myFlixDB", {
   useNewUrlParser: true
 });
 
-const express = require("express"),
-  bodyParser = require("body-parser"),
-  uuid = require("uuid");
+const express = require("express");
+const bodyParser = require("body-parser");
+const uuid = require("uuid");
 
 const app = express();
 app.use(bodyParser.json());
 // findOneAndUpdate depreciation override
-// mongoose.set("useFindAndModify", false);
+mongoose.set("useFindAndModify", false);
 
 // GET all users
 app.get("/users", function(req, res) {
@@ -104,9 +104,46 @@ app.put("/users/:Username", function(req, res) {
     }
   );
 });
+// Add a movie to a users list of  favorites
+app.post("/users/:Username/Movies/:MovieID", function(req, res) {
+  Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $push: { FavoriteMovies: req.params.MovieID }
+    },
+    { new: true },
+    function(err, updatedUser) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      } else {
+        res.json(updatedUser);
+      }
+    }
+  );
+});
+
+// Remove  a movie from favorites
+app.put("/users/:Username/:FavoriteMovies/:MovieID", function(req, res) {
+  Users.findOneAndUpdate(
+    { FavoriteMovies: req.params.MovieID },
+    {
+      $pull: { FavoriteMovies: req.params.MovieID }
+    },
+    { new: true },
+    function(err, updatedFavorites) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("YOUVE MADE A TERRIBLE Error: " + err);
+      } else {
+        res.json(updatedFavorites);
+      }
+    }
+  );
+});
 
 // DELETE a user by username
-app.delete("/users/:username", function(req, res) {
+app.delete("/users/:Username", function(req, res) {
   Users.findOneAndRemove({ Username: req.params.Username })
     .then(function(user) {
       if (!user) {
