@@ -16,6 +16,53 @@ const app = express();
 app.use(bodyParser.json());
 // findOneAndUpdate depreciation override
 mongoose.set("useFindAndModify", false);
+// GET all Movies
+app.get("/movies", function(req, res) {
+  Movies.find(function(err, movie) {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    } else {
+      res.json(movie);
+    }
+  });
+});
+
+// Get movie by Title
+app.get("/movies/:Title", function(req, res) {
+  Movies.findOne({ Title: req.params.Title }, function(err, oneMovie) {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    } else {
+      res.json(oneMovie);
+    }
+  });
+});
+
+// GET data about a genre
+app.get("/movies/Genre/:Name", function(req, res) {
+  Movies.findOne({ "Genre.Name": req.params.Name }, function(err, movies) {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    } else {
+      res.json(movies.Genre);
+    }
+  });
+});
+
+//GET data about a director
+app.get("/movies/director/:Name", function(req, res) {
+  Movies.findOne({ "Director.Name": req.params.Name }, function(err, movies) {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    } else {
+      res.json(movies.Director);
+    }
+  });
+});
 
 // GET all users
 app.get("/users", function(req, res) {
@@ -31,9 +78,7 @@ app.get("/users", function(req, res) {
 
 // CREATE in Mongoose  - i.e. POST
 app.post("/users", function(req, res) {
-  Users.findOne({
-    Username: req.body.Username
-  })
+  Users.findOne({ Username: req.body.Username })
     .then(function(user) {
       if (user) {
         return res.status(400).send(req.body.Username + " already exists");
@@ -62,27 +107,20 @@ app.post("/users", function(req, res) {
 
 // READ in Mongoose to GET a  user by username
 app.get("/users/:Username", function(req, res) {
-  Users.findOne(
-    {
-      Username: req.params.Username
-    },
-    function(err, users) {
-      if (err) {
-        console.error(err);
-        res.status(500).send("Error: " + err);
-      } else {
-        res.json(users);
-      }
+  Users.findOne({ Username: req.params.Username }, function(err, users) {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    } else {
+      res.json(users);
     }
-  );
+  });
 });
 
 // Update by Username
 app.put("/users/:Username", function(req, res) {
   Users.findOneAndUpdate(
-    {
-      Username: req.params.Username
-    },
+    { Username: req.params.Username },
     {
       $set: {
         Username: req.body.Username,
@@ -127,14 +165,12 @@ app.post("/users/:Username/Movies/:MovieID", function(req, res) {
 app.put("/users/:Username/:FavoriteMovies/:MovieID", function(req, res) {
   Users.findOneAndUpdate(
     { FavoriteMovies: req.params.MovieID },
-    {
-      $pull: { FavoriteMovies: req.params.MovieID }
-    },
+    { $pull: { FavoriteMovies: req.params.MovieID } },
     { new: true },
     function(err, updatedFavorites) {
       if (err) {
         console.error(err);
-        res.status(500).send("YOUVE MADE A TERRIBLE Error: " + err);
+        res.status(500).send("Error: " + err);
       } else {
         res.json(updatedFavorites);
       }
