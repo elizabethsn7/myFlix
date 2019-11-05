@@ -1,24 +1,29 @@
-const mongoose = require("mongoose");
-const Models = require("./models.js");
+const express = require("express")
+  bodyParser = require("body-parser"),
+  mongoose = require("mongoose"),
+   uuid = require("uuid"),
+  Models = require("./models.js"),
+  app = express();
 
 const Movies = Models.Movie;
 const Users = Models.User;
 
+app.use(bodyParser.json());
+app.use(express.static("public"));
+
+var auth = require("./auth")(app);
+/* ^ Theis app argument ensures that Express is available in your auth.js file */
+const passport = require("passport");
+require("./passport");
+
+mongoose.set("useFindAndModify", false);
+// findOneAndUpdate depreciation override
 mongoose.connect("mongodb://localhost:27017/myFlixDB", {
   useNewUrlParser: true
 });
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const uuid = require("uuid");
-
-const app = express();
-app.use(bodyParser.json());
-// findOneAndUpdate depreciation override
-mongoose.set("useFindAndModify", false);
-
 // GET all Movies
-app.get("/movies", function(req, res) {
+app.get("/movies", passport.authenticate("jwt", { session: false }), function(req,  res) {
   Movies.find(function(err, movie) {
     if (err) {
       console.error(err);
