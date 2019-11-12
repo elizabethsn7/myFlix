@@ -23,11 +23,16 @@ const {
   validationResult
 } = require('express-validator');
 
-mongoose.set('useFindAndModify', false);
-// findOneAndUpdate depreciation override
-mongoose.connect('mongodb://localhost:27017/myFlixDB', {
+// mongoose.set('useFindAndModify', false);
+// // findOneAndUpdate depreciation override
+// mongoose.connect('mongodb://localhost:27017/myFlixDB', {
+//   useNewUrlParser: true
+// });
+mongoose.connect('mongodb+srv://LizIsAdmin:WeDidIt@cluster0-lbz0j.mongodb.net/test?retryWrites=true&w=majority', {
   useNewUrlParser: true
 });
+
+
 
 // GET all users
 app.get('/users', function(req, res) {
