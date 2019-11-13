@@ -243,7 +243,7 @@ app.get('/movies/:Title', passport.authenticate('jwt', {
   }, function(err, oneMovie) {
     if (err) {
       console.error(err);
-      res.status(500).send('Movies.findOneError: ' + err);
+      res.status(500).send('Movies.findOne: ' + err);
     } else {
       res.json(oneMovie);
     }
