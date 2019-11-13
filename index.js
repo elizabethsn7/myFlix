@@ -25,15 +25,25 @@ const {
 
 // mongoose.set('useFindAndModify', false);
 // // findOneAndUpdate depreciation override
-
-/*  Connect to mongoose locally  */
 // mongoose.connect('mongodb://localhost:27017/myFlixDB', {
 //   useNewUrlParser: true
 // });
-
-/*  Connect to mongoDB via heroku  */
-mongoose.connect('mongodb+srv://LizIsAdmin:WeDidIt@cluster0-lbz0j.mongodb.net/myFlixDB?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://LizIsAdmin:WeDidIt@cluster0-lbz0j.mongodb.net/test?retryWrites=true&w=majority', {
   useNewUrlParser: true
+});
+
+//going crazy right now
+
+// GET all users
+app.get('/users', function(req, res) {
+  Users.find()
+    .then(function(users) {
+      res.status(201).json(users);
+    })
+    .catch(function(err) {
+      console.error(err);
+      res.status(500).send('THIS IS AN ERROR ' + err);
+    });
 });
 
 // CREATE in Mongoose  - i.e. POST
@@ -122,18 +132,6 @@ app.put('/users/:Username', passport.authenticate('jwt', {
       }
     }
   );
-});
-
-// GET all users
-app.get('/users', function(req, res) {
-  Users.find()
-    .then(function(users) {
-      res.status(201).json(users);
-    })
-    .catch(function(err) {
-      console.error(err);
-      res.status(500).send('THIS IS AN ERROR ' + err);
-    });
 });
 
 // READ in Mongoose to GET a  user by Username
@@ -249,7 +247,7 @@ app.get('/movies/:Title', passport.authenticate('jwt', {
   }, function(err, oneMovie) {
     if (err) {
       console.error(err);
-      res.status(500).send('Movies.findOne: ' + err);
+      res.status(500).send('Movies.findOneError: ' + err);
     } else {
       res.json(oneMovie);
     }

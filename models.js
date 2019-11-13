@@ -21,7 +21,6 @@ var movieSchema = mongoose.Schema({
   ImagePath: String,
   Featured: Boolean
 });
-
 const bcrypt = require('bcrypt');
 
 var userSchema = mongoose.Schema({
@@ -43,9 +42,11 @@ var userSchema = mongoose.Schema({
     ref: 'Movie'
   }]
 });
+
 userSchema.statics.hashPassword = function(password) {
   return bcrypt.hashSync(password, 10);
 };
+
 userSchema.methods.validatePassword = function(password) {
   return bcrypt.compareSync(password, this.Password);
 };
