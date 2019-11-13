@@ -107,7 +107,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {
       errors: errors.array()
     });
   }
-  var hashedPassword = Users.hashPassword(req.body.Password);
+
   Users.findOneAndUpdate(
     {
       Username: req.params.Username
@@ -122,7 +122,9 @@ app.put('/users/:Username', passport.authenticate('jwt', {
     },
     {
       new: true
-    }, // ^The line above makes sure that the updated document is returned - not needed in READ
+    },
+    // The line above makes sure that the updated document is returned - not needed in READ
+
     function(err, updatedUser) {
       if (err) {
         console.error(err);
@@ -131,6 +133,8 @@ app.put('/users/:Username', passport.authenticate('jwt', {
         res.json(updatedUser);
       }
     }
+
+
   );
 });
 
