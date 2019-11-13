@@ -81,7 +81,7 @@ app.post('/users', [check('Username', 'Username is required').isLength({
           })
           .catch(function(error) {
             console.error(error);
-            res.status(500).send('Users.create Error: ' + error);
+            res.status(500).send('Error: ' + error);
           });
       }
     })
@@ -123,12 +123,12 @@ app.put('/users/:Username', passport.authenticate('jwt', {
     {
       new: true
     }, // ^The line above makes sure that the updated document is returned - not needed in READ
-    function(err, updateUser) {
+    function(err, updatedUser) {
       if (err) {
         console.error(err);
-        res.status(500).send('UpdateUserError: ' + err);
+        res.status(500).send('Error: ' + err);
       } else {
-        res.json(updateUser);
+        res.json(updatedUser);
       }
     }
   );
@@ -143,7 +143,7 @@ app.get('/users/:Username', passport.authenticate('jwt', {
   }, function(err, users) {
     if (err) {
       console.error(err);
-      res.status(500).send('Users.findONeUsername: ' + err);
+      res.status(500).send('Username: ' + err);
     } else {
       res.json(users);
     }
