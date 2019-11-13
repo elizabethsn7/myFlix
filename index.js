@@ -1,38 +1,42 @@
 const express = require('express')
 bodyParser = require('body-parser'),
+  morgan = require('morgan'),
   mongoose = require('mongoose'),
   uuid = require('uuid'),
   Models = require('./models.js'),
-  app = express();
+  passport = require('passport'),
+  cors = require('cors'),
+  {
+    check,
+    validationResult
+  } = require('express-validator');
+require('./passport');
 
 const Movies = Models.Movie;
 const Users = Models.User;
 
-app.use(bodyParser.json());
-
-var auth = require('./auth')(app);
-/* ^ Theis app argument ensures that Express is available in your auth.js file */
-const passport = require('passport');
-require('./passport');
-
-const cors = require('cors');
-app.use(cors());
-
-const {
-  check,
-  validationResult
-} = require('express-validator');
-
-// mongoose.set('useFindAndModify', false);
-// // findOneAndUpdate depreciation override
 // mongoose.connect('mongodb://localhost:27017/myFlixDB', {
 //   useNewUrlParser: true
 // });
 mongoose.connect('mongodb+srv://LizIsAdmin:WeDidIt@cluster0-lbz0j.mongodb.net/test?retryWrites=true&w=majority', {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useFindAndModify: false
 });
 
-//going crazy right now
+const app = express();
+
+app.use(bodyParser.json());
+app.use(morgan('common'));
+app.use(express.static('public'));
+app.use(cors());
+const auth = require('./auth')(app);
+
+//Error handling middleware functions
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+  next();
+});
 
 // GET all users
 app.get('/users', function(req, res) {
@@ -107,7 +111,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {
       errors: errors.array()
     });
   }
-
+  var hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOneAndUpdate(
     {
       Username: req.params.Username
@@ -124,6 +128,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {
       new: true
     },
     // The line above makes sure that the updated document is returned - not needed in READ
+
 
     function(err, updatedUser) {
       if (err) {
