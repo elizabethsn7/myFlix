@@ -25,10 +25,16 @@ const {
 
 // mongoose.set('useFindAndModify', false);
 // // findOneAndUpdate depreciation override
-mongoose.connect('mongodb://localhost:27017/myFlixDB', {
+
+/*  Connect to mongoose locally  */
+// mongoose.connect('mongodb://localhost:27017/myFlixDB', {
+//   useNewUrlParser: true
+// });
+
+/*  Connect to mongoDB via heroku  */
+mongoose.connect('mongodb+srv://LizIsAdmin:WeDidIt@cluster0-lbz0j.mongodb.net/myFlixDB?retryWrites=true&w=majority', {
   useNewUrlParser: true
 });
-
 
 // CREATE in Mongoose  - i.e. POST
 app.post('/users', [check('Username', 'Username is required').isLength({
