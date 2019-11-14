@@ -1,7 +1,7 @@
-require('dotenv').config();
 const express = require('express')
-bodyParser = require('body-parser'),
-  morgan = require('morgan'),
+bodyParser = require('body-parser');
+require('dotenv').config();
+const morgan = require('morgan'),
   mongoose = require('mongoose'),
   uuid = require('uuid'),
   Models = require('./models.js'),
