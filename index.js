@@ -1,4 +1,6 @@
-require('dotenv').config();
+require('dotenv').config({
+  debug: process.env.DEBUG
+});
 const express = require('express')
 bodyParser = require('body-parser'),
   morgan = require('morgan'),
