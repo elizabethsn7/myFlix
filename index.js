@@ -18,7 +18,12 @@ const Users = Models.User;
 // mongoose.connect('mongodb://localhost:27017/myFlixDB', {
 //   useNewUrlParser: true
 // });
-mongoose.connect('mongodb+srv://LizIsAdmin:WeDidIt@cluster0-lbz0j.mongodb.net/test?retryWrites=true&w=majority', {
+
+// change the url below to reflect the variable and write it like the port variable below
+// .end package for setting a variable for the local
+//require.end.config
+
+mongoose.connect('mongodb+srv://LizIsAdmin:wedidit@cluster0-lbz0j.mongodb.net/myFlixDB?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useFindAndModify: false
 });
@@ -38,20 +43,8 @@ app.use(function(err, req, res, next) {
   next();
 });
 
-// GET all users
-app.get('/users', function(req, res) {
-  Users.find()
-    .then(function(users) {
-      res.status(201).json(users);
-    })
-    .catch(function(err) {
-      console.error(err);
-      res.status(500).send('THIS IS AN ERROR ' + err);
-    });
-});
-
 // CREATE in Mongoose  - i.e. POST
-app.post('/users', [check('Username', 'Username is required').isLength({
+app.post('/users', [check('Username', 'Username is required  minimum 5 characters').isLength({
     min: 5
   }),
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
@@ -98,12 +91,11 @@ app.post('/users', [check('Username', 'Username is required').isLength({
 // Update by Username
 app.put('/users/:Username', passport.authenticate('jwt', {
   session: false
-}), [check('Username', 'Username is required').isLength({
+}), [check('Username', 'Username is required minimum 5 characters').isLength({
     min: 5
   }),
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
-  check('Password', 'Password is required').not().isEmpty(),
-  check('Email', 'Email does not appear to be valid').isEmail()
+  check('Password', 'Password is required').not().isEmpty()
 ], (req, res) => {
   var errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -127,9 +119,7 @@ app.put('/users/:Username', passport.authenticate('jwt', {
     {
       new: true
     },
-    // The line above makes sure that the updated document is returned - not needed in READ
-
-
+    // new: true makes sure that the updated document is returned - not needed in READ
     function(err, updatedUser) {
       if (err) {
         console.error(err);
@@ -138,9 +128,19 @@ app.put('/users/:Username', passport.authenticate('jwt', {
         res.json(updatedUser);
       }
     }
-
-
   );
+});
+
+// GET all users
+app.get('/users', function(req, res) {
+  Users.find()
+    .then(function(users) {
+      res.status(201).json(users);
+    })
+    .catch(function(err) {
+      console.error(err);
+      res.status(500).send('THIS IS AN ERROR ' + err);
+    });
 });
 
 // READ in Mongoose to GET a  user by Username
