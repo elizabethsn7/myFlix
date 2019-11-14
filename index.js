@@ -1,6 +1,4 @@
-require('dotenv').config({
-  debug: process.env.DEBUG
-});
+//require('dotenv').config();
 const express = require('express')
 bodyParser = require('body-parser'),
   morgan = require('morgan'),
@@ -22,9 +20,8 @@ const Users = Models.User;
 //   useNewUrlParser: true
 // });
 
-mongoose.connect('MONGO_URL', {
-  useNewUrlParser: true,
-  useFindAndModify: false
+mongoose.connect('mongodb+srv://LizIsAdmin:wedidit@cluster0-lbz0j.mongodb.net/myFlixDB?retryWrites=true&w=majority', {
+  useNewUrlParser: true
 });
 
 const app = express();
