@@ -1,7 +1,7 @@
-const express = require('express')
-bodyParser = require('body-parser');
 require('dotenv').config();
-const morgan = require('morgan'),
+const express = require('express')
+bodyParser = require('body-parser'),
+  morgan = require('morgan'),
   mongoose = require('mongoose'),
   uuid = require('uuid'),
   Models = require('./models.js'),
@@ -20,7 +20,7 @@ const Users = Models.User;
 //   useNewUrlParser: true
 // });
 
-mongoose.connect('MONGO_URL', {
+mongoose.connect('mongodb+srv://LizIsAdmin:wedidit@cluster0-lbz0j.mongodb.net/myFlixDB?retryWrites=true&w=majority', {
   useNewUrlParser: true
 });
 
