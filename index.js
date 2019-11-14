@@ -11,6 +11,7 @@ bodyParser = require('body-parser'),
     validationResult
   } = require('express-validator');
 require('./passport');
+require('dotenv').config();
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -19,11 +20,7 @@ const Users = Models.User;
 //   useNewUrlParser: true
 // });
 
-// change the url below to reflect the variable and write it like the port variable below
-// .end package for setting a variable for the local
-//require.end.config
-
-mongoose.connect('mongodb+srv://LizIsAdmin:wedidit@cluster0-lbz0j.mongodb.net/myFlixDB?retryWrites=true&w=majority', {
+mongoose.connect('MONGO_URL', {
   useNewUrlParser: true,
   useFindAndModify: false
 });
