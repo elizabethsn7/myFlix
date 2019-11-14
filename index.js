@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 bodyParser = require('body-parser'),
   morgan = require('morgan'),
@@ -11,7 +12,6 @@ bodyParser = require('body-parser'),
     validationResult
   } = require('express-validator');
 require('./passport');
-require('dotenv').config();
 
 const Movies = Models.Movie;
 const Users = Models.User;
