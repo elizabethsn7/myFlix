@@ -293,7 +293,7 @@ app.get('/movies/director/:Name', passport.authenticate('jwt', {
 });
 
 // Listen for requests
-var port = process.env.PORT || 3000;
+var port = process.env.MONGO_URL
 app.listen(port, "0.0.0.0", function() {
   console.log("listening on Port 3000");
 });
