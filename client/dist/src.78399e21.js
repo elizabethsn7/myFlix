@@ -33481,19 +33481,31 @@ function (_React$Component) {
   _inherits(MainView, _React$Component);
 
   function MainView() {
+    var _this;
+
     _classCallCheck(this, MainView);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MainView).apply(this, arguments));
+    // Call the superclass constructor so React can initialize it
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainView).call(this));
+    _this.state = {};
+    return _this;
   }
 
   _createClass(MainView, [{
+    key: "render",
+    value: function render() {
+      return _react.default.createElement("div", {
+        className: "main-view"
+      });
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this = this;
+      var _this2 = this;
 
       _axios.default.get('https://liz-flix.herokuapp.com/movies').then(function (response) {
         // Assign the result to the state
-        _this.setState({
+        _this2.setState({
           movies: response.data
         });
       }).catch(function (error) {
@@ -33503,7 +33515,7 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var movie = this.state.movie; // Before the movies have been loaded
+      var movies = this.state.movies; // Before the movies have been loaded
 
       if (!movies) return _react.default.createElement("div", {
         className: "main-view"
@@ -33680,7 +33692,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49237" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57410" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
