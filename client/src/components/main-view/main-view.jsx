@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 
+import { MovieCard } from '../movie-card/movie-card';
+
 export class MainView extends React.Component {
   constructor() {
     // Call the superclass constructor so React can initialize it
@@ -10,7 +12,7 @@ export class MainView extends React.Component {
   render() {
     return (
       <div className="main-view"></div>
-    );
+    )
   }
   componentDidMount() {
     axios.get('https://liz-flix.herokuapp.com/movies')
@@ -33,8 +35,7 @@ export class MainView extends React.Component {
     return (
       <div className="main-view">
         {movies.map(movie => (
-          <div className="movie-card" key={movie._id}>{movie.Title}
-          </div>
+          <MovieCard key={movie._id} movie={movie} />
         ))}
       </div>
     );
