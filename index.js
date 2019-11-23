@@ -283,6 +283,20 @@ app.get('/movies/director/:Name', function (req, res) {
   });
 });
 
+//GET data about a movie's Image
+app.get('/movies/ImagePath/:Name', function (req, res) {
+  Movies.findOne({
+    'ImagePath.Name': req.params.Name
+  }, function (err, movies) {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    } else {
+      res.json(movies.ImagePath);
+    }
+  });
+});
+
 // Listen for requests
 var port = process.env.PORT || 3000;
 app.listen(port, "0.0.0.0", function () {
