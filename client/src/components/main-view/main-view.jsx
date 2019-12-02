@@ -12,7 +12,6 @@ export class MainView extends React.Component {
       selectedMovie: null
     };
   }
-
   componentDidMount() {
     axios.get('https://liz-flix.herokuapp.com/movies')
       .then(response => {
@@ -25,24 +24,30 @@ export class MainView extends React.Component {
         console.log(error);
       });
   }
-
   onMovieClick(movie) {
     this.setState({
       selectedMovie: movie
     });
   }
-
+  backButton(movie) {
+    this.setState({
+      selectedMovie: null
+    });
+  }
   render() {
     const { movies, selectedMovie } = this.state;
-    // Before the movies have been loaded
+
+    //Before the movies have been loaded
     if (!movies) return <div className="main-view" />;
 
     return (
       <div className="main-view">
         {selectedMovie
-          ? <MovieView movie={selectedMovie} />
+          ? <MovieView movie={selectedMovie}
+            onClick={button => this.backButton()} />
           : movies.map(movie => (
-            <MovieCard key={movie._id} movie={movie} onClick={movie => this.onMovieClick(movie)} />
+            <MovieCard key={movie._id} movie={movie}
+              onClick={movie => this.onMovieClick(movie)} />
           ))
         }
       </div>
