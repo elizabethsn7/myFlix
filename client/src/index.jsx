@@ -5,7 +5,6 @@ import Popper from "popper.js";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import React from "react";
 import ReactDOM from "react-dom";
-
 import { MainView } from "./components/main-view/main-view";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -14,9 +13,9 @@ import "./index.scss";
 
 //Main component (will eventually uou all the others)
 class MyFlixApplication extends React.Component {
-	render() {
-		return <MainView />;
-	}
+  render() {
+    return <MainView />;
+  }
 }
 
 // Find the root of our app

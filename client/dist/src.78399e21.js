@@ -51940,7 +51940,12 @@ Button.displayName = 'Button';
 Button.defaultProps = defaultProps;
 var _default = Button;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./SafeAnchor":"../node_modules/react-bootstrap/esm/SafeAnchor.js"}],"components/registration-view/registration-view.jsx":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./SafeAnchor":"../node_modules/react-bootstrap/esm/SafeAnchor.js"}],"components/registration-view/registration-view.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/registration-view/registration-view.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51957,6 +51962,8 @@ var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
 var _Form = _interopRequireDefault(require("react-bootstrap/Form"));
 
 var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
+
+require("./registration-view.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52063,7 +52070,53 @@ RegistrationView.propTypes = {
     value: _propTypes.default.object.isRequired
   })
 };
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js"}],"../node_modules/react-bootstrap/esm/Row.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","./registration-view.scss":"components/registration-view/registration-view.scss"}],"../node_modules/react-bootstrap/esm/Jumbotron.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var defaultProps = {
+  fluid: false
+};
+
+var Jumbotron = _react.default.forwardRef(function (_ref, ref) {
+  var _classes;
+
+  var _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'div' : _ref$as,
+      className = _ref.className,
+      fluid = _ref.fluid,
+      bsPrefix = _ref.bsPrefix,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["as", "className", "fluid", "bsPrefix"]);
+  bsPrefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'jumbotron');
+  var classes = (_classes = {}, _classes[bsPrefix] = true, _classes[bsPrefix + "-fluid"] = fluid, _classes);
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref
+  }, props, {
+    className: (0, _classnames.default)(className, classes)
+  }));
+});
+
+Jumbotron.defaultProps = defaultProps;
+Jumbotron.displayName = 'Jumbotron';
+var _default = Jumbotron;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Row.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52105,7 +52158,97 @@ var Row = _react.default.forwardRef(function (props, ref) {
 Row.defaultProps = defaultProps;
 var _default = Row;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"components/login-view/login-view.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/login-view/login-view.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.LoginView = LoginView;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
+
+var _Jumbotron = _interopRequireDefault(require("react-bootstrap/Jumbotron"));
+
+var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
+
+var _Form = _interopRequireDefault(require("react-bootstrap/Form"));
+
+var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
+
+var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
+
+require("./login-view.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function LoginView(props) {
+  var _useState = (0, _react.useState)(""),
+      _useState2 = _slicedToArray(_useState, 2),
+      username = _useState2[0],
+      setUsername = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(""),
+      _useState4 = _slicedToArray(_useState3, 2),
+      password = _useState4[0],
+      setPassword = _useState4[1];
+
+  var handleSubmit = function handleSubmit() {
+    // Send a request to the server for authentification
+    props.onLoggedIn(username);
+  };
+
+  return _react.default.createElement(_Container.default, null, _react.default.createElement(_Jumbotron.default, null, _react.default.createElement("h1", null, "Welcome to myFlix!"), _react.default.createElement("p", null, "This is a simple single page app using React")), _react.default.createElement("h3", null, "Sign in Below or click here to Register"), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Row, null, _react.default.createElement(_Form.default.Group, {
+    as: _Col.default
+  }, _react.default.createElement(_Form.default.Label, null, "Username:"), _react.default.createElement(_Form.default.Control, {
+    type: "text",
+    name: "username",
+    value: username,
+    onChange: function onChange(e) {
+      return setUsername(e.target.value);
+    }
+  })), _react.default.createElement(_Form.default.Group, {
+    as: _Col.default
+  }, _react.default.createElement(_Form.default.Label, null, "Password:"), _react.default.createElement(_Form.default.Control, {
+    type: "password",
+    name: "password",
+    value: password,
+    onChange: function onChange(e) {
+      return setPassword(e.target.value);
+    }
+  }))), _react.default.createElement(_Button.default, {
+    variant: "danger",
+    type: "button",
+    onClick: handleSubmit
+  }, "Submit")));
+}
+
+{}
+LoginView.propTypes = {
+  onLoggedIn: _propTypes.default.func.isRequired
+};
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Jumbotron":"../node_modules/react-bootstrap/esm/Jumbotron.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","./login-view.scss":"components/login-view/login-view.scss"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52290,7 +52433,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _default = (0, _createWithBsPrefix.default)('card-columns');
 
 exports.default = _default;
-},{"./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js"}],"components/movie-card/movie-card.jsx":[function(require,module,exports) {
+},{"./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js"}],"components/movie-card/movie-card.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/movie-card/movie-card.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52313,6 +52461,8 @@ var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 var _Card = _interopRequireDefault(require("react-bootstrap/Card"));
 
 var _CardColumns = _interopRequireDefault(require("react-bootstrap/CardColumns"));
+
+require("./movie-card.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52355,7 +52505,7 @@ function (_React$Component) {
       var _this$props = this.props,
           movie = _this$props.movie,
           _onClick = _this$props.onClick;
-      return _react.default.createElement(_CardColumns.default, null, _react.default.createElement(_Card.default, {
+      return _react.default.createElement(_Container.default, null, _react.default.createElement(_Row.default, null, _react.default.createElement(_Col.default, null, _react.default.createElement("div", null, _react.default.createElement(_CardColumns.default, null, _react.default.createElement(_Card.default, {
         style: {
           width: "16rem"
         }
@@ -52367,7 +52517,7 @@ function (_React$Component) {
           return _onClick(movie);
         },
         variant: "link"
-      }, "Open"))));
+      }, "Open"))))))));
     }
   }]);
 
@@ -52377,13 +52527,29 @@ function (_React$Component) {
 exports.MovieCard = MovieCard;
 MovieCard.propTypes = {
   movie: _propTypes.default.shape({
+    ImagePath: _propTypes.default.string.isRequired,
     Title: _propTypes.default.string.isRequired,
     Description: _propTypes.default.string.isRequired,
-    ImagePath: _propTypes.default.string.isRequired
+    Genre: _propTypes.default.shape({
+      Name: _propTypes.default.string.isRequired,
+      Description: _propTypes.default.string.isRequired
+    }),
+    Featured: _propTypes.default.bool,
+    Director: _propTypes.default.shape({
+      Name: _propTypes.default.string.isRequired,
+      Bio: _propTypes.default.string.isRequired,
+      Birth: _propTypes.default.string.isRequired,
+      Death: _propTypes.default.string
+    })
   }).isRequired,
   onClick: _propTypes.default.func.isRequired
 };
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js"}],"components/movie-view/movie-view.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js","./movie-card.scss":"components/movie-card/movie-card.scss"}],"components/movie-view/movie-view.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/movie-view/movie-view.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52394,6 +52560,8 @@ exports.MovieView = void 0;
 var _react = _interopRequireDefault(require("react"));
 
 var _propTypes = _interopRequireWildcard(require("prop-types"));
+
+require("./movie-view.scss");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -52501,7 +52669,12 @@ MovieView.propTypes = {
   }).isRequired,
   onClick: _propTypes.default.func.isRequired
 };
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js"}],"components/main-view/main-view.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","./movie-view.scss":"components/movie-view/movie-view.scss"}],"components/main-view/main-view.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/main-view/main-view.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -52517,9 +52690,13 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _registrationView = require("../registration-view/registration-view");
 
+var _loginView = require("../login-view/login-view");
+
 var _movieCard = require("../movie-card/movie-card");
 
 var _movieView = require("../movie-view/movie-view");
+
+require("./main-view.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52583,12 +52760,14 @@ function (_React$Component) {
       });
     } // method, onLoggedIn, will be passed as a prop with the same name to LoginView
     //will update the user state of the MainView component and will be called when the user has successfully logged in
-    // onLoggedIn(user) {
-    // 	this.setState({
-    // 		user
-    // 	});
-    // }
 
+  }, {
+    key: "onLoggedIn",
+    value: function onLoggedIn(user) {
+      this.setState({
+        user: user
+      });
+    }
   }, {
     key: "onRegistered",
     value: function onRegistered(registeredUser) {
@@ -52611,24 +52790,25 @@ function (_React$Component) {
       var _this$state = this.state,
           movies = _this$state.movies,
           selectedMovie = _this$state.selectedMovie,
-          registeredUser = _this$state.registeredUser; //  user, - add back to constructor
-      // if (!user)
-      // 	return (
-      // 		<LoginView
-      // 			onLoggedIn={user =>
-      // 				// LoginView is rendered as long as there's no user in the state
-      // 				this.onLoggedIn(user)
-      // 			}
-      // 		/>
-      // 	);
+          registeredUser = _this$state.registeredUser,
+          user = _this$state.user; //  user, - add back to constructor
 
-      if (!registeredUser) return _react.default.createElement(_registrationView.RegistrationView, {
-        onRegistered: function onRegistered(registeredUser) {
+      if (!user) return _react.default.createElement(_loginView.LoginView, {
+        onLoggedIn: function onLoggedIn(user) {
           return (// LoginView is rendered as long as there's no user in the state
-            _this3.onRegistered(registeredUser)
+            _this3.onLoggedIn(user)
           );
         }
-      }); //Before the movies have been loaded
+      }); // if (!registeredUser)
+      //   return (
+      //     <RegistrationView
+      //       onRegistered={registeredUser =>
+      //         // LoginView is rendered as long as there's no user in the state
+      //         this.onRegistered(registeredUser)
+      //       }
+      //     />
+      //   );
+      //Before the movies have been loaded
 
       if (!movies) return _react.default.createElement("div", {
         className: "main-view"
@@ -52656,7 +52836,7 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.MainView = MainView;
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","prop-types":"../node_modules/prop-types/index.js","../registration-view/registration-view":"components/registration-view/registration-view.jsx","../movie-card/movie-card":"components/movie-card/movie-card.jsx","../movie-view/movie-view":"components/movie-view/movie-view.jsx"}],"index.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","prop-types":"../node_modules/prop-types/index.js","../registration-view/registration-view":"components/registration-view/registration-view.jsx","../login-view/login-view":"components/login-view/login-view.jsx","../movie-card/movie-card":"components/movie-card/movie-card.jsx","../movie-view/movie-view":"components/movie-view/movie-view.jsx","./main-view.scss":"components/main-view/main-view.scss"}],"index.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
