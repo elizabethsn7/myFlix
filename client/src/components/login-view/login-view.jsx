@@ -18,6 +18,7 @@ export function LoginView(props) {
     // Send a request to the server for authentification
     props.onLoggedIn(username);
   };
+
   return (
     <div>
       <Navbar bg="danger">
@@ -26,12 +27,14 @@ export function LoginView(props) {
 
       <Jumbotron className="jumbo">
         <h1>Welcome to myFlix!</h1>
-        <p class="loginView">This is a simple single page app using React</p>
+        <p className="loginView">
+          This is a simple single page app using React
+        </p>
       </Jumbotron>
       <Container>
         <Row>
           <Col>
-            <h3>Sign in Below or click here to Register</h3>
+            <h3>Sign in Below</h3>
           </Col>
         </Row>
         <Form>
@@ -59,6 +62,12 @@ export function LoginView(props) {
             Submit
           </Button>
         </Form>
+        <div>
+          <h3>New to myFlix?</h3>
+          <Button type="button" onClick={handleSubmit}>
+            Register
+          </Button>
+        </div>
       </Container>
     </div>
   );

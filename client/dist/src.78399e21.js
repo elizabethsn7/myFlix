@@ -54292,8 +54292,8 @@ function LoginView(props) {
   }, "myFlix")), _react.default.createElement(_Jumbotron.default, {
     className: "jumbo"
   }, _react.default.createElement("h1", null, "Welcome to myFlix!"), _react.default.createElement("p", {
-    "class": "loginView"
-  }, "This is a simple single page app using React")), _react.default.createElement(_Container.default, null, _react.default.createElement(_Row.default, null, _react.default.createElement(_Col.default, null, _react.default.createElement("h3", null, "Sign in Below or click here to Register"))), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Row, null, _react.default.createElement(_Form.default.Group, {
+    className: "loginView"
+  }, "This is a simple single page app using React")), _react.default.createElement(_Container.default, null, _react.default.createElement(_Row.default, null, _react.default.createElement(_Col.default, null, _react.default.createElement("h3", null, "Sign in Below"))), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Row, null, _react.default.createElement(_Form.default.Group, {
     as: _Col.default
   }, _react.default.createElement(_Form.default.Label, null, "Username:"), _react.default.createElement(_Form.default.Control, {
     type: "text",
@@ -54315,7 +54315,10 @@ function LoginView(props) {
     variant: "danger",
     type: "button",
     onClick: handleSubmit
-  }, "Submit"))));
+  }, "Submit")), _react.default.createElement("div", null, _react.default.createElement("h3", null, "New to myFlix?"), _react.default.createElement(_Button.default, {
+    type: "button",
+    onClick: handleSubmit
+  }, "Register"))));
 }
 
 {}
@@ -54876,8 +54879,8 @@ function (_React$Component) {
           movies = _this$state.movies,
           selectedMovie = _this$state.selectedMovie,
           registeredUser = _this$state.registeredUser,
-          user = _this$state.user; //  user, - add back to constructor
-
+          registerMe = _this$state.registerMe,
+          user = _this$state.user;
       if (!user) return _react.default.createElement(_loginView.LoginView, {
         onLoggedIn: function onLoggedIn(user) {
           return (// LoginView is rendered as long as there's no user in the state
@@ -54887,7 +54890,7 @@ function (_React$Component) {
       });
       if (!registeredUser) return _react.default.createElement(_registrationView.RegistrationView, {
         onRegistered: function onRegistered(registeredUser) {
-          return (// LoginView is rendered as long as there's no user in the state
+          return (// RegistrationView is rendered as long as there's no user in the state
             _this3.onRegistered(registeredUser)
           );
         }
@@ -55017,7 +55020,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57859" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49603" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -18,6 +18,7 @@ export function RegistrationView(props) {
     // Send a request to the server for authentification
     props.onRegistered(username);
   };
+
   return (
     <Container>
       <Form>

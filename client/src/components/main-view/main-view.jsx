@@ -58,9 +58,14 @@ export class MainView extends React.Component {
     });
   }
   render() {
-    const { movies, selectedMovie, registeredUser, user } = this.state;
+    const {
+      movies,
+      selectedMovie,
+      registeredUser,
+      registerMe,
+      user
+    } = this.state;
 
-    //  user, - add back to constructor
     if (!user)
       return (
         <LoginView
@@ -75,7 +80,7 @@ export class MainView extends React.Component {
       return (
         <RegistrationView
           onRegistered={registeredUser =>
-            // LoginView is rendered as long as there's no user in the state
+            // RegistrationView is rendered as long as there's no user in the state
             this.onRegistered(registeredUser)
           }
         />
