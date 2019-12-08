@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+
 import { RegistrationView } from "../registration-view/registration-view";
 import { LoginView } from "../login-view/login-view";
 import { MovieCard } from "../movie-card/movie-card";
@@ -70,15 +71,15 @@ export class MainView extends React.Component {
         />
       );
 
-    // if (!registeredUser)
-    //   return (
-    //     <RegistrationView
-    //       onRegistered={registeredUser =>
-    //         // LoginView is rendered as long as there's no user in the state
-    //         this.onRegistered(registeredUser)
-    //       }
-    //     />
-    //   );
+    if (!registeredUser)
+      return (
+        <RegistrationView
+          onRegistered={registeredUser =>
+            // LoginView is rendered as long as there's no user in the state
+            this.onRegistered(registeredUser)
+          }
+        />
+      );
 
     //Before the movies have been loaded
     if (!movies) return <div className="main-view" />;

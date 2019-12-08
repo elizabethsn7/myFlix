@@ -19,21 +19,19 @@ export class MovieCard extends React.Component {
     return (
       <Container>
         <Row>
-          <Col>
-            <div>
-              <CardColumns>
-                <Card style={{ width: "16rem" }}>
-                  <Card.Img variant="top" src={movie.ImagePath} />
-                  <Card.Body>
-                    <Card.Title>{movie.Title}</Card.Title>
-                    <Card.Text>{movie.Description}</Card.Text>
-                    <Button onClick={() => onClick(movie)} variant="link">
-                      Open
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </CardColumns>
-            </div>
+          <Col sm={6}>
+            <CardColumns>
+              <Card style={{ width: "16rem" }}>
+                <Card.Img variant="top" src={movie.ImagePath} />
+                <Card.Body>
+                  <Card.Title>{movie.Title}</Card.Title>
+                  <Card.Text>{movie.Description}</Card.Text>
+                  <Button onClick={() => onClick(movie)} variant="danger">
+                    Open
+                  </Button>
+                </Card.Body>
+              </Card>
+            </CardColumns>
           </Col>
         </Row>
       </Container>

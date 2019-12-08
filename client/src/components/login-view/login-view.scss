@@ -1,0 +1,20 @@
+$backgroundColor: #202020;
+$white: #eeeeee;
+h1 {
+  font-size: 5em;
+  font-family: "Poiret One", cursive;
+}
+.brand {
+  font-size: 2em;
+  font-family: "Poiret One", cursive;
+}
+.loginView {
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.25em;
+}
+.jumbo {
+  text-align: center;
+  border-radius: 0px;
+  color: $white;
+  background-color: $backgroundColor;
+}
