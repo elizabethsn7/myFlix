@@ -19,9 +19,26 @@ export class MainView extends React.Component {
       registeredUser: null
     };
   }
-  componentDidMount() {
+
+  // componentDidMount() {
+  //   axios
+  //     .get("https://liz-flix.herokuapp.com/movies")
+  //     .then(response => {
+  //       // Assign the result to the state
+  //       this.setState({
+  //         movies: response.data
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       console.log(error);
+  //     });
+  // }
+
+  getMovies(token) {
     axios
-      .get("https://liz-flix.herokuapp.com/movies")
+      .get("https://liz-flix.herokuapp.com/movies", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then(response => {
         // Assign the result to the state
         this.setState({
@@ -32,6 +49,7 @@ export class MainView extends React.Component {
         console.log(error);
       });
   }
+
   onMovieClick(movie) {
     this.setState({
       selectedMovie: movie
@@ -46,7 +64,7 @@ export class MainView extends React.Component {
       user: authData.user.Username
     });
     localStorage.setItem("token", authData.token);
-    localStorage.setItem("user", authData.Username);
+    localStorage.setItem("user", suthData.user.Username);
     this.getMovies(authData.token);
   }
 
@@ -61,23 +79,6 @@ export class MainView extends React.Component {
       selectedMovie: null
     });
   }
-
-  getMovies(token) {
-    axios
-      .get("https://liz-flix.herokuapp.com/movies", {
-        headers: { Authorization: "Bearer ${token}" }
-      })
-      .then(response => {
-        // Assign the result to the state
-        this.setState({
-          movies: response.data
-        });
-      })
-      .catch(function(error) {
-        console.log(error + "Here is the error");
-      });
-  }
-
   render() {
     const {
       movies,

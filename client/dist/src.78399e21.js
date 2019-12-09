@@ -54836,14 +54836,31 @@ function (_React$Component) {
       registeredUser: null
     };
     return _this;
-  }
+  } // componentDidMount() {
+  //   axios
+  //     .get("https://liz-flix.herokuapp.com/movies")
+  //     .then(response => {
+  //       // Assign the result to the state
+  //       this.setState({
+  //         movies: response.data
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       console.log(error);
+  //     });
+  // }
+
 
   _createClass(MainView, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
+    key: "getMovies",
+    value: function getMovies(token) {
       var _this2 = this;
 
-      _axios.default.get("https://liz-flix.herokuapp.com/movies").then(function (response) {
+      _axios.default.get("https://liz-flix.herokuapp.com/movies", {
+        headers: {
+          Authorization: "Bearer ".concat(token)
+        }
+      }).then(function (response) {
         // Assign the result to the state
         _this2.setState({
           movies: response.data
@@ -54869,7 +54886,7 @@ function (_React$Component) {
         user: authData.user.Username
       });
       localStorage.setItem("token", authData.token);
-      localStorage.setItem("user", authData.Username);
+      localStorage.setItem("user", suthData.user.Username);
       this.getMovies(authData.token);
     }
   }, {
@@ -54887,27 +54904,9 @@ function (_React$Component) {
       });
     }
   }, {
-    key: "getMovies",
-    value: function getMovies(token) {
-      var _this3 = this;
-
-      _axios.default.get("https://liz-flix.herokuapp.com/movies", {
-        headers: {
-          Authorization: "Bearer ${token}"
-        }
-      }).then(function (response) {
-        // Assign the result to the state
-        _this3.setState({
-          movies: response.data
-        });
-      }).catch(function (error) {
-        console.log(error + "Here is the error");
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this3 = this;
 
       var _this$state = this.state,
           movies = _this$state.movies,
@@ -54918,14 +54917,14 @@ function (_React$Component) {
       if (!user) return _react.default.createElement(_loginView.LoginView, {
         onLoggedIn: function onLoggedIn(user) {
           return (// LoginView is rendered as long as there's no user in the state
-            _this4.onLoggedIn(user)
+            _this3.onLoggedIn(user)
           );
         }
       });
       if (!registeredUser) return _react.default.createElement(_registrationView.RegistrationView, {
         onRegistered: function onRegistered(registeredUser) {
           return (// RegistrationView is rendered as long as there's no user in the state
-            _this4.onRegistered(registeredUser)
+            _this3.onRegistered(registeredUser)
           );
         }
       }); //Before the movies have been loaded
@@ -54938,14 +54937,14 @@ function (_React$Component) {
       }, selectedMovie ? _react.default.createElement(_movieView.MovieView, {
         movie: selectedMovie,
         onClick: function onClick(button) {
-          return _this4.backButton();
+          return _this3.backButton();
         }
       }) : movies.map(function (movie) {
         return _react.default.createElement(_movieCard.MovieCard, {
           key: movie._id,
           movie: movie,
           onClick: function onClick(movie) {
-            return _this4.onMovieClick(movie);
+            return _this3.onMovieClick(movie);
           }
         });
       }));
@@ -55054,7 +55053,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59911" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63955" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
