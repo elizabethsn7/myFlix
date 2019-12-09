@@ -21,7 +21,7 @@ export class MainView extends React.Component {
   }
   componentDidMount() {
     axios
-      .get("http://localhost:1234/login")
+      .get("https://liz-flix.herokuapp.com/movies")
       .then(response => {
         // Assign the result to the state
         this.setState({
@@ -74,7 +74,7 @@ export class MainView extends React.Component {
         });
       })
       .catch(function(error) {
-        console.log(error);
+        console.log(error + "Here is the error");
       });
   }
 

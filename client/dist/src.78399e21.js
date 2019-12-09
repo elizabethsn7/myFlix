@@ -54843,7 +54843,7 @@ function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      _axios.default.get("http://localhost:1234/login").then(function (response) {
+      _axios.default.get("https://liz-flix.herokuapp.com/movies").then(function (response) {
         // Assign the result to the state
         _this2.setState({
           movies: response.data
@@ -54901,7 +54901,7 @@ function (_React$Component) {
           movies: response.data
         });
       }).catch(function (error) {
-        console.log(error);
+        console.log(error + "Here is the error");
       });
     }
   }, {
@@ -55054,7 +55054,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63163" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59911" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
