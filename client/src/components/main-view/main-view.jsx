@@ -21,7 +21,7 @@ export class MainView extends React.Component {
   }
   componentDidMount() {
     axios
-      .get("https://liz-flix.herokuapp.com/movies")
+      .get("http://localhost:1234/login")
       .then(response => {
         // Assign the result to the state
         this.setState({
@@ -40,10 +40,14 @@ export class MainView extends React.Component {
   // method, onLoggedIn, will be passed as a prop with the same name to LoginView
   //will update the user state of the MainView component and will be called when the user has successfully logged in
 
-  onLoggedIn(user) {
+  onLoggedIn(authData) {
+    console.log(authData);
     this.setState({
-      user
+      user: authData.user.Username
     });
+    localStorage.setItem("token", authData.token);
+    localStorage.setItem("user", authData.Username);
+    this.getMovies(authData.token);
   }
 
   onRegistered(registeredUser) {
@@ -57,6 +61,23 @@ export class MainView extends React.Component {
       selectedMovie: null
     });
   }
+
+  getMovies(token) {
+    axios
+      .get("https://liz-flix.herokuapp.com/movies", {
+        headers: { Authorization: "Bearer ${token}" }
+      })
+      .then(response => {
+        // Assign the result to the state
+        this.setState({
+          movies: response.data
+        });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
+
   render() {
     const {
       movies,

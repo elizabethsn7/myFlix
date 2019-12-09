@@ -54237,6 +54237,8 @@ exports.LoginView = LoginView;
 
 var _react = _interopRequireWildcard(require("react"));
 
+var _axios = _interopRequireDefault(require("axios"));
+
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
@@ -54280,9 +54282,19 @@ function LoginView(props) {
       password = _useState4[0],
       setPassword = _useState4[1];
 
-  var handleSubmit = function handleSubmit() {
-    // Send a request to the server for authentification
-    props.onLoggedIn(username);
+  var handleSubmit = function handleSubmit(e) {
+    e.preventDefault();
+    /* Send a request to the server for authentification */
+
+    _axios.default.post("https://liz-flix.herokuapp.com/login", {
+      Username: username,
+      Password: password
+    }).then(function (response) {
+      var data = response.data;
+      props.onLoggedIn(data);
+    }).catch(function (e) {
+      console.log("No such user");
+    });
   };
 
   return _react.default.createElement("div", null, _react.default.createElement(_Navbar.default, {
@@ -54293,20 +54305,20 @@ function LoginView(props) {
     className: "jumbo"
   }, _react.default.createElement("h1", null, "Welcome to myFlix!"), _react.default.createElement("p", {
     className: "loginView"
-  }, "This is a simple single page app using React")), _react.default.createElement(_Container.default, null, _react.default.createElement(_Row.default, null, _react.default.createElement(_Col.default, null, _react.default.createElement("h3", null, "Sign in Below"))), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Row, null, _react.default.createElement(_Form.default.Group, {
-    as: _Col.default
+  }, "This is a simple single page app using React")), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Row, null, _react.default.createElement(_Form.default.Group, {
+    controlId: "formBasicUsername"
   }, _react.default.createElement(_Form.default.Label, null, "Username:"), _react.default.createElement(_Form.default.Control, {
     type: "text",
-    name: "username",
+    placeholder: "Enter username",
     value: username,
     onChange: function onChange(e) {
       return setUsername(e.target.value);
     }
   })), _react.default.createElement(_Form.default.Group, {
-    as: _Col.default
+    controlId: "formBasicPassword"
   }, _react.default.createElement(_Form.default.Label, null, "Password:"), _react.default.createElement(_Form.default.Control, {
     type: "password",
-    name: "password",
+    placeholder: "Password",
     value: password,
     onChange: function onChange(e) {
       return setPassword(e.target.value);
@@ -54318,14 +54330,14 @@ function LoginView(props) {
   }, "Submit")), _react.default.createElement("div", null, _react.default.createElement("h3", null, "New to myFlix?"), _react.default.createElement(_Button.default, {
     type: "button",
     onClick: handleSubmit
-  }, "Register"))));
+  }, "Register")));
 }
 
 {}
 LoginView.propTypes = {
   onLoggedIn: _propTypes.default.func.isRequired
 };
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Jumbotron":"../node_modules/react-bootstrap/esm/Jumbotron.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/esm/Navbar.js","./login-view.scss":"components/login-view/login-view.scss"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Jumbotron":"../node_modules/react-bootstrap/esm/Jumbotron.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/esm/Navbar.js","./login-view.scss":"components/login-view/login-view.scss"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54831,7 +54843,7 @@ function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      _axios.default.get("https://liz-flix.herokuapp.com/movies").then(function (response) {
+      _axios.default.get("http://localhost:1234/login").then(function (response) {
         // Assign the result to the state
         _this2.setState({
           movies: response.data
@@ -54851,10 +54863,14 @@ function (_React$Component) {
 
   }, {
     key: "onLoggedIn",
-    value: function onLoggedIn(user) {
+    value: function onLoggedIn(authData) {
+      console.log(authData);
       this.setState({
-        user: user
+        user: authData.user.Username
       });
+      localStorage.setItem("token", authData.token);
+      localStorage.setItem("user", authData.Username);
+      this.getMovies(authData.token);
     }
   }, {
     key: "onRegistered",
@@ -54871,9 +54887,27 @@ function (_React$Component) {
       });
     }
   }, {
+    key: "getMovies",
+    value: function getMovies(token) {
+      var _this3 = this;
+
+      _axios.default.get("https://liz-flix.herokuapp.com/movies", {
+        headers: {
+          Authorization: "Bearer ${token}"
+        }
+      }).then(function (response) {
+        // Assign the result to the state
+        _this3.setState({
+          movies: response.data
+        });
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var _this$state = this.state,
           movies = _this$state.movies,
@@ -54884,14 +54918,14 @@ function (_React$Component) {
       if (!user) return _react.default.createElement(_loginView.LoginView, {
         onLoggedIn: function onLoggedIn(user) {
           return (// LoginView is rendered as long as there's no user in the state
-            _this3.onLoggedIn(user)
+            _this4.onLoggedIn(user)
           );
         }
       });
       if (!registeredUser) return _react.default.createElement(_registrationView.RegistrationView, {
         onRegistered: function onRegistered(registeredUser) {
           return (// RegistrationView is rendered as long as there's no user in the state
-            _this3.onRegistered(registeredUser)
+            _this4.onRegistered(registeredUser)
           );
         }
       }); //Before the movies have been loaded
@@ -54904,14 +54938,14 @@ function (_React$Component) {
       }, selectedMovie ? _react.default.createElement(_movieView.MovieView, {
         movie: selectedMovie,
         onClick: function onClick(button) {
-          return _this3.backButton();
+          return _this4.backButton();
         }
       }) : movies.map(function (movie) {
         return _react.default.createElement(_movieCard.MovieCard, {
           key: movie._id,
           movie: movie,
           onClick: function onClick(movie) {
-            return _this3.onMovieClick(movie);
+            return _this4.onMovieClick(movie);
           }
         });
       }));
@@ -55020,7 +55054,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49603" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63163" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
