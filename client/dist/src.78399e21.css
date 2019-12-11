@@ -32,6 +32,9 @@ h1 {
 .movie-view {
   font-family: "Open Sans", sans-serif;
 }
+.row {
+  margin-top: 30px;
+}
 .my-flix {
   color: steelblue;
 }

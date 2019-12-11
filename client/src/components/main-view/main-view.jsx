@@ -1,12 +1,16 @@
 import React from "react";
 import axios from "axios";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import PropTypes from "prop-types";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 
-import { RegistrationView } from "../registration-view/registration-view";
 import { LoginView } from "../login-view/login-view";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
-
+import { RegistrationView } from "../registration-view/registration-view";
 import "./main-view.scss";
 
 export class MainView extends React.Component {
@@ -15,24 +19,10 @@ export class MainView extends React.Component {
     this.state = {
       movies: null,
       selectedMovie: null,
-      //user: null,
+      user: null,
       registeredUser: null
     };
   }
-
-  // componentDidMount() {
-  //   axios
-  //     .get("https://liz-flix.herokuapp.com/movies")
-  //     .then(response => {
-  //       // Assign the result to the state
-  //       this.setState({
-  //         movies: response.data
-  //       });
-  //     })
-  //     .catch(function(error) {
-  //       console.log(error);
-  //     });
-  // }
 
   getMovies(token) {
     axios
@@ -50,6 +40,16 @@ export class MainView extends React.Component {
       });
   }
 
+  componentDidMount() {
+    let accessToken = localStorage.getItem("token");
+    if (accessToken !== null) {
+      this.setState({
+        user: localStorage.getItem("user")
+      });
+      this.getMovies(accessToken);
+    }
+  }
+
   onMovieClick(movie) {
     this.setState({
       selectedMovie: movie
@@ -64,8 +64,16 @@ export class MainView extends React.Component {
       user: authData.user.Username
     });
     localStorage.setItem("token", authData.token);
-    localStorage.setItem("user", suthData.user.Username);
+    localStorage.setItem("user", authData.user.Username);
     this.getMovies(authData.token);
+  }
+
+  handleLogOut() {
+    this.setState({
+      user: null
+    });
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }
 
   onRegistered(registeredUser) {
@@ -80,13 +88,7 @@ export class MainView extends React.Component {
     });
   }
   render() {
-    const {
-      movies,
-      selectedMovie,
-      registeredUser,
-      registerMe,
-      user
-    } = this.state;
+    const { movies, selectedMovie, registeredUser, user } = this.state;
 
     if (!user)
       return (
@@ -112,22 +114,33 @@ export class MainView extends React.Component {
     if (!movies) return <div className="main-view" />;
 
     return (
-      <div className="main-view">
-        {selectedMovie ? (
-          <MovieView
-            movie={selectedMovie}
-            onClick={button => this.backButton()}
-          />
-        ) : (
-          movies.map(movie => (
-            <MovieCard
-              key={movie._id}
-              movie={movie}
-              onClick={movie => this.onMovieClick(movie)}
-            />
-          ))
-        )}
-      </div>
+      <Container>
+        <Row>
+          <Col xs={8}>
+            <div className="main-view">
+              {selectedMovie ? (
+                <MovieView
+                  movie={selectedMovie}
+                  onClick={button => this.backButton()}
+                />
+              ) : (
+                movies.map(movie => (
+                  <MovieCard
+                    key={movie._id}
+                    movie={movie}
+                    onClick={movie => this.onMovieClick(movie)}
+                  />
+                ))
+              )}
+            </div>
+          </Col>
+          <Col xs={4}>
+            <Button variant="danger" onClick={() => this.handleLogOut()}>
+              Logout
+            </Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
