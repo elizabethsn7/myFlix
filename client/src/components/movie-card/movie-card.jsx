@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,7 +16,7 @@ export class MovieCard extends React.Component {
     // which in this case is  'MainView', as 'MainView'
     // is what's connected to your database via the movies
     // endpoint of your API
-    const { movie, onClick } = this.props;
+    const { movie } = this.props;
     return (
       <Container>
         <Row>
@@ -26,9 +27,9 @@ export class MovieCard extends React.Component {
                 <Card.Body>
                   <Card.Title>{movie.Title}</Card.Title>
                   <Card.Text>{movie.Description}</Card.Text>
-                  <Button onClick={() => onClick(movie)} variant="danger">
-                    Open
-                  </Button>
+                  <Link to={"/movies/${movie.id}"}>
+                    <Button variant="link">Open</Button>
+                  </Link>
                 </Card.Body>
               </Card>
             </CardColumns>
