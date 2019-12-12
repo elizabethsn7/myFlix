@@ -286,88 +286,72 @@ app.get("/movies", passport.authenticate("jwt", { session: false }), function(
 });
 
 // Get movie by Title
-app.get(
-  "/movies/:Title",
-  passport.authenticate("jwt", { session: false }),
-  function(req, res) {
-    Movies.findOne(
-      {
-        Title: req.params.Title
-      },
-      function(err, oneMovie) {
-        if (err) {
-          console.error(err);
-          res.status(500).send("Movies.findOneError: " + err);
-        } else {
-          res.json(oneMovie);
-        }
+app.get("/movies/:Title", function(req, res) {
+  Movies.findOne(
+    {
+      Title: req.params.Title
+    },
+    function(err, oneMovie) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Movies.findOneError: " + err);
+      } else {
+        res.json(oneMovie);
       }
-    );
-  }
-);
+    }
+  );
+});
 
 // GET data about a genre
-app.get(
-  "/movies/Genre/:Name",
-  passport.authenticate("jwt", { session: false }),
-  function(req, res) {
-    Movies.findOne(
-      {
-        "Genre.Name": req.params.Name
-      },
-      function(err, movies) {
-        if (err) {
-          console.error(err);
-          res.status(500).send("Error: " + err);
-        } else {
-          res.json(movies.Genre);
-        }
+app.get("/movies/Genre/:Name", function(req, res) {
+  Movies.findOne(
+    {
+      "Genre.Name": req.params.Name
+    },
+    function(err, movies) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      } else {
+        res.json(movies.Genre);
       }
-    );
-  }
-);
+    }
+  );
+});
 
 //GET data about a director
-app.get(
-  "/movies/director/:Name",
-  passport.authenticate("jwt", { session: false }),
-  function(req, res) {
-    Movies.findOne(
-      {
-        "Director.Name": req.params.Name
-      },
-      function(err, movies) {
-        if (err) {
-          console.error(err);
-          res.status(500).send("Error: " + err);
-        } else {
-          res.json(movies.Director);
-        }
+app.get("/movies/director/:Name", function(req, res) {
+  Movies.findOne(
+    {
+      "Director.Name": req.params.Name
+    },
+    function(err, movies) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      } else {
+        res.json(movies.Director);
       }
-    );
-  }
-);
+    }
+  );
+});
 
 //GET data about a movie's Image
-app.get(
-  "/movies/ImagePath/:Name",
-  passport.authenticate("jwt", { session: false }),
-  function(req, res) {
-    Movies.findOne(
-      {
-        "ImagePath.Name": req.params.Name
-      },
-      function(err, movies) {
-        if (err) {
-          console.error(err);
-          res.status(500).send("Error: " + err);
-        } else {
-          res.json(movies.ImagePath);
-        }
+app.get("/movies/ImagePath/:Name", function(req, res) {
+  Movies.findOne(
+    {
+      "ImagePath.Name": req.params.Name
+    },
+    function(err, movies) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      } else {
+        res.json(movies.ImagePath);
       }
-    );
-  }
-);
+    }
+  );
+});
 
 // Listen for requests
 var port = process.env.PORT || 3000;

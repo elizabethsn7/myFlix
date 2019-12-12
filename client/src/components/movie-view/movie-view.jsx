@@ -4,6 +4,11 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+
+import { ProfileView } from "../profile-view/profile-view";
+import { DirectorView } from "../director-view/director-view";
+import { GenreView } from "../genre-view/genre-view";
+
 import "./movie-view.scss";
 
 export class MovieView extends React.Component {
@@ -37,10 +42,10 @@ export class MovieView extends React.Component {
         <Link to={"/movies"}>
           <Button variant="link">Back</Button>
         </Link>
-        <Link to={"/directors/${movie.Director.Name}"}>
+        <Link to={"/director/${movie.Director.Name}"}>
           <Button variant="link">Director</Button>
         </Link>
-        <Link to={"/genres/${movie.Genre.Name}"}>
+        <Link to={"/genre/${movie.Genre.Name}"}>
           <Button variant="link">Genre</Button>
         </Link>
       </div>

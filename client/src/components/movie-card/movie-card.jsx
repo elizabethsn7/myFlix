@@ -1,12 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import CardColumns from "react-bootstrap/CardColumns";
+
+import { Link } from "react-router-dom";
+import { ProfileView } from "../profile-view/profile-view";
+import { DirectorView } from "../director-view/director-view";
+import { GenreView } from "../genre-view/genre-view";
 
 import "./movie-card.scss";
 
@@ -40,22 +45,22 @@ export class MovieCard extends React.Component {
   }
 }
 
-MovieCard.propTypes = {
-  movie: PropTypes.shape({
-    ImagePath: PropTypes.string.isRequired,
-    Title: PropTypes.string.isRequired,
-    Description: PropTypes.string.isRequired,
-    Genre: PropTypes.shape({
-      Name: PropTypes.string.isRequired,
-      Description: PropTypes.string.isRequired
-    }),
-    Featured: PropTypes.bool,
-    Director: PropTypes.shape({
-      Name: PropTypes.string.isRequired,
-      Bio: PropTypes.string.isRequired,
-      Birth: PropTypes.string.isRequired,
-      Death: PropTypes.string
-    })
-  }).isRequired,
-  onClick: PropTypes.func.isRequired
-};
+// MovieCard.propTypes = {
+//   movie: PropTypes.shape({
+//     ImagePath: PropTypes.string.isRequired,
+//     Title: PropTypes.string.isRequired,
+//     Description: PropTypes.string.isRequired,
+//     Genre: PropTypes.shape({
+//       Name: PropTypes.string.isRequired,
+//       Description: PropTypes.string.isRequired
+//     }),
+//     Featured: PropTypes.bool,
+//     Director: PropTypes.shape({
+//       Name: PropTypes.string.isRequired,
+//       Bio: PropTypes.string.isRequired,
+//       Birth: PropTypes.string.isRequired,
+//       Death: PropTypes.string
+//     })
+//   }).isRequired,
+//   onClick: PropTypes.func.isRequired
+// };

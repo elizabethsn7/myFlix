@@ -86,9 +86,9 @@ export function RegistrationView(props) {
     </Container>
   );
 }
-RegistrationView.propTypes = {
-  handleSubmit: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    value: PropTypes.object.isRequired
-  })
-};
+// RegistrationView.propTypes = {
+//   handleSubmit: PropTypes.shape({
+//     type: PropTypes.string.isRequired,
+//     value: PropTypes.object.isRequired
+//   })
+// };
