@@ -9,9 +9,9 @@ import Card from "react-bootstrap/Card";
 import CardColumns from "react-bootstrap/CardColumns";
 
 import { Link } from "react-router-dom";
-import { ProfileView } from "../profile-view/profile-view";
-import { DirectorView } from "../director-view/director-view";
-import { GenreView } from "../genre-view/genre-view";
+// import { ProfileView } from "../profile-view/profile-view";
+// import { DirectorView } from "../director-view/director-view";
+// import { GenreView } from "../genre-view/genre-view";
 
 import "./movie-card.scss";
 
@@ -32,7 +32,7 @@ export class MovieCard extends React.Component {
                 <Card.Body>
                   <Card.Title>{movie.Title}</Card.Title>
                   <Card.Text>{movie.Description}</Card.Text>
-                  <Link to={"/movies/${movie.id}"}>
+                  <Link to={`/movies/${movie._id}`}>
                     <Button variant="link">Open</Button>
                   </Link>
                 </Card.Body>
