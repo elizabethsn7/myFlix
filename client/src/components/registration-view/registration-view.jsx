@@ -5,17 +5,14 @@ import PropTypes from 'prop-types';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Navbar from 'react-bootstrap/Navbar';
 
 import './registration-view.scss';
 
 export function RegistrationView(props) {
   const [username, setUsername] = useState('');
-  const [firstname, setFirstname] = useState('');
-  const [lastname, setLastname] = useState('');
+  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [birthday, setBirthday] = useState('');
-  const [password, setPassword] = useState('');
 
   const handleRegister = e => {
     e.preventDefault();
@@ -27,7 +24,6 @@ export function RegistrationView(props) {
         Birthday: birthday
       })
       .then(response => {
-        const data = response.data;
         console.log(data);
         window.open('/', '_self');
       })
@@ -38,14 +34,8 @@ export function RegistrationView(props) {
 
   return (
     <Container>
-      <Navbar bg='danger'>
-        <Navbar.Brand className='brand'>myFlix</Navbar.Brand>
-        <Button variant='danger' onClick={() => this.handleLogOut()}>
-          Logout
-        </Button>
-      </Navbar>
       <Form>
-        <Form.Group>
+        {/* <Form.Group controlId='formFirstName'>
           <Form.Label>First Name:</Form.Label>
           <Form.Control
             type='text'
@@ -53,8 +43,8 @@ export function RegistrationView(props) {
             value={firstname}
             onChange={e => setFirstname(e.target.value)}
           />
-        </Form.Group>
-        <Form.Group>
+        </Form.Group> */}
+        {/* <Form.Group controlId='formLastName'>
           <Form.Label>Last Name:</Form.Label>
           <Form.Control
             type='text'
@@ -62,29 +52,8 @@ export function RegistrationView(props) {
             value={lastname}
             onChange={e => setLastname(e.target.value)}
           />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Birthday:</Form.Label>
-          <Form.Control
-            type='text'
-            name='birthday'
-            value={birthday}
-            onChange={e => setBirthday(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label>Email:</Form.Label>
-          <Form.Control
-            type='email'
-            name='email'
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group>
+        </Form.Group> */}
+        <Form.Group controlId='formUsername'>
           <Form.Label>Username:</Form.Label>
           <Form.Control
             type='text'
@@ -103,6 +72,27 @@ export function RegistrationView(props) {
             onChange={e => setPassword(e.target.value)}
           />
         </Form.Group>
+
+        <Form.Group controlId='formBirthday'>
+          <Form.Label>Birthday:</Form.Label>
+          <Form.Control
+            type='date'
+            name='birthday'
+            value={birthday}
+            onChange={e => setBirthday(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group controlId='formEmail'>
+          <Form.Label>Email:</Form.Label>
+          <Form.Control
+            type='email'
+            name='email'
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+        </Form.Group>
+
         <Button variant='danger' type='submit' onClick={handleRegister}>
           Register
         </Button>
@@ -110,9 +100,3 @@ export function RegistrationView(props) {
     </Container>
   );
 }
-RegistrationView.propTypes = {
-  handleRegister: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    value: PropTypes.object.isRequired
-  })
-};

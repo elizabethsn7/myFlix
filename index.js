@@ -42,7 +42,6 @@ app.use(function(err, req, res, next) {
 // CREATE in Mongoose  - i.e. POST
 app.post(
   '/users',
-  passport.authenticate('jwt', { session: false }),
   [
     (check('Username', 'Username is required  minimum 5 characters').isLength({
       min: 5
@@ -98,9 +97,7 @@ app.post(
 // Update by Username
 app.put(
   '/users/:Username',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   [
     check('Username', 'Username is required minimum 5 characters').isLength({
       min: 5
@@ -188,9 +185,7 @@ app.get(
 // Add a movie to a users list of  favorites
 app.post(
   '/users/:Username/Movies/:MovieID',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   function(req, res) {
     Users.findOneAndUpdate(
       {
@@ -219,9 +214,7 @@ app.post(
 // Remove  a movie from favorites
 app.delete(
   '/users/:Username/:FavoriteMovies/:MovieID',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   function(req, res) {
     Users.findOneAndUpdate(
       {
@@ -250,9 +243,7 @@ app.delete(
 // DELETE a user by Username
 app.delete(
   '/users/:Username',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   function(req, res) {
     Users.findOneAndRemove({
       Username: req.params.Username
@@ -287,55 +278,67 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), function(
 });
 
 // Get movie by Title
-app.get('/movies/:Title', function(req, res) {
-  Movies.findOne(
-    {
-      Title: req.params.Title
-    },
-    function(err, oneMovie) {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Movies.findOneError: ' + err);
-      } else {
-        res.json(oneMovie);
+app.get(
+  '/movies/:Title',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Movies.findOne(
+      {
+        Title: req.params.Title
+      },
+      function(err, oneMovie) {
+        if (err) {
+          console.error(err);
+          res.status(500).send('Movies.findOneError: ' + err);
+        } else {
+          res.json(oneMovie);
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 // GET data about a genre
-app.get('/movies/Genre/:Name', function(req, res) {
-  Movies.findOne(
-    {
-      'Genre.Name': req.params.Name
-    },
-    function(err, movies) {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      } else {
-        res.json(movies.Genre);
+app.get(
+  '/movies/Genre/:Name',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Movies.findOne(
+      {
+        'Genre.Name': req.params.Name
+      },
+      function(err, movies) {
+        if (err) {
+          console.error(err);
+          res.status(500).send('Error: ' + err);
+        } else {
+          res.json(movies.Genre);
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 //GET data about a director
-app.get('/movies/director/:Name', function(req, res) {
-  Movies.findOne(
-    {
-      'Director.Name': req.params.Name
-    },
-    function(err, movies) {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      } else {
-        res.json(movies.Director);
+app.get(
+  '/movies/director/:Name',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Movies.findOne(
+      {
+        'Director.Name': req.params.Name
+      },
+      function(err, movies) {
+        if (err) {
+          console.error(err);
+          res.status(500).send('Error: ' + err);
+        } else {
+          res.json(movies.Director);
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 //GET data about a movie's Image
 app.get('/movies/ImagePath/:Name', function(req, res) {

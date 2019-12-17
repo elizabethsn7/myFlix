@@ -57066,8 +57066,6 @@ var _Form = _interopRequireDefault(require("react-bootstrap/Form"));
 
 var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 
-var _Navbar = _interopRequireDefault(require("react-bootstrap/Navbar"));
-
 require("./registration-view.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -57085,8 +57083,6 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function RegistrationView(props) {
-  var _this = this;
-
   var _useState = (0, _react.useState)(''),
       _useState2 = _slicedToArray(_useState, 2),
       username = _useState2[0],
@@ -57094,28 +57090,18 @@ function RegistrationView(props) {
 
   var _useState3 = (0, _react.useState)(''),
       _useState4 = _slicedToArray(_useState3, 2),
-      firstname = _useState4[0],
-      setFirstname = _useState4[1];
+      password = _useState4[0],
+      setPassword = _useState4[1];
 
   var _useState5 = (0, _react.useState)(''),
       _useState6 = _slicedToArray(_useState5, 2),
-      lastname = _useState6[0],
-      setLastname = _useState6[1];
+      email = _useState6[0],
+      setEmail = _useState6[1];
 
   var _useState7 = (0, _react.useState)(''),
       _useState8 = _slicedToArray(_useState7, 2),
-      email = _useState8[0],
-      setEmail = _useState8[1];
-
-  var _useState9 = (0, _react.useState)(''),
-      _useState10 = _slicedToArray(_useState9, 2),
-      birthday = _useState10[0],
-      setBirthday = _useState10[1];
-
-  var _useState11 = (0, _react.useState)(''),
-      _useState12 = _slicedToArray(_useState11, 2),
-      password = _useState12[0],
-      setPassword = _useState12[1];
+      birthday = _useState8[0],
+      setBirthday = _useState8[1];
 
   var handleRegister = function handleRegister(e) {
     e.preventDefault();
@@ -57126,7 +57112,6 @@ function RegistrationView(props) {
       Email: email,
       Birthday: birthday
     }).then(function (response) {
-      var data = response.data;
       console.log(data);
       window.open('/', '_self');
     }).catch(function (e) {
@@ -57134,44 +57119,9 @@ function RegistrationView(props) {
     });
   };
 
-  return _react.default.createElement(_Container.default, null, _react.default.createElement(_Navbar.default, {
-    bg: "danger"
-  }, _react.default.createElement(_Navbar.default.Brand, {
-    className: "brand"
-  }, "myFlix"), _react.default.createElement(_Button.default, {
-    variant: "danger",
-    onClick: function onClick() {
-      return _this.handleLogOut();
-    }
-  }, "Logout")), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Group, null, _react.default.createElement(_Form.default.Label, null, "First Name:"), _react.default.createElement(_Form.default.Control, {
-    type: "text",
-    name: "firstname",
-    value: firstname,
-    onChange: function onChange(e) {
-      return setFirstname(e.target.value);
-    }
-  })), _react.default.createElement(_Form.default.Group, null, _react.default.createElement(_Form.default.Label, null, "Last Name:"), _react.default.createElement(_Form.default.Control, {
-    type: "text",
-    name: "lastname",
-    value: lastname,
-    onChange: function onChange(e) {
-      return setLastname(e.target.value);
-    }
-  })), _react.default.createElement(_Form.default.Group, null, _react.default.createElement(_Form.default.Label, null, "Birthday:"), _react.default.createElement(_Form.default.Control, {
-    type: "text",
-    name: "birthday",
-    value: birthday,
-    onChange: function onChange(e) {
-      return setBirthday(e.target.value);
-    }
-  })), _react.default.createElement(_Form.default.Group, null, _react.default.createElement(_Form.default.Label, null, "Email:"), _react.default.createElement(_Form.default.Control, {
-    type: "email",
-    name: "email",
-    value: email,
-    onChange: function onChange(e) {
-      return setEmail(e.target.value);
-    }
-  })), _react.default.createElement(_Form.default.Group, null, _react.default.createElement(_Form.default.Label, null, "Username:"), _react.default.createElement(_Form.default.Control, {
+  return _react.default.createElement(_Container.default, null, _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Group, {
+    controlId: "formUsername"
+  }, _react.default.createElement(_Form.default.Label, null, "Username:"), _react.default.createElement(_Form.default.Control, {
     type: "text",
     name: "username",
     value: username,
@@ -57185,20 +57135,31 @@ function RegistrationView(props) {
     onChange: function onChange(e) {
       return setPassword(e.target.value);
     }
+  })), _react.default.createElement(_Form.default.Group, {
+    controlId: "formBirthday"
+  }, _react.default.createElement(_Form.default.Label, null, "Birthday:"), _react.default.createElement(_Form.default.Control, {
+    type: "date",
+    name: "birthday",
+    value: birthday,
+    onChange: function onChange(e) {
+      return setBirthday(e.target.value);
+    }
+  })), _react.default.createElement(_Form.default.Group, {
+    controlId: "formEmail"
+  }, _react.default.createElement(_Form.default.Label, null, "Email:"), _react.default.createElement(_Form.default.Control, {
+    type: "email",
+    name: "email",
+    value: email,
+    onChange: function onChange(e) {
+      return setEmail(e.target.value);
+    }
   })), _react.default.createElement(_Button.default, {
     variant: "danger",
     type: "submit",
     onClick: handleRegister
   }, "Register")));
 }
-
-RegistrationView.propTypes = {
-  handleRegister: _propTypes.default.shape({
-    type: _propTypes.default.string.isRequired,
-    value: _propTypes.default.object.isRequired
-  })
-};
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/esm/Navbar.js","./registration-view.scss":"components/registration-view/registration-view.scss"}],"../node_modules/react-bootstrap/esm/Jumbotron.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","./registration-view.scss":"components/registration-view/registration-view.scss"}],"../node_modules/react-bootstrap/esm/Jumbotron.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -58100,21 +58061,20 @@ function (_React$Component) {
       this.getMovies(authData.token);
     }
   }, {
-    key: "onRegistered",
-    value: function onRegistered(registeredUser) {
-      this.setState({
-        registeredUser: registeredUser
-      });
-    }
-  }, {
     key: "handleLogOut",
     value: function handleLogOut() {
       this.setState({
         user: null
       });
+      window.open('/', '_self');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-    }
+    } // onRegistered(registeredUser) {
+    //   this.setState({
+    //     registeredUser
+    //   });
+    // }
+
   }, {
     key: "render",
     value: function render() {
@@ -58122,18 +58082,19 @@ function (_React$Component) {
 
       var _this$state = this.state,
           movies = _this$state.movies,
-          user = _this$state.user,
-          registeredUser = _this$state.registeredUser;
+          user = _this$state.user;
       if (!movies) return _react.default.createElement("div", {
         className: "main-view"
-      });
-      if (!registeredUser) return _react.default.createElement(_registrationView.RegistrationView, {
-        onRegistered: function onRegistered(registeredUser) {
-          return (// RegistrationView is rendered as long as there's no user in the state
-            _this3.onRegistered(registeredUser)
-          );
-        }
-      });
+      }); // if (!registeredUser)
+      //   return (
+      //     <RegistrationView
+      //       onRegistered={registeredUser =>
+      //         // RegistrationView is rendered as long as there's no user in the state
+      //         this.onRegistered(registeredUser)
+      //       }
+      //     />
+      //   );
+
       return _react.default.createElement("div", {
         className: "main-view"
       }, _react.default.createElement(_Navbar.default, {
@@ -58308,7 +58269,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61234" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61122" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
