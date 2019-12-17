@@ -89,7 +89,7 @@ app.post(
       })
       .catch(function(error) {
         console.error(error);
-        res.status(500).semd('Users.create.catch Error: ' + error);
+        res.status(500).send('Users.create.catch Error: ' + error);
       });
   }
 );
