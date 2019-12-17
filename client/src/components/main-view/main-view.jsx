@@ -11,9 +11,10 @@ import { LoginView } from '../login-view/login-view';
 import { MovieCard } from '../movie-card/movie-card';
 import { MovieView } from '../movie-view/movie-view';
 import { RegistrationView } from '../registration-view/registration-view';
-// import { ProfileView } from "../profile-view/profile-view";
+import { ProfileView } from '../profile-view/profile-view';
 import { DirectorView } from '../director-view/director-view';
 import { GenreView } from '../genre-view/genre-view';
+import { Link } from 'react-router-dom';
 
 import './main-view.scss';
 
@@ -22,7 +23,10 @@ export class MainView extends React.Component {
     super();
     this.state = {
       movies: [],
-      user: null
+      user: null,
+      email: '',
+      birthday: '',
+      userInfo: {}
     };
   }
 
@@ -73,35 +77,24 @@ export class MainView extends React.Component {
     localStorage.removeItem('user');
   }
 
-  // onRegistered(registeredUser) {
-  //   this.setState({
-  //     registeredUser
-  //   });
-  // }
-
   render() {
-    const { movies, user } = this.state;
+    const { movies, userInfo, user } = this.state;
 
     if (!movies) return <div className='main-view' />;
-
-    // if (!registeredUser)
-    //   return (
-    //     <RegistrationView
-    //       onRegistered={registeredUser =>
-    //         // RegistrationView is rendered as long as there's no user in the state
-    //         this.onRegistered(registeredUser)
-    //       }
-    //     />
-    //   );
-
     return (
       <div className='main-view'>
-        <Navbar bg='danger'>
-          <Navbar.Brand className='brand'>myFlix</Navbar.Brand>
-          <Button variant='danger' onClick={() => this.handleLogOut()}>
-            Logout
-          </Button>
-        </Navbar>
+        <Router>
+          <Navbar bg='danger'>
+            <Navbar.Brand className='brand'>myFlix</Navbar.Brand>
+            <Button variant='danger' onClick={() => this.handleLogOut()}>
+              Logout
+            </Button>
+            <Link to={`/users/${user}`}>
+              <Button variant='danger'>Profile</Button>
+            </Link>
+          </Navbar>
+        </Router>
+
         <Router>
           <Route
             exact
@@ -135,6 +128,7 @@ export class MainView extends React.Component {
               );
             }}
           />
+
           <Route
             path='/directors/:name'
             render={({ match }) => {
@@ -147,6 +141,13 @@ export class MainView extends React.Component {
                   }
                 />
               );
+            }}
+          />
+
+          <Route
+            path='/users/:Username'
+            render={({ match }) => {
+              return <ProfileView userInfo={userInfo} />;
             }}
           />
         </Router>
