@@ -57112,10 +57112,11 @@ function RegistrationView(props) {
       Email: email,
       Birthday: birthday
     }).then(function (response) {
+      var data = response.data;
       console.log(data);
       window.open('/', '_self');
     }).catch(function (e) {
-      console.log('error_in_registering_the_user', e);
+      console.log(e.response);
     });
   };
 
@@ -58269,7 +58270,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61868" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65064" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -24,11 +24,12 @@ export function RegistrationView(props) {
         Birthday: birthday
       })
       .then(response => {
+        const data = response.data;
         console.log(data);
         window.open('/', '_self');
       })
       .catch(e => {
-        console.log('error_in_registering_the_user', e);
+        console.log(e.response);
       });
   };
 
