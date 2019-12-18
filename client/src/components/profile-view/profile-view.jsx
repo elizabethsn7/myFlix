@@ -11,12 +11,13 @@ export class ProfileView extends React.Component {
       password: null,
       email: null,
       birthday: null,
+      userInfo: null,
       favorites: []
     };
   }
   getUser(token) {
     axios
-      .get('https://liz-flix.herokuapp.com/users', {
+      .get('https://liz-flix.herokuapp.com/users/:Username', {
         headers: { Authorization: 'Bearer ${token}' }
       })
       .then(response => {

@@ -93,6 +93,7 @@ export class MainView extends React.Component {
               <Button variant='danger'>Profile</Button>
             </Link>
           </Navbar>
+          <Route path={`/users/${user}`} component={ProfileView} />
         </Router>
 
         <Router>
