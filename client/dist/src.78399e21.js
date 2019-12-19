@@ -53820,158 +53820,7 @@ function createBootstrapComponent(Component, opts) {
 
 var _default = ThemeProvider;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@restart/context/forwardRef":"../node_modules/@restart/context/forwardRef.js","react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/esm/Container.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var defaultProps = {
-  fluid: false
-};
-
-var Container = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
-function (_ref, ref) {
-  var bsPrefix = _ref.bsPrefix,
-      fluid = _ref.fluid,
-      _ref$as = _ref.as,
-      Component = _ref$as === void 0 ? 'div' : _ref$as,
-      className = _ref.className,
-      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "fluid", "as", "className"]);
-  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'container');
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    ref: ref
-  }, props, {
-    className: (0, _classnames.default)(className, fluid ? prefix + "-fluid" : prefix)
-  }));
-});
-
-Container.displayName = 'Container';
-Container.defaultProps = defaultProps;
-var _default = Container;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Row.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var defaultProps = {
-  noGutters: false
-};
-
-var Row = _react.default.forwardRef(function (props, ref) {
-  var bsPrefix = props.bsPrefix,
-      noGutters = props.noGutters,
-      _props$as = props.as,
-      Component = _props$as === void 0 ? 'div' : _props$as,
-      className = props.className,
-      otherProps = (0, _objectWithoutPropertiesLoose2.default)(props, ["bsPrefix", "noGutters", "as", "className"]);
-  var decoratedBsPrefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'row');
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    ref: ref
-  }, otherProps, {
-    className: (0, _classnames.default)(className, decoratedBsPrefix, noGutters && 'no-gutters')
-  }));
-});
-
-Row.defaultProps = defaultProps;
-var _default = Row;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Col.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var DEVICE_SIZES = ['xl', 'lg', 'md', 'sm', 'xs'];
-
-var Col = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
-function (_ref, ref) {
-  var bsPrefix = _ref.bsPrefix,
-      className = _ref.className,
-      _ref$as = _ref.as,
-      Component = _ref$as === void 0 ? 'div' : _ref$as,
-      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "className", "as"]);
-  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'col');
-  var spans = [];
-  var classes = [];
-  DEVICE_SIZES.forEach(function (brkPoint) {
-    var propValue = props[brkPoint];
-    delete props[brkPoint];
-    var span, offset, order;
-
-    if (propValue != null && typeof propValue === 'object') {
-      var _propValue$span = propValue.span;
-      span = _propValue$span === void 0 ? true : _propValue$span;
-      offset = propValue.offset;
-      order = propValue.order;
-    } else {
-      span = propValue;
-    }
-
-    var infix = brkPoint !== 'xs' ? "-" + brkPoint : '';
-    if (span != null) spans.push(span === true ? "" + prefix + infix : "" + prefix + infix + "-" + span);
-    if (order != null) classes.push("order" + infix + "-" + order);
-    if (offset != null) classes.push("offset" + infix + "-" + offset);
-  });
-
-  if (!spans.length) {
-    spans.push(prefix); // plain 'col'
-  }
-
-  return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
-    ref: ref,
-    className: _classnames.default.apply(void 0, [className].concat(spans, classes))
-  }));
-});
-
-Col.displayName = 'Col';
-var _default = Col;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/createChainedFunction.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@restart/context/forwardRef":"../node_modules/@restart/context/forwardRef.js","react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/esm/createChainedFunction.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56284,379 +56133,51 @@ Navbar.Text = (0, _createWithBsPrefix.default)('navbar-text', {
 });
 var _default = Navbar;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","uncontrollable":"../node_modules/uncontrollable/esm/index.js","./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js","./NavbarBrand":"../node_modules/react-bootstrap/esm/NavbarBrand.js","./NavbarCollapse":"../node_modules/react-bootstrap/esm/NavbarCollapse.js","./NavbarToggle":"../node_modules/react-bootstrap/esm/NavbarToggle.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./NavbarContext":"../node_modules/react-bootstrap/esm/NavbarContext.js","./SelectableContext":"../node_modules/react-bootstrap/esm/SelectableContext.js"}],"../node_modules/react-router-dom/cjs/react-router-dom.js":[function(require,module,exports) {
-'use strict';
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var reactRouter = require('react-router');
-var React = _interopDefault(require('react'));
-var history = require('history');
-var PropTypes = _interopDefault(require('prop-types'));
-var warning = _interopDefault(require('tiny-warning'));
-var invariant = _interopDefault(require('tiny-invariant'));
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function _inheritsLoose(subClass, superClass) {
-  subClass.prototype = Object.create(superClass.prototype);
-  subClass.prototype.constructor = subClass;
-  subClass.__proto__ = superClass;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-/**
- * The public API for a <Router> that uses HTML5 history.
- */
-
-var BrowserRouter =
-/*#__PURE__*/
-function (_React$Component) {
-  _inheritsLoose(BrowserRouter, _React$Component);
-
-  function BrowserRouter() {
-    var _this;
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
-    _this.history = history.createBrowserHistory(_this.props);
-    return _this;
-  }
-
-  var _proto = BrowserRouter.prototype;
-
-  _proto.render = function render() {
-    return React.createElement(reactRouter.Router, {
-      history: this.history,
-      children: this.props.children
-    });
-  };
-
-  return BrowserRouter;
-}(React.Component);
-
-{
-  BrowserRouter.propTypes = {
-    basename: PropTypes.string,
-    children: PropTypes.node,
-    forceRefresh: PropTypes.bool,
-    getUserConfirmation: PropTypes.func,
-    keyLength: PropTypes.number
-  };
-
-  BrowserRouter.prototype.componentDidMount = function () {
-     warning(!this.props.history, "<BrowserRouter> ignores the history prop. To use a custom history, " + "use `import { Router }` instead of `import { BrowserRouter as Router }`.") ;
-  };
-}
-
-/**
- * The public API for a <Router> that uses window.location.hash.
- */
-
-var HashRouter =
-/*#__PURE__*/
-function (_React$Component) {
-  _inheritsLoose(HashRouter, _React$Component);
-
-  function HashRouter() {
-    var _this;
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
-    _this.history = history.createHashHistory(_this.props);
-    return _this;
-  }
-
-  var _proto = HashRouter.prototype;
-
-  _proto.render = function render() {
-    return React.createElement(reactRouter.Router, {
-      history: this.history,
-      children: this.props.children
-    });
-  };
-
-  return HashRouter;
-}(React.Component);
-
-{
-  HashRouter.propTypes = {
-    basename: PropTypes.string,
-    children: PropTypes.node,
-    getUserConfirmation: PropTypes.func,
-    hashType: PropTypes.oneOf(["hashbang", "noslash", "slash"])
-  };
-
-  HashRouter.prototype.componentDidMount = function () {
-     warning(!this.props.history, "<HashRouter> ignores the history prop. To use a custom history, " + "use `import { Router }` instead of `import { HashRouter as Router }`.") ;
-  };
-}
-
-var resolveToLocation = function resolveToLocation(to, currentLocation) {
-  return typeof to === "function" ? to(currentLocation) : to;
-};
-var normalizeToLocation = function normalizeToLocation(to, currentLocation) {
-  return typeof to === "string" ? history.createLocation(to, null, null, currentLocation) : to;
-};
-
-var forwardRefShim = function forwardRefShim(C) {
-  return C;
-};
-
-var forwardRef = React.forwardRef;
-
-if (typeof forwardRef === "undefined") {
-  forwardRef = forwardRefShim;
-}
-
-function isModifiedEvent(event) {
-  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
-}
-
-var LinkAnchor = forwardRef(function (_ref, forwardedRef) {
-  var innerRef = _ref.innerRef,
-      navigate = _ref.navigate,
-      _onClick = _ref.onClick,
-      rest = _objectWithoutPropertiesLoose(_ref, ["innerRef", "navigate", "onClick"]);
-
-  var target = rest.target;
-
-  var props = _extends({}, rest, {
-    onClick: function onClick(event) {
-      try {
-        if (_onClick) _onClick(event);
-      } catch (ex) {
-        event.preventDefault();
-        throw ex;
-      }
-
-      if (!event.defaultPrevented && // onClick prevented default
-      event.button === 0 && ( // ignore everything but left clicks
-      !target || target === "_self") && // let browser handle "target=_blank" etc.
-      !isModifiedEvent(event) // ignore clicks with modifier keys
-      ) {
-          event.preventDefault();
-          navigate();
-        }
-    }
-  }); // React 15 compat
-
-
-  if (forwardRefShim !== forwardRef) {
-    props.ref = forwardedRef || innerRef;
-  } else {
-    props.ref = innerRef;
-  }
-
-  return React.createElement("a", props);
-});
-
-{
-  LinkAnchor.displayName = "LinkAnchor";
-}
-/**
- * The public API for rendering a history-aware <a>.
- */
-
-
-var Link = forwardRef(function (_ref2, forwardedRef) {
-  var _ref2$component = _ref2.component,
-      component = _ref2$component === void 0 ? LinkAnchor : _ref2$component,
-      replace = _ref2.replace,
-      to = _ref2.to,
-      innerRef = _ref2.innerRef,
-      rest = _objectWithoutPropertiesLoose(_ref2, ["component", "replace", "to", "innerRef"]);
-
-  return React.createElement(reactRouter.__RouterContext.Consumer, null, function (context) {
-    !context ?  invariant(false, "You should not use <Link> outside a <Router>")  : void 0;
-    var history = context.history;
-    var location = normalizeToLocation(resolveToLocation(to, context.location), context.location);
-    var href = location ? history.createHref(location) : "";
-
-    var props = _extends({}, rest, {
-      href: href,
-      navigate: function navigate() {
-        var location = resolveToLocation(to, context.location);
-        var method = replace ? history.replace : history.push;
-        method(location);
-      }
-    }); // React 15 compat
-
-
-    if (forwardRefShim !== forwardRef) {
-      props.ref = forwardedRef || innerRef;
-    } else {
-      props.innerRef = innerRef;
-    }
-
-    return React.createElement(component, props);
-  });
-});
-
-{
-  var toType = PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]);
-  var refType = PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.shape({
-    current: PropTypes.any
-  })]);
-  Link.displayName = "Link";
-  Link.propTypes = {
-    innerRef: refType,
-    onClick: PropTypes.func,
-    replace: PropTypes.bool,
-    target: PropTypes.string,
-    to: toType.isRequired
-  };
-}
-
-var forwardRefShim$1 = function forwardRefShim(C) {
-  return C;
-};
-
-var forwardRef$1 = React.forwardRef;
-
-if (typeof forwardRef$1 === "undefined") {
-  forwardRef$1 = forwardRefShim$1;
-}
-
-function joinClassnames() {
-  for (var _len = arguments.length, classnames = new Array(_len), _key = 0; _key < _len; _key++) {
-    classnames[_key] = arguments[_key];
-  }
-
-  return classnames.filter(function (i) {
-    return i;
-  }).join(" ");
-}
-/**
- * A <Link> wrapper that knows if it's "active" or not.
- */
-
-
-var NavLink = forwardRef$1(function (_ref, forwardedRef) {
-  var _ref$ariaCurrent = _ref["aria-current"],
-      ariaCurrent = _ref$ariaCurrent === void 0 ? "page" : _ref$ariaCurrent,
-      _ref$activeClassName = _ref.activeClassName,
-      activeClassName = _ref$activeClassName === void 0 ? "active" : _ref$activeClassName,
-      activeStyle = _ref.activeStyle,
-      classNameProp = _ref.className,
-      exact = _ref.exact,
-      isActiveProp = _ref.isActive,
-      locationProp = _ref.location,
-      strict = _ref.strict,
-      styleProp = _ref.style,
-      to = _ref.to,
-      innerRef = _ref.innerRef,
-      rest = _objectWithoutPropertiesLoose(_ref, ["aria-current", "activeClassName", "activeStyle", "className", "exact", "isActive", "location", "strict", "style", "to", "innerRef"]);
-
-  return React.createElement(reactRouter.__RouterContext.Consumer, null, function (context) {
-    !context ?  invariant(false, "You should not use <NavLink> outside a <Router>")  : void 0;
-    var currentLocation = locationProp || context.location;
-    var toLocation = normalizeToLocation(resolveToLocation(to, currentLocation), currentLocation);
-    var path = toLocation.pathname; // Regex taken from: https://github.com/pillarjs/path-to-regexp/blob/master/index.js#L202
-
-    var escapedPath = path && path.replace(/([.+*?=^!:${}()[\]|/\\])/g, "\\$1");
-    var match = escapedPath ? reactRouter.matchPath(currentLocation.pathname, {
-      path: escapedPath,
-      exact: exact,
-      strict: strict
-    }) : null;
-    var isActive = !!(isActiveProp ? isActiveProp(match, currentLocation) : match);
-    var className = isActive ? joinClassnames(classNameProp, activeClassName) : classNameProp;
-    var style = isActive ? _extends({}, styleProp, {}, activeStyle) : styleProp;
-
-    var props = _extends({
-      "aria-current": isActive && ariaCurrent || null,
-      className: className,
-      style: style,
-      to: toLocation
-    }, rest); // React 15 compat
-
-
-    if (forwardRefShim$1 !== forwardRef$1) {
-      props.ref = forwardedRef || innerRef;
-    } else {
-      props.innerRef = innerRef;
-    }
-
-    return React.createElement(Link, props);
-  });
-});
-
-{
-  NavLink.displayName = "NavLink";
-  var ariaCurrentType = PropTypes.oneOf(["page", "step", "location", "date", "time", "true"]);
-  NavLink.propTypes = _extends({}, Link.propTypes, {
-    "aria-current": ariaCurrentType,
-    activeClassName: PropTypes.string,
-    activeStyle: PropTypes.object,
-    className: PropTypes.string,
-    exact: PropTypes.bool,
-    isActive: PropTypes.func,
-    location: PropTypes.object,
-    strict: PropTypes.bool,
-    style: PropTypes.object
-  });
-}
-
-Object.keys(reactRouter).forEach(function (k) {
-  if (k !== 'default') Object.defineProperty(exports, k, {
-    enumerable: true,
-    get: function () {
-      return reactRouter[k];
-    }
-  });
-});
-exports.BrowserRouter = BrowserRouter;
-exports.HashRouter = HashRouter;
-exports.Link = Link;
-exports.NavLink = NavLink;
-
-
-},{"react-router":"../node_modules/react-router/esm/react-router.js","react":"../node_modules/react/index.js","history":"../node_modules/history/esm/history.js","prop-types":"../node_modules/prop-types/index.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js","tiny-invariant":"../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../node_modules/react-router-dom/index.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","uncontrollable":"../node_modules/uncontrollable/esm/index.js","./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js","./NavbarBrand":"../node_modules/react-bootstrap/esm/NavbarBrand.js","./NavbarCollapse":"../node_modules/react-bootstrap/esm/NavbarCollapse.js","./NavbarToggle":"../node_modules/react-bootstrap/esm/NavbarToggle.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./NavbarContext":"../node_modules/react-bootstrap/esm/NavbarContext.js","./SelectableContext":"../node_modules/react-bootstrap/esm/SelectableContext.js"}],"../node_modules/react-bootstrap/esm/Container.js":[function(require,module,exports) {
 "use strict";
 
-if ("development" === "production") {
-  module.exports = require("./cjs/react-router-dom.min.js");
-} else {
-  module.exports = require("./cjs/react-router-dom.js");
-}
-},{"./cjs/react-router-dom.js":"../node_modules/react-router-dom/cjs/react-router-dom.js"}],"../node_modules/prop-types-extra/lib/utils/createChainableTypeChecker.js":[function(require,module,exports) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var defaultProps = {
+  fluid: false
+};
+
+var Container = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
+function (_ref, ref) {
+  var bsPrefix = _ref.bsPrefix,
+      fluid = _ref.fluid,
+      _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'div' : _ref$as,
+      className = _ref.className,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "fluid", "as", "className"]);
+  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'container');
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref
+  }, props, {
+    className: (0, _classnames.default)(className, fluid ? prefix + "-fluid" : prefix)
+  }));
+});
+
+Container.displayName = 'Container';
+Container.defaultProps = defaultProps;
+var _default = Container;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/prop-types-extra/lib/utils/createChainableTypeChecker.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -57215,7 +56736,72 @@ var FormGroup = _react.default.forwardRef(function (_ref, ref) {
 FormGroup.displayName = 'FormGroup';
 var _default = FormGroup;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./FormContext":"../node_modules/react-bootstrap/esm/FormContext.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/FormLabel.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./FormContext":"../node_modules/react-bootstrap/esm/FormContext.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Col.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var DEVICE_SIZES = ['xl', 'lg', 'md', 'sm', 'xs'];
+
+var Col = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
+function (_ref, ref) {
+  var bsPrefix = _ref.bsPrefix,
+      className = _ref.className,
+      _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'div' : _ref$as,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "className", "as"]);
+  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'col');
+  var spans = [];
+  var classes = [];
+  DEVICE_SIZES.forEach(function (brkPoint) {
+    var propValue = props[brkPoint];
+    delete props[brkPoint];
+    var span, offset, order;
+
+    if (propValue != null && typeof propValue === 'object') {
+      var _propValue$span = propValue.span;
+      span = _propValue$span === void 0 ? true : _propValue$span;
+      offset = propValue.offset;
+      order = propValue.order;
+    } else {
+      span = propValue;
+    }
+
+    var infix = brkPoint !== 'xs' ? "-" + brkPoint : '';
+    if (span != null) spans.push(span === true ? "" + prefix + infix : "" + prefix + infix + "-" + span);
+    if (order != null) classes.push("order" + infix + "-" + order);
+    if (offset != null) classes.push("offset" + infix + "-" + offset);
+  });
+
+  if (!spans.length) {
+    spans.push(prefix); // plain 'col'
+  }
+
+  return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
+    ref: ref,
+    className: _classnames.default.apply(void 0, [className].concat(spans, classes))
+  }));
+});
+
+Col.displayName = 'Col';
+var _default = Col;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/FormLabel.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57578,7 +57164,49 @@ Jumbotron.defaultProps = defaultProps;
 Jumbotron.displayName = 'Jumbotron';
 var _default = Jumbotron;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"components/login-view/login-view.scss":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Row.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var defaultProps = {
+  noGutters: false
+};
+
+var Row = _react.default.forwardRef(function (props, ref) {
+  var bsPrefix = props.bsPrefix,
+      noGutters = props.noGutters,
+      _props$as = props.as,
+      Component = _props$as === void 0 ? 'div' : _props$as,
+      className = props.className,
+      otherProps = (0, _objectWithoutPropertiesLoose2.default)(props, ["bsPrefix", "noGutters", "as", "className"]);
+  var decoratedBsPrefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'row');
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref
+  }, otherProps, {
+    className: (0, _classnames.default)(className, decoratedBsPrefix, noGutters && 'no-gutters')
+  }));
+});
+
+Row.defaultProps = defaultProps;
+var _default = Row;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"components/login-view/login-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -57693,7 +57321,7 @@ function LoginView(props) {
 LoginView.propTypes = {
   onLoggedIn: _propTypes.default.func.isRequired
 };
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-router-dom":"../node_modules/react-router-dom/index.js","../registration-view/registration-view":"components/registration-view/registration-view.jsx","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Jumbotron":"../node_modules/react-bootstrap/esm/Jumbotron.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","./login-view.scss":"components/login-view/login-view.scss","axios":"../node_modules/axios/index.js"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","../registration-view/registration-view":"components/registration-view/registration-view.jsx","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Jumbotron":"../node_modules/react-bootstrap/esm/Jumbotron.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","./login-view.scss":"components/login-view/login-view.scss","axios":"../node_modules/axios/index.js"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57990,7 +57618,7 @@ function (_React$Component) {
 
 
 exports.MovieCard = MovieCard;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js","react-router-dom":"../node_modules/react-router-dom/index.js","./movie-card.scss":"components/movie-card/movie-card.scss"}],"components/movie-view/movie-view.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./movie-card.scss":"components/movie-card/movie-card.scss"}],"components/movie-view/movie-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -58130,7 +57758,7 @@ function (_React$Component) {
 
 
 exports.MovieView = MovieView;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-router-dom":"../node_modules/react-router-dom/index.js","./movie-view.scss":"components/movie-view/movie-view.scss"}],"../node_modules/dom-helpers/esm/querySelectorAll.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./movie-view.scss":"components/movie-view/movie-view.scss"}],"../node_modules/dom-helpers/esm/querySelectorAll.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -58805,7 +58433,7 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.DirectorView = DirectorView;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-router-dom":"../node_modules/react-router-dom/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js"}],"components/genre-view/genre-view.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js"}],"components/genre-view/genre-view.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -58893,7 +58521,7 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.GenreView = GenreView;
-},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-router-dom":"../node_modules/react-router-dom/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js"}],"components/main-view/main-view.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/CardColumns":"../node_modules/react-bootstrap/esm/CardColumns.js"}],"components/main-view/main-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -58911,14 +58539,6 @@ var _react = _interopRequireDefault(require("react"));
 var _axios = _interopRequireDefault(require("axios"));
 
 var _reactRouterDom = require("react-router-dom");
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
-
-var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
-
-var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
 
 var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 
@@ -58974,8 +58594,8 @@ function (_React$Component) {
     _this.state = {
       movies: [],
       user: null,
-      email: '',
-      birthday: '',
+      email: "",
+      birthday: "",
       userInfo: {}
     };
     return _this;
@@ -58986,7 +58606,7 @@ function (_React$Component) {
     value: function getMovies(token) {
       var _this2 = this;
 
-      _axios.default.get('https://liz-flix.herokuapp.com/movies', {
+      _axios.default.get("https://liz-flix.herokuapp.com/movies", {
         headers: {
           Authorization: "Bearer ".concat(token)
         }
@@ -59002,11 +58622,11 @@ function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var accessToken = localStorage.getItem('token');
+      var accessToken = localStorage.getItem("token");
 
       if (accessToken !== null) {
         this.setState({
-          user: localStorage.getItem('user')
+          user: localStorage.getItem("user")
         });
         this.getMovies(accessToken);
       }
@@ -59020,8 +58640,8 @@ function (_React$Component) {
       this.setState({
         user: authData.user.Username
       });
-      localStorage.setItem('token', authData.token);
-      localStorage.setItem('user', authData.user.Username);
+      localStorage.setItem("token", authData.token);
+      localStorage.setItem("user", authData.user.Username);
       this.getMovies(authData.token);
     }
   }, {
@@ -59030,9 +58650,9 @@ function (_React$Component) {
       this.setState({
         user: null
       });
-      window.open('/', '_self');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      window.open("/", "_self");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
   }, {
     key: "render",
@@ -59052,7 +58672,7 @@ function (_React$Component) {
         bg: "danger"
       }, _react.default.createElement(_Navbar.default.Brand, {
         className: "brand"
-      }, "myFlix")), _react.default.createElement(_Button.default, {
+      }, "myFlix"), _react.default.createElement(_Button.default, {
         variant: "danger",
         onClick: function onClick() {
           return _this3.handleLogOut();
@@ -59061,7 +58681,10 @@ function (_React$Component) {
         to: "/users/".concat(user)
       }, _react.default.createElement(_Button.default, {
         variant: "danger"
-      }, "Profile")), _react.default.createElement(_reactRouterDom.Route, {
+      }, "Profile"))), _react.default.createElement(_reactRouterDom.Route, {
+        path: "/users/".concat(user),
+        component: _profileView.ProfileView
+      })), _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: "/",
         render: function render() {
@@ -59081,11 +58704,6 @@ function (_React$Component) {
         path: "/register",
         render: function render() {
           return _react.default.createElement(_registrationView.RegistrationView, null);
-        }
-      }), _react.default.createElement(_reactRouterDom.Route, {
-        path: "/profile",
-        render: function render() {
-          return _react.default.createElement(_profileView.ProfileView, null);
         }
       }), _react.default.createElement(_reactRouterDom.Route, {
         path: "/movies/:movieId",
@@ -59139,7 +58757,7 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.MainView = MainView;
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/esm/Navbar.js","../login-view/login-view":"components/login-view/login-view.jsx","../movie-card/movie-card":"components/movie-card/movie-card.jsx","../movie-view/movie-view":"components/movie-view/movie-view.jsx","../registration-view/registration-view":"components/registration-view/registration-view.jsx","../profile-view/profile-view":"components/profile-view/profile-view.jsx","../director-view/director-view":"components/director-view/director-view.jsx","../genre-view/genre-view":"components/genre-view/genre-view.jsx","./main-view.scss":"components/main-view/main-view.scss"}],"index.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Navbar":"../node_modules/react-bootstrap/esm/Navbar.js","../login-view/login-view":"components/login-view/login-view.jsx","../movie-card/movie-card":"components/movie-card/movie-card.jsx","../movie-view/movie-view":"components/movie-view/movie-view.jsx","../registration-view/registration-view":"components/registration-view/registration-view.jsx","../profile-view/profile-view":"components/profile-view/profile-view.jsx","../director-view/director-view":"components/director-view/director-view.jsx","../genre-view/genre-view":"components/genre-view/genre-view.jsx","./main-view.scss":"components/main-view/main-view.scss"}],"index.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -59237,7 +58855,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63472" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62633" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
