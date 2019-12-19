@@ -59052,7 +59052,7 @@ function (_React$Component) {
         bg: "danger"
       }, _react.default.createElement(_Navbar.default.Brand, {
         className: "brand"
-      }, "myFlix"), _react.default.createElement(_Button.default, {
+      }, "myFlix")), _react.default.createElement(_Button.default, {
         variant: "danger",
         onClick: function onClick() {
           return _this3.handleLogOut();
@@ -59061,10 +59061,7 @@ function (_React$Component) {
         to: "/users/".concat(user)
       }, _react.default.createElement(_Button.default, {
         variant: "danger"
-      }, "Profile"))), _react.default.createElement(_reactRouterDom.Route, {
-        path: "/users/".concat(user),
-        component: _profileView.ProfileView
-      })), _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_reactRouterDom.Route, {
+      }, "Profile")), _react.default.createElement(_reactRouterDom.Route, {
         exact: true,
         path: "/",
         render: function render() {
@@ -59084,6 +59081,11 @@ function (_React$Component) {
         path: "/register",
         render: function render() {
           return _react.default.createElement(_registrationView.RegistrationView, null);
+        }
+      }), _react.default.createElement(_reactRouterDom.Route, {
+        path: "/profile",
+        render: function render() {
+          return _react.default.createElement(_profileView.ProfileView, null);
         }
       }), _react.default.createElement(_reactRouterDom.Route, {
         path: "/movies/:movieId",
@@ -59235,7 +59237,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50238" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63472" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

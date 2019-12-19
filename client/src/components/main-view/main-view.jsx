@@ -86,17 +86,16 @@ export class MainView extends React.Component {
         <Router>
           <Navbar bg='danger'>
             <Navbar.Brand className='brand'>myFlix</Navbar.Brand>
-            <Button variant='danger' onClick={() => this.handleLogOut()}>
-              Logout
-            </Button>
-            <Link to={`/users/${user}`}>
-              <Button variant='danger'>Profile</Button>
-            </Link>
           </Navbar>
-          <Route path={`/users/${user}`} component={ProfileView} />
-        </Router>
+          <Button variant='danger' onClick={() => this.handleLogOut()}>
+            Logout
+          </Button>
+          <Link to={`/users/${user}`}>
+            <Button variant='danger'>Profile</Button>
+          </Link>
 
-        <Router>
+          {/* <Route path={`/users/${user}`} component={ProfileView} /> */}
+
           <Route
             exact
             path='/'
@@ -107,6 +106,7 @@ export class MainView extends React.Component {
             }}
           />
           <Route path='/register' render={() => <RegistrationView />} />
+          <Route path='/profile' render={() => <ProfileView />} />
 
           <Route
             path='/movies/:movieId'
