@@ -19,9 +19,24 @@ export class MainView extends React.Component {
       registeredUser: null
     };
   }
-  componentDidMount() {
+
+  // method, onLoggedIn, will be passed as a prop with the same name to LoginView
+  //will update the user state of the MainView component and will be called when the user has successfully logged in
+  onLoggedIn(authData) {
+    console.log(authData);
+    this.setState({
+      user: authData.user.Username
+    });
+    localStorage.setItem("token", authData.token);
+    localStorage.setItem("user", authData.Username);
+    this.getMovies(authData.token);
+  }
+
+  getMovies(token) {
     axios
-      .get("https://liz-flix.herokuapp.com/movies")
+      .get("https://liz-flix.herokuapp.com/movies", {
+        headers: { Authorization: "Bearer ${token}" }
+      })
       .then(response => {
         // Assign the result to the state
         this.setState({
@@ -29,28 +44,31 @@ export class MainView extends React.Component {
         });
       })
       .catch(function(error) {
-        console.log(error);
+        console.log(error + "error_from_getMovies_method");
       });
   }
+
+  componentDidMount() {
+    let accessToken = localStorage.getItem("token");
+    if (accessToken !== null) {
+      this.setState({
+        user: localStorage.getItem("user")
+      });
+      this.getMovies(accessToken);
+    }
+  }
+
   onMovieClick(movie) {
     this.setState({
       selectedMovie: movie
     });
   }
-  // method, onLoggedIn, will be passed as a prop with the same name to LoginView
-  //will update the user state of the MainView component and will be called when the user has successfully logged in
 
-  onLoggedIn(user) {
-    this.setState({
-      user
-    });
-  }
-
-  onRegistered(registeredUser) {
-    this.setState({
-      registeredUser
-    });
-  }
+  // onRegistered(registeredUser) {
+  //   this.setState({
+  //     registeredUser
+  //   });
+  // }
 
   backButton(movie) {
     this.setState({
