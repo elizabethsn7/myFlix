@@ -6,7 +6,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import CardColumns from "react-bootstrap/CardColumns";
-
+import { Link } from "react-router-dom";
 import "./movie-card.scss";
 
 export class MovieCard extends React.Component {
@@ -15,7 +15,7 @@ export class MovieCard extends React.Component {
     // which in this case is  'MainView', as 'MainView'
     // is what's connected to your database via the movies
     // endpoint of your API
-    const { movie, onClick } = this.props;
+    const { movie } = this.props;
     return (
       <Container>
         <Row>
@@ -26,9 +26,9 @@ export class MovieCard extends React.Component {
                 <Card.Body>
                   <Card.Title>{movie.Title}</Card.Title>
                   <Card.Text>{movie.Description}</Card.Text>
-                  <Button onClick={() => onClick(movie)} variant="danger">
-                    Open
-                  </Button>
+                  <Link to={`/movies/${movie._id}`}>
+                    <Button variant="link">Open</Button>
+                  </Link>
                 </Card.Body>
               </Card>
             </CardColumns>
@@ -39,22 +39,21 @@ export class MovieCard extends React.Component {
   }
 }
 
-MovieCard.propTypes = {
-  movie: PropTypes.shape({
-    ImagePath: PropTypes.string.isRequired,
-    Title: PropTypes.string.isRequired,
-    Description: PropTypes.string.isRequired,
-    Genre: PropTypes.shape({
-      Name: PropTypes.string.isRequired,
-      Description: PropTypes.string.isRequired
-    }),
-    Featured: PropTypes.bool,
-    Director: PropTypes.shape({
-      Name: PropTypes.string.isRequired,
-      Bio: PropTypes.string.isRequired,
-      Birth: PropTypes.string.isRequired,
-      Death: PropTypes.string
-    })
-  }).isRequired,
-  onClick: PropTypes.func.isRequired
-};
+// MovieCard.propTypes = {
+//   movie: PropTypes.shape({
+//     ImagePath: PropTypes.string.isRequired,
+//     Title: PropTypes.string.isRequired,
+//     Description: PropTypes.string.isRequired,
+//     Genre: PropTypes.shape({
+//       Name: PropTypes.string.isRequired,
+//       Description: PropTypes.string.isRequired
+//     }),
+//     Featured: PropTypes.bool,
+//     Director: PropTypes.shape({
+//       Name: PropTypes.string.isRequired,
+//       Bio: PropTypes.string.isRequired,
+//       Birth: PropTypes.string.isRequired,
+//       Death: PropTypes.string
+//     })
+//   }).isRequired
+// };

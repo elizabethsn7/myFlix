@@ -1,25 +1,49 @@
 import React from "react";
 import axios from "axios";
-import PropTypes from "prop-types";
-
-import { RegistrationView } from "../registration-view/registration-view";
-import { LoginView } from "../login-view/login-view";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Navbar } from "../movie-card/movie-card";
 import { MovieCard } from "../movie-card/movie-card";
+import { DirectorView } from "../director-view/director-view";
+import { GenreView } from "../genre-view/genre-view";
 import { MovieView } from "../movie-view/movie-view";
-
+import { LoginView } from "../login-view/login-view";
+import { RegistrationView } from "../registration-view/registration-view";
+import Button from "react-bootstrap/Button";
 import "./main-view.scss";
 
 export class MainView extends React.Component {
   constructor() {
     super();
     this.state = {
-      movies: null,
-      selectedMovie: null,
-      //user: null,
-      registeredUser: null
+      movies: [],
+      user: null
     };
   }
 
+  getMovies(token) {
+    axios
+      .get("https://liz-flix.herokuapp.com/movies", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        // Assign the result to the state
+        this.setState({
+          movies: response.data
+        });
+      })
+      .catch(function(error) {
+        console.log(error + "From_getMovies_Method");
+      });
+  }
+  componentDidMount() {
+    let accessToken = localStorage.getItem("token");
+    if (accessToken !== null) {
+      this.setState({
+        user: localStorage.getItem("user")
+      });
+      this.getMovies(accessToken);
+    }
+  }
   // method, onLoggedIn, will be passed as a prop with the same name to LoginView
   //will update the user state of the MainView component and will be called when the user has successfully logged in
   onLoggedIn(authData) {
@@ -32,98 +56,77 @@ export class MainView extends React.Component {
     this.getMovies(authData.token);
   }
 
-  getMovies(token) {
-    axios
-      .get("https://liz-flix.herokuapp.com/movies", {
-        headers: { Authorization: "Bearer ${token}" }
-      })
-      .then(response => {
-        // Assign the result to the state
-        this.setState({
-          movies: response.data
-        });
-      })
-      .catch(function(error) {
-        console.log(error + "error_from_getMovies_method");
-      });
-  }
-
-  componentDidMount() {
-    let accessToken = localStorage.getItem("token");
-    if (accessToken !== null) {
-      this.setState({
-        user: localStorage.getItem("user")
-      });
-      this.getMovies(accessToken);
-    }
-  }
-
-  onMovieClick(movie) {
+  onLogout(authData) {
     this.setState({
-      selectedMovie: movie
+      user: null
     });
+    window.open("/", "_self");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }
 
-  // onRegistered(registeredUser) {
-  //   this.setState({
-  //     registeredUser
-  //   });
-  // }
-
-  backButton(movie) {
-    this.setState({
-      selectedMovie: null
-    });
-  }
   render() {
-    const {
-      movies,
-      selectedMovie,
-      registeredUser,
-      registerMe,
-      user
-    } = this.state;
+    const { movies, user } = this.state;
 
-    if (!user)
-      return (
-        <LoginView
-          onLoggedIn={user =>
-            // LoginView is rendered as long as there's no user in the state
-            this.onLoggedIn(user)
-          }
-        />
-      );
-
-    if (!registeredUser)
-      return (
-        <RegistrationView
-          onRegistered={registeredUser =>
-            // RegistrationView is rendered as long as there's no user in the state
-            this.onRegistered(registeredUser)
-          }
-        />
-      );
-
-    //Before the movies have been loaded
     if (!movies) return <div className="main-view" />;
 
     return (
-      <div className="main-view">
-        {selectedMovie ? (
-          <MovieView
-            movie={selectedMovie}
-            onClick={button => this.backButton()}
+      <Router>
+        <div className="main-view">
+          <Button variant="danger" onClick={() => this.onLogout()}>
+            Logout
+          </Button>
+
+          <Route
+            exact
+            path="/"
+            render={() => {
+              if (!user)
+                return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
+              return movies.map(m => <MovieCard key={m._id} movie={m} />);
+            }}
           />
-        ) : (
-          movies.map(movie => (
-            <MovieCard
-              key={movie._id}
-              movie={movie}
-              onClick={movie => this.onMovieClick(movie)}
-            />
-          ))
-        )}
-      </div>
+
+          <Route path="/register" render={() => <RegistrationView />} />
+
+          <Route
+            path="/movies/:movieId"
+            render={({ match }) => (
+              <MovieView
+                movie={movies.find(m => m._id === match.params.movieId)}
+              />
+            )}
+          />
+          <Route
+            path="/Genres/:name"
+            render={({ match }) => {
+              if (!movies) return <div className="main-view" />;
+              return (
+                <GenreView
+                  genre={
+                    movies.find(m => m.Genre.Name === match.params.name).Genre
+                  }
+                />
+              );
+            }}
+          />
+
+          <Route
+            path="/directors/:name"
+            render={({ match }) => {
+              if (!movies) return <div className="main-view" />;
+              return (
+                <DirectorView
+                  director={
+                    movies.find(m => m.Director.Name === match.params.name)
+                      .Director
+                  }
+                />
+              );
+            }}
+          />
+        </div>
+      </Router>
     );
   }
 }

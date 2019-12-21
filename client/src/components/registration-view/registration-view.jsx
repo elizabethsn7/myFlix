@@ -4,88 +4,91 @@ import PropTypes from "prop-types";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import "./registration-view.scss";
-import { constants } from "crypto";
 
 export function RegistrationView(props) {
-  const [username, createUsername] = useState("");
-  const [password, createPassword] = useState("");
-  const [email, createEmail] = useState("");
-  const [birthday, createBirthday] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [birthday, setBirthday] = useState("");
 
   const handleRegister = e => {
     e.preventDefault;
-    // Send a request to the server for authentification
+    /* Send a request to the server to register */
+
     axios
-      .post("https://liz-flix.herokuapp.com/login", {
+      .post("https://liz-flix.herokuapp.com/users", {
         Username: username,
         Password: password,
         Email: email,
         Birthday: birthday
       })
-      .then(resoonse => {
+      .then(response => {
         const data = response.data;
-        window.open("/", "_self");
+        console.log(data);
+        window.open("/", "_self"); // the second argument '_self' is necessary so that the page will open in the current tab
       })
       .catch(e => {
-        console.log("error_registering_user");
+        console.log("error_in_registering_user");
       });
-    props.onRegistered(username);
   };
-
   return (
-    <Container>
-      <Form>
-        <Form.Group controlId="formBasicUsername">
-          <Form.Label>Username:</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter a username"
-            value={username}
-            onChange={e => createUsername(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group controlId="formBasidPassword">
-          <Form.Label>Password:</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter a password"
-            value={password}
-            onChange={e => createPassword(e.target.value)}
-          />
-        </Form.Group>
+    <div>
+      <Container>
+        <Row>
+          <Col>
+            <h3>Sign in Below</h3>
+          </Col>
+        </Row>
+        <Form>
+          <Form.Row>
+            <Form.Group as={Col} controlId="formBasicUsername">
+              <Form.Label>Username:</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+              />
+            </Form.Group>
 
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email:</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={e => createEmail(e.target.value)}
-          />
-        </Form.Group>
+            <Form.Group as={Col} controlId="formBasicPassword">
+              <Form.Label>Password:</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            </Form.Group>
 
-        <Form.Group controlId="formBasicBirthday">
-          <Form.Label>Birthday:</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter birthday"
-            value={birthday}
-            onChange={e => createBirthday(e.target.value)}
-          />
-        </Form.Group>
+            <Form.Group as={Col} controlId="formBasicEmail">
+              <Form.Label>Email:</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </Form.Group>
 
-        <Button variant="danger" type="button" onClick={handleRegister}>
-          Register
-        </Button>
-      </Form>
-    </Container>
+            <Form.Group as={Col} controlId="formBasicBirthday">
+              <Form.Label>Birthday:</Form.Label>
+              <Form.Control
+                type="date"
+                placeholder="Birthday"
+                value={birthday}
+                onChange={e => setBirthday(e.target.value)}
+              />
+            </Form.Group>
+          </Form.Row>
+          <Button variant="danger" type="button" onClick={handleRegister}>
+            Register
+          </Button>
+        </Form>
+      </Container>
+    </div>
   );
 }
-RegistrationView.propTypes = {
-  handleRegister: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    value: PropTypes.object.isRequired
-  })
-};

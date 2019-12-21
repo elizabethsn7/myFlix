@@ -1,5 +1,8 @@
 import React from "react";
 import PropTypes, { checkPropTypes } from "prop-types";
+import { Link } from "react-router-dom";
+import { DirectorView } from "../director-view/director-view";
+import { GenreView } from "../genre-view/genre-view";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -12,7 +15,7 @@ export class MovieView extends React.Component {
     this.state = {};
   }
   render() {
-    const { movie, onClick } = this.props;
+    const { movie } = this.props;
     if (!movie) return null;
 
     return (
@@ -37,9 +40,16 @@ export class MovieView extends React.Component {
                 <span className="label">Director: </span>
                 <span className="value">{movie.Director.Name}</span>
               </div>
-              <Button onClick={() => onClick()} variant="dark">
-                Back
-              </Button>
+
+              <Link to={`/`}>
+                <Button variant="link">Back</Button>
+              </Link>
+              <Link to={`/directors/${movie.Director.Name}`}>
+                <Button variant="link">Director</Button>
+              </Link>
+              <Link to={`/genres/${movie.Genre.Name}`}>
+                <Button variant="link">Genre</Button>
+              </Link>
             </div>
           </Col>
         </Row>
@@ -63,6 +73,5 @@ MovieView.propTypes = {
       Birth: PropTypes.string.isRequired,
       Death: PropTypes.string
     })
-  }).isRequired,
-  onClick: PropTypes.func.isRequired
+  }).isRequired
 };
