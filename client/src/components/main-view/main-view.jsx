@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Navbar } from "../movie-card/movie-card";
 import { MovieCard } from "../movie-card/movie-card";
 import { DirectorView } from "../director-view/director-view";
@@ -8,6 +8,7 @@ import { GenreView } from "../genre-view/genre-view";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { RegistrationView } from "../registration-view/registration-view";
+import { ProfileView } from "../profile-view/profile-view";
 import Button from "react-bootstrap/Button";
 import "./main-view.scss";
 
@@ -16,7 +17,8 @@ export class MainView extends React.Component {
     super();
     this.state = {
       movies: [],
-      user: null
+      user: null,
+      userInfo: {}
     };
   }
 
@@ -66,7 +68,7 @@ export class MainView extends React.Component {
   }
 
   render() {
-    const { movies, user } = this.state;
+    const { movies, user, userInfo } = this.state;
 
     if (!movies) return <div className="main-view" />;
 
@@ -76,6 +78,10 @@ export class MainView extends React.Component {
           <Button variant="danger" onClick={() => this.onLogout()}>
             Logout
           </Button>
+
+          <Link to={`/users/${user}`}>
+            <Button className="btn-primary">Profile</Button>
+          </Link>
 
           <Route
             exact
@@ -123,6 +129,13 @@ export class MainView extends React.Component {
                   }
                 />
               );
+            }}
+          />
+
+          <Route
+            path="/users/:Username"
+            render={({ match }) => {
+              return <ProfileView userInfo={user} />;
             }}
           />
         </div>
