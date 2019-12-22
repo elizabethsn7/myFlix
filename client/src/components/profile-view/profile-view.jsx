@@ -38,10 +38,10 @@ export class ProfileView extends React.Component {
       })
       .then(response => {
         this.setState({
-          username: response.data.Username,
-          password: response.data.Password,
-          email: response.data.Email,
-          birthday: response.data.Birthday,
+          username: response.data.username,
+          password: response.data.uassword,
+          email: response.data.email,
+          birthday: response.data.birthday,
           favorites: response.data.favorites
         });
       })

@@ -58513,10 +58513,10 @@ function (_React$Component) {
         }
       }).then(function (response) {
         _this2.setState({
-          username: response.data.Username,
-          password: response.data.Password,
-          email: response.data.Email,
-          birthday: response.data.Birthday,
+          username: response.data.username,
+          password: response.data.uassword,
+          email: response.data.email,
+          birthday: response.data.birthday,
           favorites: response.data.favorites
         });
       }).catch(function (error) {
@@ -58869,7 +58869,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59932" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57367" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
