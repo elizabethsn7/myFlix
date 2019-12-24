@@ -1,9 +1,13 @@
+//https://liz-flix.herokuapp.com
+
 import React from "react";
 import axios from "axios";
-
-import Button from "react-bootstrap/Button";
-import ListGroup from "react-bootstrap/ListGroup";
 import { Link } from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import ListGroup from "react-bootstrap/ListGroup";
+import Button from "react-bootstrap/Button";
 
 export class ProfileView extends React.Component {
   constructor() {
@@ -19,7 +23,6 @@ export class ProfileView extends React.Component {
   }
 
   componentDidMount() {
-    //authentication
     let accessToken = localStorage.getItem("token");
     if (accessToken !== null) {
       this.getUser(accessToken);
@@ -29,41 +32,19 @@ export class ProfileView extends React.Component {
   getUser(token) {
     let username = localStorage.getItem("user");
     axios
-      .get(`https://liz-flix.herokuapp.com/users/${username}`, {
+      .get(`https://liz-flix.herokuapp.com/client/users/${username}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
         this.setState({
-          userData: response.data,
-          username: response.data.Username,
-          password: response.data.Password,
-          email: response.data.Email,
-          birthday: response.data.Birthday,
-          favoriteMovies: response.data.Favorites
+          username: response.data.username,
+          email: response.data.email,
+          birthday: response.data.birthday,
+          favorites: response.data.favorites
         });
       })
       .catch(function(error) {
-        console.log(error);
-      });
-  }
-
-  deleteMovieFromFavs(event, favoriteMovie) {
-    event.preventDefault();
-    console.log(favoriteMovie);
-    axios
-      .delete(
-        `https://liz-flix.herokuapp.com/users/${localStorage.getItem(
-          "user"
-        )}/Favorites/${favoriteMovie}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-        }
-      )
-      .then(response => {
-        this.getUser(localStorage.getItem("token"));
-      })
-      .catch(event => {
-        alert("Oops... something went wrong...");
+        console.log(error + " getUser_error");
       });
   }
 
@@ -72,64 +53,13 @@ export class ProfileView extends React.Component {
   }
 
   render() {
-    const { username, password, email, birthday, favoriteMovies } = this.state;
-
+    const { username, email, password, birthday, favorites } = this.state;
     return (
-      <ListGroup className="list-group-flush" variant="flush">
+      <ListGroup>
         <ListGroup.Item>Username: {username}</ListGroup.Item>
         <ListGroup.Item>Password: {password}</ListGroup.Item>
         <ListGroup.Item>Email: {email}</ListGroup.Item>
-        <ListGroup.Item>
-          Birthday: {birthday && birthday.slice(0, 10)}
-        </ListGroup.Item>
-        <ListGroup.Item>
-          Favorite Movies:
-          <div>
-            {favoriteMovies.length === 0 && (
-              <div className="value">No Favorite Movies have been added</div>
-            )}
-            {favoriteMovies.length > 0 && (
-              <ul>
-                {favoriteMovies.map(favoriteMovie => (
-                  <li key={favoriteMovie}>
-                    <p className="favoriteMovies">
-                      {
-                        JSON.parse(localStorage.getItem("movies")).find(
-                          movie => movie._id === favoriteMovie
-                        ).Title
-                      }
-                    </p>
-                    <Link to={`/movies/${favoriteMovie}`}>
-                      <Button size="sm" variant="info">
-                        Open
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={event =>
-                        this.deleteMovieFromFavs(event, favoriteMovie)
-                      }>
-                      Delete
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </ListGroup.Item>
-        <div className="text-center">
-          <Link to={`/`}>
-            <Button className="button-back" variant="outline-danger">
-              MOVIES
-            </Button>
-          </Link>
-          <Link to={`/update/:Username`}>
-            <Button className="button-update" variant="outline-danger">
-              Update profile
-            </Button>
-          </Link>
-        </div>
+        <ListGroup.Item>Birthday:{birthday} </ListGroup.Item>
       </ListGroup>
     );
   }

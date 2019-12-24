@@ -58434,11 +58434,17 @@ var _react = _interopRequireDefault(require("react"));
 
 var _axios = _interopRequireDefault(require("axios"));
 
-var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
+var _reactRouterDom = require("react-router-dom");
+
+var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
+
+var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
+
+var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
 
 var _ListGroup = _interopRequireDefault(require("react-bootstrap/ListGroup"));
 
-var _reactRouterDom = require("react-router-dom");
+var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -58487,7 +58493,6 @@ function (_React$Component) {
   _createClass(ProfileView, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      //authentication
       var accessToken = localStorage.getItem("token");
 
       if (accessToken !== null) {
@@ -58501,39 +58506,19 @@ function (_React$Component) {
 
       var username = localStorage.getItem("user");
 
-      _axios.default.get("https://liz-flix.herokuapp.com/users/".concat(username), {
+      _axios.default.get("https://liz-flix.herokuapp.com/client/users/".concat(username), {
         headers: {
           Authorization: "Bearer ".concat(token)
         }
       }).then(function (response) {
         _this2.setState({
-          userData: response.data,
-          username: response.data.Username,
-          password: response.data.Password,
-          email: response.data.Email,
-          birthday: response.data.Birthday,
-          favoriteMovies: response.data.Favorites
+          username: response.data.username,
+          email: response.data.email,
+          birthday: response.data.birthday,
+          favorites: response.data.favorites
         });
       }).catch(function (error) {
-        console.log(error);
-      });
-    }
-  }, {
-    key: "deleteMovieFromFavs",
-    value: function deleteMovieFromFavs(event, favoriteMovie) {
-      var _this3 = this;
-
-      event.preventDefault();
-      console.log(favoriteMovie);
-
-      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/Favorites/").concat(favoriteMovie), {
-        headers: {
-          Authorization: "Bearer ".concat(localStorage.getItem("token"))
-        }
-      }).then(function (response) {
-        _this3.getUser(localStorage.getItem("token"));
-      }).catch(function (event) {
-        alert("Oops... something went wrong...");
+        console.log(error + " getUser_error");
       });
     }
   }, {
@@ -58544,51 +58529,13 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
-
       var _this$state = this.state,
           username = _this$state.username,
-          password = _this$state.password,
           email = _this$state.email,
+          password = _this$state.password,
           birthday = _this$state.birthday,
-          favoriteMovies = _this$state.favoriteMovies;
-      return _react.default.createElement(_ListGroup.default, {
-        className: "list-group-flush",
-        variant: "flush"
-      }, _react.default.createElement(_ListGroup.default.Item, null, "Username: ", username), _react.default.createElement(_ListGroup.default.Item, null, "Password: ", password), _react.default.createElement(_ListGroup.default.Item, null, "Email: ", email), _react.default.createElement(_ListGroup.default.Item, null, "Birthday: ", birthday && birthday.slice(0, 10)), _react.default.createElement(_ListGroup.default.Item, null, "Favorite Movies:", _react.default.createElement("div", null, favoriteMovies.length === 0 && _react.default.createElement("div", {
-        className: "value"
-      }, "No Favorite Movies have been added"), favoriteMovies.length > 0 && _react.default.createElement("ul", null, favoriteMovies.map(function (favoriteMovie) {
-        return _react.default.createElement("li", {
-          key: favoriteMovie
-        }, _react.default.createElement("p", {
-          className: "favoriteMovies"
-        }, JSON.parse(localStorage.getItem("movies")).find(function (movie) {
-          return movie._id === favoriteMovie;
-        }).Title), _react.default.createElement(_reactRouterDom.Link, {
-          to: "/movies/".concat(favoriteMovie)
-        }, _react.default.createElement(_Button.default, {
-          size: "sm",
-          variant: "info"
-        }, "Open")), _react.default.createElement(_Button.default, {
-          variant: "secondary",
-          size: "sm",
-          onClick: function onClick(event) {
-            return _this4.deleteMovieFromFavs(event, favoriteMovie);
-          }
-        }, "Delete"));
-      })))), _react.default.createElement("div", {
-        className: "text-center"
-      }, _react.default.createElement(_reactRouterDom.Link, {
-        to: "/"
-      }, _react.default.createElement(_Button.default, {
-        className: "button-back",
-        variant: "outline-danger"
-      }, "MOVIES")), _react.default.createElement(_reactRouterDom.Link, {
-        to: "/update/:Username"
-      }, _react.default.createElement(_Button.default, {
-        className: "button-update",
-        variant: "outline-danger"
-      }, "Update profile"))));
+          favorites = _this$state.favorites;
+      return _react.default.createElement(_ListGroup.default, null, _react.default.createElement(_ListGroup.default.Item, null, "Username: ", username), _react.default.createElement(_ListGroup.default.Item, null, "Password: ", password), _react.default.createElement(_ListGroup.default.Item, null, "Email: ", email), _react.default.createElement(_ListGroup.default.Item, null, "Birthday:", birthday, " "));
     }
   }]);
 
@@ -58596,7 +58543,7 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.ProfileView = ProfileView;
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/ListGroup":"../node_modules/react-bootstrap/esm/ListGroup.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js"}],"components/main-view/main-view.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/ListGroup":"../node_modules/react-bootstrap/esm/ListGroup.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js"}],"components/main-view/main-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -58920,7 +58867,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53043" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61434" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
