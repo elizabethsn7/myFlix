@@ -310,21 +310,25 @@ app.get(
 );
 
 // GET data about a genre
-app.get("/movies/Genre/:Name", function(req, res) {
-  Movies.findOne(
-    {
-      "Genre.Name": req.params.Name
-    },
-    function(err, movies) {
-      if (err) {
-        console.error(err);
-        res.status(500).send("Error: " + err);
-      } else {
-        res.json(movies.Genre);
+app.get(
+  "/movies/Genre/:Name",
+  passport.authenticate("jwt", { session: false }),
+  function(req, res) {
+    Movies.findOne(
+      {
+        "Genre.Name": req.params.Name
+      },
+      function(err, movies) {
+        if (err) {
+          console.error(err);
+          res.status(500).send("Error: " + err);
+        } else {
+          res.json(movies.Genre);
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 //GET data about a director
 app.get("/movies/director/:Name", function(req, res) {

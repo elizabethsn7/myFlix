@@ -17,7 +17,8 @@ export class MainView extends React.Component {
     super();
     this.state = {
       movies: [],
-      user: null
+      user: null,
+      userInfo: {}
     };
   }
 
@@ -69,7 +70,7 @@ export class MainView extends React.Component {
   render() {
     // If the state isn't initialized, this will throw on runtime
     // before the data is initially loaded
-    const { movies, user } = this.state;
+    const { movies, user, userInfo, token } = this.state;
 
     // Before the movies have been loaded
     if (!movies) return <div className="main-view" />;
@@ -135,9 +136,9 @@ export class MainView extends React.Component {
           />
 
           <Route
-            path="/users/:user"
+            path="/users/:Username"
             render={({ match }) => {
-              return <ProfileView userInfo={user} />;
+              return <ProfileView userInfo={userInfo} />;
             }}
           />
         </div>

@@ -58432,25 +58432,21 @@ exports.ProfileView = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _axios = _interopRequireDefault(require("axios"));
-
 var _reactRouterDom = require("react-router-dom");
 
-var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
+var _axios = _interopRequireDefault(require("axios"));
 
-var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
+var _Card = _interopRequireDefault(require("react-bootstrap/Card"));
 
-var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
+var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 
 var _ListGroup = _interopRequireDefault(require("react-bootstrap/ListGroup"));
 
-var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
+var _mainView = require("../main-view/main-view");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -58473,24 +58469,55 @@ var ProfileView =
 function (_React$Component) {
   _inherits(ProfileView, _React$Component);
 
-  function ProfileView() {
+  function ProfileView(props) {
     var _this;
 
     _classCallCheck(this, ProfileView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(ProfileView).call(this));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ProfileView).call(this, props));
     _this.state = {
+      userData: null,
       username: null,
       password: null,
       email: null,
       birthday: null,
-      userData: null,
-      favoriteMovies: []
+      favorites: []
     };
     return _this;
   }
 
   _createClass(ProfileView, [{
+    key: "render",
+    value: function render() {
+      var _this$state = this.state,
+          username = _this$state.username,
+          email = _this$state.email,
+          birthday = _this$state.birthday,
+          favorites = _this$state.favorites;
+      return _react.default.createElement(_Card.default, {
+        className: "profile-view",
+        style: {
+          width: "32rem"
+        }
+      }, _react.default.createElement(_Card.default.Body, null, _react.default.createElement(_Card.default.Title, {
+        className: "profile-title"
+      }, "Profile"), _react.default.createElement(_ListGroup.default, {
+        className: "user-name"
+      }, _react.default.createElement(_ListGroup.default.Item, null, "username: ", _react.default.createElement("span", {
+        className: "user-value"
+      }, username)), _react.default.createElement(_ListGroup.default.Item, null, "E-Mail: ", _react.default.createElement("span", {
+        className: "user-value"
+      }, email)), _react.default.createElement(_ListGroup.default.Item, null, "birthday: ", _react.default.createElement("span", {
+        className: "user-value"
+      }, birthday)), _react.default.createElement(_ListGroup.default.Item, null, "favorites: ", _react.default.createElement("span", {
+        className: "user-value"
+      }, favorites)))), _react.default.createElement("div", null, _react.default.createElement(_reactRouterDom.Link, {
+        to: "/"
+      }, _react.default.createElement(_Button.default, {
+        className: "danger"
+      }, "Back to Movies"))));
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       var accessToken = localStorage.getItem("token");
@@ -58506,36 +58533,21 @@ function (_React$Component) {
 
       var username = localStorage.getItem("user");
 
-      _axios.default.get("https://liz-flix.herokuapp.com/client/users/".concat(username), {
+      _axios.default.get("https://liz-flix.herokuapp.com/users/".concat(username), {
         headers: {
           Authorization: "Bearer ".concat(token)
         }
       }).then(function (response) {
         _this2.setState({
+          userData: response.data,
           username: response.data.username,
           email: response.data.email,
           birthday: response.data.birthday,
           favorites: response.data.favorites
         });
       }).catch(function (error) {
-        console.log(error + " getUser_error");
+        console.log(error);
       });
-    }
-  }, {
-    key: "handleChange",
-    value: function handleChange(e) {
-      this.setState(_defineProperty({}, e.target.name, e.target.value));
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this$state = this.state,
-          username = _this$state.username,
-          email = _this$state.email,
-          password = _this$state.password,
-          birthday = _this$state.birthday,
-          favorites = _this$state.favorites;
-      return _react.default.createElement(_ListGroup.default, null, _react.default.createElement(_ListGroup.default.Item, null, "Username: ", username), _react.default.createElement(_ListGroup.default.Item, null, "Password: ", password), _react.default.createElement(_ListGroup.default.Item, null, "Email: ", email), _react.default.createElement(_ListGroup.default.Item, null, "Birthday:", birthday, " "));
     }
   }]);
 
@@ -58543,7 +58555,7 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.ProfileView = ProfileView;
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/ListGroup":"../node_modules/react-bootstrap/esm/ListGroup.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js"}],"components/main-view/main-view.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","axios":"../node_modules/axios/index.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/ListGroup":"../node_modules/react-bootstrap/esm/ListGroup.js","../main-view/main-view":"components/main-view/main-view.jsx"}],"components/main-view/main-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -58613,7 +58625,8 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MainView).call(this));
     _this.state = {
       movies: [],
-      user: null
+      user: null,
+      userInfo: {}
     };
     return _this;
   }
@@ -58680,7 +58693,9 @@ function (_React$Component) {
       // before the data is initially loaded
       var _this$state = this.state,
           movies = _this$state.movies,
-          user = _this$state.user; // Before the movies have been loaded
+          user = _this$state.user,
+          userInfo = _this$state.userInfo,
+          token = _this$state.token; // Before the movies have been loaded
 
       if (!movies) return _react.default.createElement("div", {
         className: "main-view"
@@ -58754,11 +58769,11 @@ function (_React$Component) {
           });
         }
       }), _react.default.createElement(_reactRouterDom.Route, {
-        path: "/users/:user",
+        path: "/users/:Username",
         render: function render(_ref4) {
           var match = _ref4.match;
           return _react.default.createElement(_profileView.ProfileView, {
-            userInfo: user
+            userInfo: userInfo
           });
         }
       })));
@@ -58867,7 +58882,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61434" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50293" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

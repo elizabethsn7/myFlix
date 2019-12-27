@@ -1,42 +1,69 @@
-//https://liz-flix.herokuapp.com
-
 import React from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import ListGroup from "react-bootstrap/ListGroup";
+import axios from "axios";
+import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import ListGroup from "react-bootstrap/ListGroup";
+import { MainView } from "../main-view/main-view";
 
 export class ProfileView extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
+      userData: null,
       username: null,
       password: null,
       email: null,
       birthday: null,
-      userData: null,
-      favoriteMovies: []
+      favorites: []
     };
   }
 
+  render() {
+    const { username, email, birthday, favorites } = this.state;
+
+    return (
+      <Card className="profile-view" style={{ width: "32rem" }}>
+        <Card.Body>
+          <Card.Title className="profile-title">Profile</Card.Title>
+          <ListGroup className="user-name">
+            <ListGroup.Item>
+              username: <span className="user-value">{username}</span>
+            </ListGroup.Item>
+            <ListGroup.Item>
+              E-Mail: <span className="user-value">{email}</span>
+            </ListGroup.Item>
+            <ListGroup.Item>
+              birthday: <span className="user-value">{birthday}</span>
+            </ListGroup.Item>
+            <ListGroup.Item>
+              favorites: <span className="user-value">{favorites}</span>
+            </ListGroup.Item>
+          </ListGroup>
+        </Card.Body>
+        <div>
+          <Link to={`/`}>
+            <Button className="danger">Back to Movies</Button>
+          </Link>
+        </div>
+      </Card>
+    );
+  }
   componentDidMount() {
-    let accessToken = localStorage.getItem("token");
+    const accessToken = localStorage.getItem("token");
     if (accessToken !== null) {
       this.getUser(accessToken);
     }
   }
-
   getUser(token) {
     let username = localStorage.getItem("user");
     axios
-      .get(`https://liz-flix.herokuapp.com/client/users/${username}`, {
+      .get(`https://liz-flix.herokuapp.com/users/${username}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
         this.setState({
+          userData: response.data,
           username: response.data.username,
           email: response.data.email,
           birthday: response.data.birthday,
@@ -44,23 +71,7 @@ export class ProfileView extends React.Component {
         });
       })
       .catch(function(error) {
-        console.log(error + " getUser_error");
+        console.log(error);
       });
-  }
-
-  handleChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-  }
-
-  render() {
-    const { username, email, password, birthday, favorites } = this.state;
-    return (
-      <ListGroup>
-        <ListGroup.Item>Username: {username}</ListGroup.Item>
-        <ListGroup.Item>Password: {password}</ListGroup.Item>
-        <ListGroup.Item>Email: {email}</ListGroup.Item>
-        <ListGroup.Item>Birthday:{birthday} </ListGroup.Item>
-      </ListGroup>
-    );
   }
 }
