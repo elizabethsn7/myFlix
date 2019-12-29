@@ -51,7 +51,11 @@ export class MainView extends React.Component {
       this.getMovies(accessToken);
     }
   }
-
+  onMovieClick(movie) {
+    this.setState({
+      selectedMovie: movie
+    });
+  }
   // method, onLoggedIn, will be passed as a prop with the same name to LoginView
   //will update the user state of the MainView component and will be called when the user has successfully logged in
   onLoggedIn(authData) {
@@ -64,7 +68,7 @@ export class MainView extends React.Component {
     this.getMovies(authData.token);
   }
 
-  handleLogOut() {
+  handleLogOut(authData) {
     this.setState({
       user: null
     });
@@ -142,7 +146,7 @@ export class MainView extends React.Component {
           />
 
           <Route
-            path="/users/:username"
+            path="/users/:Username"
             render={({ match }) => {
               return <ProfileView userInfo={userInfo} />;
             }}

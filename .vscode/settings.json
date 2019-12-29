@@ -1,3 +1,5 @@
 {
-  "editor.formatOnPaste": true
+  "editor.formatOnPaste": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false
 }
