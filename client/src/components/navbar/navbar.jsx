@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import Navbar from "react-bootstrap/Navbar";
 import { LoginView } from "../login-view/login-view";
 import { ProfileView } from "../profile-view/profile-view";
+import { ProfileUpdate } from "../profile-view/profile-update";
 import { RegistrationView } from "../registration-view/registration-view";
 
 export class Navbar extends React.Component {

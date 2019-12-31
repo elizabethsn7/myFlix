@@ -9,23 +9,22 @@ export class ProfileView extends React.Component {
   constructor() {
     super();
     this.state = {
-      userInfo: null,
       username: null,
       password: null,
       email: null,
       birthday: null,
+      userData: null,
       favorites: []
     };
   }
+
   componentDidMount() {
     let accessToken = localStorage.getItem("token");
     if (accessToken !== null) {
-      this.setState({
-        userInfo: localStorage.getItem("user")
-      });
       this.getUser(accessToken);
     }
   }
+
   getUser(token) {
     let username = localStorage.getItem("user");
     axios
@@ -34,8 +33,9 @@ export class ProfileView extends React.Component {
       })
       .then(response => {
         this.setState({
-          userInfo: response.data,
+          userData: response.data,
           username: response.data.Username,
+          password: response.data.Password,
           email: response.data.Email,
           birthday: response.data.Birthday,
           favorites: response.data.FavoriteMovies
@@ -46,8 +46,32 @@ export class ProfileView extends React.Component {
       });
   }
 
+  deleteMovieFromFavs(event, favoriteMovie) {
+    event.preventDefault();
+    console.log(favoriteMovie);
+    axios
+      .delete(
+        `https://liz-flix.herokuapp.com/users/${localStorage.getItem(
+          "user"
+        )}/FavoriteMovies/${favoriteMovie}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        }
+      )
+      .then(response => {
+        this.getUser(localStorage.getItem("token"));
+      })
+      .catch(event => {
+        alert("something went wrong.");
+      });
+  }
+
+  handleChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
   render() {
-    const { username, email, birthday, favorites } = this.state;
+    const { userData, username, email, birthday, favorites } = this.state;
 
     return (
       <Card className="profile-view" style={{ width: "32rem" }}>
@@ -62,7 +86,7 @@ export class ProfileView extends React.Component {
               <div>
                 {favorites.length === 0 && (
                   <div className="value">No favorites added</div>
-                )}{" "}
+                )}
                 {favorites.length > 0 && (
                   <ul>
                     {favorites.map(favoriteMovie => (
@@ -70,10 +94,18 @@ export class ProfileView extends React.Component {
                         <p className="favorites">
                           {
                             JSON.parse(localStorage.getItem("movies")).find(
-                              movie => movie.id === favoriteMovie
+                              movie => movie._id === favoriteMovie
                             ).Title
                           }
                         </p>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={event =>
+                            this.deleteMovieFromFavs(event, favoriteMovie)
+                          }>
+                          Delete
+                        </Button>
                       </li>
                     ))}
                   </ul>
@@ -86,6 +118,11 @@ export class ProfileView extends React.Component {
         <div>
           <Link to={`/`}>
             <Button className="danger">Back to Movies</Button>
+          </Link>
+          <Link to={`/update/:Username`}>
+            <Button className="button-update" variant="outline-secondary">
+              Update profile
+            </Button>
           </Link>
         </div>
       </Card>
