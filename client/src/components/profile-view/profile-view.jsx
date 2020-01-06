@@ -4,6 +4,7 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
+import "./profile-view.scss";
 
 export class ProfileView extends React.Component {
   constructor() {
@@ -99,7 +100,7 @@ export class ProfileView extends React.Component {
                           }
                         </p>
                         <Button
-                          variant="secondary"
+                          className="submitButton"
                           size="sm"
                           onClick={event =>
                             this.deleteMovieFromFavs(event, favoriteMovie)
@@ -117,12 +118,10 @@ export class ProfileView extends React.Component {
 
         <div>
           <Link to={`/`}>
-            <Button className="danger">Back to Movies</Button>
+            <Button className="submitButton">Back to Movies</Button>
           </Link>
           <Link to={`/update/:Username`}>
-            <Button className="button-update" variant="outline-secondary">
-              Update profile
-            </Button>
+            <Button className="submitButton">Update profile</Button>
           </Link>
         </div>
       </Card>

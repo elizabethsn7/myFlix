@@ -111,18 +111,10 @@ export function ProfileUpdate(props) {
           />
         </Form.Group>
         <div className="text-center">
-          <Button
-            className="btn-register"
-            variant="secondary"
-            type="submit"
-            onClick={handleUpdate}>
+          <Button className="submitButton" type="submit" onClick={handleUpdate}>
             Update
           </Button>
-          <Button
-            className="btn-delete"
-            variant="danger"
-            type="submit"
-            onClick={handleDelete}>
+          <Button className="submitButton" type="submit" onClick={handleDelete}>
             Delete profile
           </Button>
         </div>

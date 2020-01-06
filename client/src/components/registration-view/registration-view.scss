@@ -1,0 +1,16 @@
+$backgroundColor: #202020;
+$font_family_1: "Poiret One";
+$white: #ffffff;
+$buttonColor: #202020;
+
+.registerButton {
+  font-size: 1.25em;
+  font-family: $font_family_1;
+  background-color: $backgroundColor;
+  margin: 2px;
+  border: none;
+}
+.registerButton:hover {
+  background-color: $white;
+  color: $buttonColor;
+}

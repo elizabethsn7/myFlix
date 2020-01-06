@@ -5,9 +5,8 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import CardColumns from "react-bootstrap/CardColumns";
 
+import "./director-view.scss";
 export class DirectorView extends React.Component {
   constructor() {
     super();
@@ -20,20 +19,18 @@ export class DirectorView extends React.Component {
     return (
       <Container>
         <Row>
-          <Col sm={6}>
-            <CardColumns>
-              <Card style={{ width: "16rem" }}>
-                <Card.Body>
-                  <Card.Title>Director Name: {director.Name}</Card.Title>
-                  <Card.Text>Director Bio: {director.Bio}</Card.Text>
-                  <Card.Text>Director Birth: {director.Birth}</Card.Text>
-                  <Link to={`/`}>
-                    <Button variant="link">Back</Button>
-                  </Link>
-                </Card.Body>
-              </Card>
-            </CardColumns>
-          </Col>
+          <div>
+            <div className="director-name">{director.Name}</div>
+            <div className="director-bio">
+              <span className="value">{director.Bio}</span>
+            </div>
+            <div className="director-bio">
+              <span className="value">{director.Birth}</span>
+            </div>
+            <Link to={`/`}>
+              <Button className="backButton">Back to Movies</Button>
+            </Link>
+          </div>
         </Row>
       </Container>
     );

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import Navbar from "react-bootstrap/Navbar";
 import { LoginView } from "../login-view/login-view";
 import { ProfileView } from "../profile-view/profile-view";
 import { ProfileUpdate } from "../profile-view/profile-update";
@@ -16,7 +15,7 @@ export class Navbar extends React.Component {
       <Router>
         <div className="Navbar">
           <Navbar bg="danger" expand="lg">
-            <Navbar.Brand href="#home">myFlix</Navbar.Brand>
+            <Navbar.Brand href="/">myFlix</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="mr-auto">

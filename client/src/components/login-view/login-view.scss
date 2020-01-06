@@ -1,5 +1,7 @@
 $backgroundColor: #202020;
-$white: #eeeeee;
+$font_family_1: "Poiret One";
+$buttonColor: #202020;
+$white: #ffffff;
 
 h1 {
   font-size: 5em;
@@ -12,10 +14,18 @@ h1 {
 .loginView {
   font-family: "Open Sans", sans-serif;
   font-size: 1.25em;
+  margin-bottom: 20px;
 }
-.jumbo {
-  text-align: center;
-  border-radius: 0px;
-  color: $white;
+
+.submitButton {
+  font-size: 1.25em;
+  font-family: $font_family_1;
   background-color: $backgroundColor;
+  margin: 2px;
+  border: none;
+}
+
+.submitButton:hover {
+  background-color: $white;
+  color: $buttonColor;
 }

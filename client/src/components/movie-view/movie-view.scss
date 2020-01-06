@@ -1,3 +1,26 @@
+$font_family_1: "Poiret One";
+$buttonColor: #202020;
+$white: #ffffff;
+
 .movie-view {
   font-family: "Open Sans", sans-serif;
+}
+.movie-poster {
+  max-width: 250px;
+  margin-bottom: 10px;
+}
+.movie-view-buttons {
+  font-size: 1.25em;
+  font-family: $font_family_1;
+  background-color: $buttonColor;
+  margin: 2px;
+  box-shadow: none;
+  border: none;
+}
+.movie-view-buttons:hover {
+  background-color: $white;
+  color: $buttonColor;
+}
+.movie-director {
+  width: 50%;
 }

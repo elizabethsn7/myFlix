@@ -34,13 +34,12 @@ export function LoginView(props) {
 
   return (
     <div>
-      <Jumbotron className="jumbo">
+      <Container>
         <h1>Welcome to myFlix!</h1>
         <p className="loginView">
           This is a simple single page app using React
         </p>
-      </Jumbotron>
-      <Container>
+
         <Form>
           <Form.Row>
             <Form.Group controlId="formBasicUsername" as={Col}>
@@ -62,11 +61,11 @@ export function LoginView(props) {
               />
             </Form.Group>
           </Form.Row>
-          <Button variant="danger" type="button" onClick={handleSubmit}>
+          <Button className="submitButton" type="button" onClick={handleSubmit}>
             Submit
           </Button>
           <Link to={`/register`}>
-            <Button variant="secondary">Register</Button>
+            <Button className="submitButton">Register</Button>
           </Link>
         </Form>
       </Container>

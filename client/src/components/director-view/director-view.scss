@@ -1,0 +1,21 @@
+$font_family_1: "Poiret One";
+$buttonColor: #202020;
+$white: #ffffff;
+
+.director-name {
+  font-size: 2em;
+  font-family: $font_family_1;
+}
+.backButton {
+  font-size: 1.25em;
+  font-family: $font_family_1;
+  background-color: $buttonColor;
+  margin-top: 10px;
+  border: none;
+}
+.backbutton:hover {
+  background-color: $white;
+  color: $buttonColor;
+  outline: none !important;
+  box-shadow: none;
+}

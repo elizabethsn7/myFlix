@@ -1,12 +1,11 @@
 import React from "react";
-import PropTypes, { checkPropTypes } from "prop-types";
 import { Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import CardColumns from "react-bootstrap/CardColumns";
+
+import "./genre-view.scss";
 
 export class GenreView extends React.Component {
   constructor() {
@@ -20,21 +19,25 @@ export class GenreView extends React.Component {
     return (
       <Container>
         <Row>
-          <Col sm={6}>
-            <CardColumns>
-              <Card style={{ width: "16rem" }}>
-                <Card.Body>
-                  <Card.Title>{genre.Name}</Card.Title>
-                  <Card.Text>Genre Description: {genre.Description}</Card.Text>
-                  <Link to={`/`}>
-                    <Button variant="link">Back</Button>
-                  </Link>
-                </Card.Body>
-              </Card>
-            </CardColumns>
+          <Col>
+            <div>
+              <div className="genre-name">{genre.Name}</div>
+              <div className="genre-description">
+                <span className="value">{genre.Description}</span>
+              </div>
+              <Link to={`/`}>
+                <Button className="backButton">Back to Movies</Button>
+              </Link>
+            </div>
           </Col>
         </Row>
       </Container>
     );
   }
 }
+
+// <Card.Title>{genre.Name}</Card.Title>
+//                   <Card.Text>Genre Description: {genre.Description}</Card.Text>
+//                   <Link to={`/`}>
+//                     <Button variant="link">Back</Button>
+//                   </Link>
