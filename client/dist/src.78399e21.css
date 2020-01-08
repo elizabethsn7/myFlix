@@ -17,6 +17,10 @@
   background-color: #ffffff;
   color: #202020;
 }
+
+.container {
+  width: 75%;
+}
 h1 {
   font-size: 5em;
   font-family: "Poiret One";
@@ -49,10 +53,14 @@ h1 {
   font-family: "Open Sans", sans-serif;
   display: inline-block;
   padding: 5px;
-  justify-content: center;
 }
 .movie-view {
   font-family: "Open Sans", sans-serif;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .movie-poster {
@@ -92,6 +100,10 @@ h1 {
 
 .submitButton:hover {
   background-color: #ffffff;
+  color: #202020;
+}
+
+.card {
   color: #202020;
 }
 .director-name {
@@ -143,9 +155,21 @@ h1 {
 }
 
 .fonts {
-  color: #eeeeee;
+  color: #ffffff;
   font-size: 1.5em;
   font-family: "Poiret One";
+}
+
+.branding {
+  color: #ffffff;
+  font-size: 1.75em;
+  font-family: "Poiret One";
+}
+
+@media screen and (max-width: 800px) {
+  .branding {
+    display: none;
+  }
 }
 .my-flix {
   color: steelblue;

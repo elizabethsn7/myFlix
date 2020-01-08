@@ -1,9 +1,13 @@
 import React from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { setMovies } from "../../actions/actions";
+import MoviesList from "../movies-list/movies-list";
 import { LoginView } from "../login-view/login-view";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
@@ -120,24 +124,36 @@ export class MainView extends React.Component {
     const { movies, userInfo, user, token } = this.state;
 
     if (!movies) return <div className="main-view" />;
+
+    // !!user will make the value of user a Boolean - so, if user is null, then!!user will be false.However, if user has a truthy value, then!!user will be true!
     return (
       <div className="main-view">
         <Router>
           <Container-fluid>
             <Row className="rowBackground">
-              <Button
-                className="fonts"
-                variant="link"
-                onClick={() => this.handleLogOut()}>
-                Logout
-              </Button>
-              <Link to={`/users/${user}`}>
-                <Button className="fonts" variant="link">
-                  Profile
-                </Button>
-              </Link>
-              <Route path={`/users/${user}`} component={ProfileView} />
+              <Col md={4}>
+                {!!user && (
+                  <Button
+                    className="fonts"
+                    variant="link"
+                    onClick={() => this.handleLogOut()}>
+                    Logout
+                  </Button>
+                )}
+                <Link to={`/users/${user}`}>
+                  {!!user && (
+                    <Button className="fonts" variant="link">
+                      Profile
+                    </Button>
+                  )}
+                  <Route path={`/users/${user}`} component={ProfileView} />
+                </Link>
+              </Col>
+              <Col md={{ span: 2, offset: 6 }} className="branding">
+                myFlix
+              </Col>
             </Row>
+
             <Row>
               <Route
                 exact

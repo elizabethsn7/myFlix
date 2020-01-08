@@ -1,5 +1,8 @@
 $backgroundColor: #202020;
-$white: #eeeeee;
+$font_family_1: "Poiret One";
+$buttonColor: #202020;
+$white: #ffffff;
+
 .row {
   margin: 0 0 0 0;
   padding: 10px;
@@ -14,4 +17,15 @@ $white: #eeeeee;
   color: $white;
   font-size: 1.5em;
   font-family: "Poiret One";
+}
+.branding {
+  color: $white;
+  font-size: 1.75em;
+  font-family: "Poiret One";
+}
+
+@media screen and (max-width: 800px) {
+  .branding {
+    display: none;
+  }
 }

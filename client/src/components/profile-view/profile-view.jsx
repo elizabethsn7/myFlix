@@ -115,7 +115,6 @@ export class ProfileView extends React.Component {
             </ListGroup.Item>
           </ListGroup>
         </Card.Body>
-
         <div>
           <Link to={`/`}>
             <Button className="submitButton">Back to Movies</Button>

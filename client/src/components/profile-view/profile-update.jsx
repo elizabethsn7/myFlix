@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -12,6 +13,7 @@ export function ProfileUpdate(props) {
     Email: oldEmail,
     Birthday: oldBirthday
   } = props.userInfo;
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -111,6 +113,9 @@ export function ProfileUpdate(props) {
           />
         </Form.Group>
         <div className="text-center">
+          <Link to={`/`}>
+            <Button className="submitButton">Cancel</Button>
+          </Link>
           <Button className="submitButton" type="submit" onClick={handleUpdate}>
             Update
           </Button>
