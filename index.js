@@ -9,7 +9,7 @@ const express = require("express");
   (cors = require("cors")),
   ({ check, validationResult } = require("express-validator"));
 require("./passport");
-
+const path = require("path");
 const Movies = Models.Movie;
 const Users = Models.User;
 
@@ -29,6 +29,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(morgan("common"));
 app.use(express.static("public"));
+app.use("/client", express.statis(path.join(__dirname, "client", "dist")));
+app.get("/client/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
 app.use(cors());
 const auth = require("./auth")(app);
 
