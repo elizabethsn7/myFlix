@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 // #0
 import { setMovies } from "../../actions/actions";
+import { setFilter } from "../../actions/actions";
+import { setUser } from "../../actions/actions";
 import MoviesList from "../movies-list/movies-list";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -35,7 +37,7 @@ export class MainView extends React.Component {
         user: localStorage.getItem("user")
       });
       this.getMovies(accessToken);
-      this.getUser(accessToken);
+      //this.getUser(accessToken);
     }
   }
 
@@ -63,6 +65,21 @@ export class MainView extends React.Component {
     localStorage.setItem("user", authData.user.Username);
     this.getMovies(authData.token);
   }
+
+  getUser(token) {
+    axios
+      .get("https://liz-flix.herokuapp.com/users/", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        // Assign the result to the state
+        this.props.setUser(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   render() {
     // #2
     let { movies } = this.props;
@@ -97,27 +114,9 @@ export class MainView extends React.Component {
 let mapStateToProps = state => {
   return { movies: state.movies };
 };
+
 // #4
 export default connect(mapStateToProps, { setMovies })(MainView);
-
-// getUser(token) {
-//   axios
-//     .get("https://liz-flix.herokuapp.com/users/", {
-//       headers: { Authorization: `Bearer ${token}` }
-//     })
-//     .then(response => {
-//       // Assign the result to the state
-//       this.setState({
-//         email: response.data.Email,
-//         birthday: response.data.Birthday,
-//         token: token,
-//         userInfo: response.data
-//       });
-//     })
-//     .catch(error => {
-//       console.log(error);
-//     });
-// }
 
 // updateUser(data) {
 //   this.setState({

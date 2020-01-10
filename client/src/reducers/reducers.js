@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 
-import { SET_FILTER, SET_MOVIES, SET_FAVORITES } from "../actions/actions";
+import { SET_FILTER, SET_MOVIES, SET_USER } from "../actions/actions";
 
 // visibilityFilter is a function (aka reducer)
 //Each reducer takes a state and an action, and if it’s concerned by the action, it changes the state and is only cares about what its responsible for.
@@ -14,7 +14,7 @@ function visibilityFilter(state = "", action) {
 }
 
 // movies is a function (aka reducer)-a  pure function; they depend on nothing but their parameters-they don't change anything. When concerned by the action, reducers simply return a new value.
-// The line:
+// The line in the code above:
 // visibilityFilter(state = '', action)
 // is an identity card - Every time an action is dispatched, this reducer will be called, and it’s responsible for addressing the action or not, hence the switch-case syntax
 
@@ -27,9 +27,9 @@ function movies(state = [], action) {
   }
 }
 
-function favorites(state = [], action) {
+function user(state = "", action) {
   switch (action.type) {
-    case SET_FAVORITES:
+    case SET_USER:
       return action.value;
     default:
       return state;
@@ -39,7 +39,7 @@ function favorites(state = [], action) {
 const moviesApp = combineReducers({
   visibilityFilter,
   movies,
-  favorites
+  user
 });
 
 // The above code is the elegant way to keep the code clean and is the same as the code below:
