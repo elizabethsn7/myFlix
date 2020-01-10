@@ -72,16 +72,16 @@ export class MainView extends React.Component {
         <div className="main-view">
           <Route
             exact
-            path="/client"
+            path="/"
             render={() => {
               if (!user)
                 return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
               return <MoviesList movies={movies} />;
             }}
           />
-          <Route path="/register/client" render={() => <RegistrationView />} />
+          <Route path="/register" render={() => <RegistrationView />} />
           <Route
-            path="/movies/:movieId/client"
+            path="/movies/:movieId"
             render={({ match }) => (
               <MovieView
                 movie={movies.find(m => m._id === match.params.movieId)}
