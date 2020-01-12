@@ -64,6 +64,7 @@ export class MainView extends React.Component {
     localStorage.setItem("token", authData.token);
     localStorage.setItem("user", authData.user.Username);
     this.getMovies(authData.token);
+    this.getUser(authData.token);
   }
 
   getUser(token) {
@@ -80,31 +81,128 @@ export class MainView extends React.Component {
       });
   }
 
+  updateUser(data) {
+    this.setState({
+      userInfo: data
+    });
+    localStorage.setItem("user", data.Username);
+  }
+
+  onMovieClick(movie) {
+    window.location.hash = "#" + movie._id;
+    this.setState({
+      selectedMovieId: movie._id
+    });
+  }
+
+  handleLogOut(authData) {
+    this.setState({
+      user: null
+    });
+    window.open("/", "_self");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("movies");
+    this.setState({
+      user: null
+    });
+    window.open("/client", "_self");
+  }
+
   render() {
     // #2
     let { movies } = this.props;
     let { user } = this.state;
     return (
-      <Router basename="/client">
+      <Router basename={process.env.PUBLIC_URL}>
         <div className="main-view">
-          <Route
-            exact
-            path="/"
-            render={() => {
-              if (!user)
-                return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
-              return <MoviesList movies={movies} />;
-            }}
-          />
-          <Route path="/register" render={() => <RegistrationView />} />
-          <Route
-            path="/movies/:movieId"
-            render={({ match }) => (
-              <MovieView
-                movie={movies.find(m => m._id === match.params.movieId)}
+          <Container-fluid>
+            <Row className="rowBackground">
+              <Col md={4}>
+                {!!user && (
+                  <Button
+                    className="fonts"
+                    variant="link"
+                    onClick={() => this.handleLogOut()}>
+                    Logout
+                  </Button>
+                )}
+                <Link to={`/users/${user}`}>
+                  {!!user && (
+                    <Button className="fonts" variant="link">
+                      Profile
+                    </Button>
+                  )}
+                  <Route path={`/users/${user}`} component={ProfileView} />
+                </Link>
+              </Col>
+              <Col md={{ span: 2, offset: 6 }} className="branding">
+                myFlix
+              </Col>
+            </Row>
+            <Row>
+              <Route
+                exact
+                path="/"
+                render={() => {
+                  if (!user)
+                    return (
+                      <LoginView onLoggedIn={user => this.onLoggedIn(user)} />
+                    );
+                  return <MoviesList movies={movies} />;
+                }}
               />
-            )}
-          />
+              <Route path="/register" render={() => <RegistrationView />} />
+              <Route
+                path="/movies/:movieId"
+                render={({ match }) => (
+                  <MovieView
+                    movie={movies.find(m => m._id === match.params.movieId)}
+                  />
+                )}
+              />
+              <Route
+                path="/genres/:name"
+                render={({ match }) => {
+                  if (!movies) return <div className="main-view" />;
+                  return (
+                    <GenreView
+                      genre={
+                        movies.find(m => m.Genre.Name === match.params.name)
+                          .Genre
+                      }
+                    />
+                  );
+                }}
+              />
+              <Route
+                path="/directors/:name"
+                render={({ match }) => {
+                  if (!movies) return <div className="main-view" />;
+                  return (
+                    <DirectorView
+                      director={
+                        movies.find(m => m.Director.Name === match.params.name)
+                          .Director
+                      }
+                    />
+                  );
+                }}
+              />
+
+              <Route
+                path="/update/:Username"
+                render={() => (
+                  <ProfileUpdate
+                    userInfo={userInfo}
+                    user={user}
+                    token={token}
+                    updateUser={data => this.updateUser(data)}
+                  />
+                )}
+              />
+            </Row>
+          </Container-fluid>
         </div>
       </Router>
     );
@@ -116,135 +214,4 @@ let mapStateToProps = state => {
 };
 
 // #4
-export default connect(mapStateToProps, { setMovies })(MainView);
-
-// updateUser(data) {
-//   this.setState({
-//     userInfo: data
-//   });
-//   localStorage.setItem("user", data.Username);
-// }
-
-// onMovieClick(movie) {
-//   window.location.hash = "#" + movie._id;
-//   this.setState({
-//     selectedMovieId: movie._id
-//   });
-// }
-
-// handleLogOut(authData) {
-//   this.setState({
-//     user: null
-//   });
-//   window.open("/", "_self");
-//   localStorage.removeItem("token");
-//   localStorage.removeItem("user");
-//   localStorage.removeItem("movies");
-//   this.setState({
-//     user: null
-//   });
-//   window.open("/", "_self");
-// }
-
-// render() {
-//   const { movies, userInfo, user, token } = this.state;
-
-//   if (!movies) return <div className="main-view" />;
-
-// !!user will make the value of user a Boolean - so, if user is null, then!!user will be false.However, if user has a truthy value, then!!user will be true!
-//     return (
-//       <div className="main-view">
-//         <Router>
-//           <Container-fluid>
-//             <Row className="rowBackground">
-//               <Col md={4}>
-//                 {!!user && (
-//                   <Button
-//                     className="fonts"
-//                     variant="link"
-//                     onClick={() => this.handleLogOut()}>
-//                     Logout
-//                   </Button>
-//                 )}
-//                 <Link to={`/users/${user}`}>
-//                   {!!user && (
-//                     <Button className="fonts" variant="link">
-//                       Profile
-//                     </Button>
-//                   )}
-//                   <Route path={`/users/${user}`} component={ProfileView} />
-//                 </Link>
-//               </Col>
-//               <Col md={{ span: 2, offset: 6 }} className="branding">
-//                 myFlix
-//               </Col>
-//             </Row>
-
-//             <Row>
-//               <Route
-//                 exact
-//                 path="/"
-//                 render={() => {
-//                   if (!user)
-//                     return (
-//                       <LoginView onLoggedIn={user => this.onLoggedIn(user)} />
-//                     );
-//                   return movies.map(m => <MovieCard key={m._id} movie={m} />);
-//                 }}
-//               />
-//               <Route path="/register" render={() => <RegistrationView />} />
-//               <Route
-//                 path="/movies/:movieId"
-//                 render={({ match }) => (
-//                   <MovieView
-//                     movie={movies.find(m => m._id === match.params.movieId)}
-//                   />
-//                 )}
-//               />
-//               <Route
-//                 path="/genres/:name"
-//                 render={({ match }) => {
-//                   if (!movies) return <div className="main-view" />;
-//                   return (
-//                     <GenreView
-//                       genre={
-//                         movies.find(m => m.Genre.Name === match.params.name)
-//                           .Genre
-//                       }
-//                     />
-//                   );
-//                 }}
-//               />
-//               <Route
-//                 path="/directors/:name"
-//                 render={({ match }) => {
-//                   if (!movies) return <div className="main-view" />;
-//                   return (
-//                     <DirectorView
-//                       director={
-//                         movies.find(m => m.Director.Name === match.params.name)
-//                           .Director
-//                       }
-//                     />
-//                   );
-//                 }}
-//               />
-
-//               <Route
-//                 path="/update/:Username"
-//                 render={() => (
-//                   <ProfileUpdate
-//                     userInfo={userInfo}
-//                     user={user}
-//                     token={token}
-//                     updateUser={data => this.updateUser(data)}
-//                   />
-//                 )}
-//               />
-//             </Row>
-//           </Container-fluid>
-//         </Router>
-//       </div>
-//     );
-//   }
-// }
+export default connect(mapStateToProps, { setMovies, setUser })(MainView);

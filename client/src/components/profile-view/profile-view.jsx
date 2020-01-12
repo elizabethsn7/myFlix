@@ -1,10 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { connect } from "react-redux";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import "./profile-view.scss";
+
+const mapStateToProps = state => {
+  const { movies } = state;
+  return { movies };
+};
 
 export class ProfileView extends React.Component {
   constructor() {
@@ -33,7 +39,7 @@ export class ProfileView extends React.Component {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
-        this.setState({
+        this.getUser({
           userData: response.data,
           username: response.data.Username,
           password: response.data.Password,
@@ -127,3 +133,4 @@ export class ProfileView extends React.Component {
     );
   }
 }
+export default connect(mapStateToProps)(ProfileView);

@@ -13,7 +13,6 @@ function visibilityFilter(state = "", action) {
   }
 }
 
-// movies is a function (aka reducer)-a  pure function; they depend on nothing but their parameters-they don't change anything. When concerned by the action, reducers simply return a new value.
 // The line in the code above:
 // visibilityFilter(state = '', action)
 // is an identity card - Every time an action is dispatched, this reducer will be called, and it’s responsible for addressing the action or not, hence the switch-case syntax
