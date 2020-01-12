@@ -14,13 +14,15 @@ function MoviesList(props) {
   let filteredMovies = movies;
 
   if (visibilityFilter !== "") {
-    filteredMovies = movies.filter(m => m.Title.includes(visibiltyFilter));
+    filteredMovies = movies.filter(m => m.Title.includes(visibilityFilter));
   }
   // MoviesList's props contains two properties (the second being movies, which was passed when the component was instantiated in the render() method of the MainView component)
   if (!movies) return <div className="main-view" />;
 
+  if (!movies) return <div className="main-view" />;
+
   return (
-    <div className="movie-list">
+    <div className="movies-list">
       <VisibilityFilterInput visibilityFilter={visibilityFilter} />
       {filteredMovies.map(m => (
         <MovieCard key={m._id} movie={m} />

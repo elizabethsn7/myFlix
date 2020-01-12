@@ -40,7 +40,6 @@ export class ProfileView extends React.Component {
       })
       .then(response => {
         this.getUser({
-          userData: response.data,
           username: response.data.Username,
           password: response.data.Password,
           email: response.data.Email,
@@ -78,7 +77,7 @@ export class ProfileView extends React.Component {
   }
 
   render() {
-    const { userData, username, email, birthday, favorites } = this.state;
+    const { username, email, birthday, favorites } = this.state;
 
     return (
       <Card className="profile-view" style={{ width: "32rem" }}>

@@ -27,7 +27,8 @@ export class MainView extends React.Component {
   constructor() {
     super();
     this.state = {
-      user: null
+      user: null,
+      userInfo: null
     };
   }
   componentDidMount() {
@@ -37,7 +38,7 @@ export class MainView extends React.Component {
         user: localStorage.getItem("user")
       });
       this.getMovies(accessToken);
-      //this.getUser(accessToken);
+      this.getUser(accessToken);
     }
   }
 
@@ -55,8 +56,6 @@ export class MainView extends React.Component {
       });
   }
 
-  // method, onLoggedIn, will be passed as a prop with the same name to LoginView
-  //will update the user state of the MainView component and will be called when the user has successfully logged in
   onLoggedIn(authData) {
     this.setState({
       user: authData.user.Username
@@ -64,7 +63,7 @@ export class MainView extends React.Component {
     localStorage.setItem("token", authData.token);
     localStorage.setItem("user", authData.user.Username);
     this.getMovies(authData.token);
-    this.getUser(authData.token);
+    this.setUser(authData.user);
   }
 
   getUser(token) {
@@ -106,7 +105,7 @@ export class MainView extends React.Component {
     this.setState({
       user: null
     });
-    window.open("/client", "_self");
+    window.open("/", "_self");
   }
 
   render() {
@@ -210,7 +209,10 @@ export class MainView extends React.Component {
 }
 // #3
 let mapStateToProps = state => {
-  return { movies: state.movies };
+  return {
+    movies: state.movies,
+    user: state.user
+  };
 };
 
 // #4

@@ -57638,7 +57638,7 @@ function MoviesList(props) {
 
   if (visibilityFilter !== "") {
     filteredMovies = movies.filter(function (m) {
-      return m.Title.includes(visibiltyFilter);
+      return m.Title.includes(visibilityFilter);
     });
   } // MoviesList's props contains two properties (the second being movies, which was passed when the component was instantiated in the render() method of the MainView component)
 
@@ -57646,8 +57646,11 @@ function MoviesList(props) {
   if (!movies) return _react.default.createElement("div", {
     className: "main-view"
   });
+  if (!movies) return _react.default.createElement("div", {
+    className: "main-view"
+  });
   return _react.default.createElement("div", {
-    className: "movie-list"
+    className: "movies-list"
   }, _react.default.createElement(_visibilityFilterInput.default, {
     visibilityFilter: visibilityFilter
   }), filteredMovies.map(function (m) {
@@ -59288,7 +59291,6 @@ function (_React$Component) {
         }
       }).then(function (response) {
         _this2.getUser({
-          userData: response.data,
           username: response.data.Username,
           password: response.data.Password,
           email: response.data.Email,
@@ -59328,7 +59330,6 @@ function (_React$Component) {
       var _this4 = this;
 
       var _this$state = this.state,
-          userData = _this$state.userData,
           username = _this$state.username,
           email = _this$state.email,
           birthday = _this$state.birthday,
@@ -59487,7 +59488,7 @@ function ProfileUpdate(props) {
       alert("Your account has been deleted");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.open("/", "_self");
+      window.open("/client", "_self");
     }).catch(function (e) {
       alert("Error deleting your account");
     });
@@ -59819,7 +59820,8 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MainView).call(this));
     _this.state = {
-      user: null
+      user: null,
+      userInfo: null
     };
     return _this;
   }
@@ -59833,7 +59835,8 @@ function (_React$Component) {
         this.setState({
           user: localStorage.getItem("user")
         });
-        this.getMovies(accessToken); //this.getUser(accessToken);
+        this.getMovies(accessToken);
+        this.getUser(accessToken);
       }
     }
   }, {
@@ -59851,9 +59854,7 @@ function (_React$Component) {
       }).catch(function (error) {
         console.log(error);
       });
-    } // method, onLoggedIn, will be passed as a prop with the same name to LoginView
-    //will update the user state of the MainView component and will be called when the user has successfully logged in
-
+    }
   }, {
     key: "onLoggedIn",
     value: function onLoggedIn(authData) {
@@ -59863,7 +59864,7 @@ function (_React$Component) {
       localStorage.setItem("token", authData.token);
       localStorage.setItem("user", authData.user.Username);
       this.getMovies(authData.token);
-      this.getUser(authData.token);
+      this.setUser(authData.user);
     }
   }, {
     key: "getUser",
@@ -59910,7 +59911,7 @@ function (_React$Component) {
       this.setState({
         user: null
       });
-      window.open("/client", "_self");
+      window.open("/", "_self");
     }
   }, {
     key: "render",
@@ -59921,7 +59922,7 @@ function (_React$Component) {
       var movies = this.props.movies;
       var user = this.state.user;
       return _react.default.createElement(_reactRouterDom.BrowserRouter, {
-        basename: "/"
+        basename: "/public"
       }, _react.default.createElement("div", {
         className: "main-view"
       }, _react.default.createElement("Container-fluid", null, _react.default.createElement(_Row.default, {
@@ -60026,7 +60027,8 @@ exports.MainView = MainView;
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
-    movies: state.movies
+    movies: state.movies,
+    user: state.user
   };
 }; // #4
 
@@ -60080,8 +60082,8 @@ function movies() {
   }
 }
 
-function user() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+function loggedInUser() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
@@ -60096,15 +60098,8 @@ function user() {
 var moviesApp = (0, _redux.combineReducers)({
   visibilityFilter: visibilityFilter,
   movies: movies,
-  user: user
-}); // The above code is the elegant way to keep the code clean and is the same as the code below:
-// function moviesApp(state = {}, action) {
-//   return {
-//     visibilityFilter: visibilityFilter(state.visibilityFilter, action),
-//     movies: movies(state.movies, action)
-//   };
-// }
-
+  loggedInUser: loggedInUser
+});
 var _default = moviesApp;
 exports.default = _default;
 },{"redux":"../node_modules/redux/es/redux.js","../actions/actions":"actions/actions.js"}],"index.scss":[function(require,module,exports) {
@@ -60214,7 +60209,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50158" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52937" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

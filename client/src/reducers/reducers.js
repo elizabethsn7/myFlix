@@ -26,7 +26,7 @@ function movies(state = [], action) {
   }
 }
 
-function user(state = "", action) {
+function loggedInUser(state = [], action) {
   switch (action.type) {
     case SET_USER:
       return action.value;
@@ -38,16 +38,7 @@ function user(state = "", action) {
 const moviesApp = combineReducers({
   visibilityFilter,
   movies,
-  user
+  loggedInUser
 });
-
-// The above code is the elegant way to keep the code clean and is the same as the code below:
-
-// function moviesApp(state = {}, action) {
-//   return {
-//     visibilityFilter: visibilityFilter(state.visibilityFilter, action),
-//     movies: movies(state.movies, action)
-//   };
-// }
 
 export default moviesApp;

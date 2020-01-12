@@ -64,7 +64,7 @@ export function ProfileUpdate(props) {
         alert("Your account has been deleted");
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.open("/", "_self");
+        window.open("/client", "_self");
       })
       .catch(e => {
         alert("Error deleting your account");
