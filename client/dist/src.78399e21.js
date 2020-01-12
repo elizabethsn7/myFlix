@@ -59488,7 +59488,7 @@ function ProfileUpdate(props) {
       alert("Your account has been deleted");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.open("/client", "_self");
+      window.open("/", "_self");
     }).catch(function (e) {
       alert("Error deleting your account");
     });
@@ -59922,7 +59922,7 @@ function (_React$Component) {
       var movies = this.props.movies;
       var user = this.state.user;
       return _react.default.createElement(_reactRouterDom.BrowserRouter, {
-        basename: "/public"
+        basename: "/client"
       }, _react.default.createElement("div", {
         className: "main-view"
       }, _react.default.createElement("Container-fluid", null, _react.default.createElement(_Row.default, {
@@ -60209,7 +60209,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52937" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57585" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

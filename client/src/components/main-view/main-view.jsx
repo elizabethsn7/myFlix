@@ -113,7 +113,7 @@ export class MainView extends React.Component {
     let { movies } = this.props;
     let { user } = this.state;
     return (
-      <Router basename={process.env.PUBLIC_URL}>
+      <Router basename="/client">
         <div className="main-view">
           <Container-fluid>
             <Row className="rowBackground">
