@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
-
+import { ProfileView } from "../profile-view/profile-view";
 import "./movie-view.scss";
 
 export function MovieView(props) {

@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { RegistrationView } from "../registration-view/registration-view";
 import Container from "react-bootstrap/Container";
-import Jumbotron from "react-bootstrap/Jumbotron";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 import "./login-view.scss";
@@ -74,6 +71,3 @@ export function LoginView(props) {
 }
 {
 }
-LoginView.propTypes = {
-  onLoggedIn: PropTypes.func.isRequired
-};

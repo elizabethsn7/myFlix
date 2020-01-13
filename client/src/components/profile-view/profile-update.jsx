@@ -114,7 +114,7 @@ export function ProfileUpdate(props) {
         </Form.Group>
         <div className="text-center">
           <Link to={`/`}>
-            <Button className="submitButton">Cancel</Button>
+            <Button className="submitButton">Back to Movies</Button>
           </Link>
           <Button className="submitButton" type="submit" onClick={handleUpdate}>
             Update

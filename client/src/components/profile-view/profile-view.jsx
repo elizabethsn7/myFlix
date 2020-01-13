@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
+import { setUser, toggleFavorite } from "../../actions/actions";
+
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -39,7 +41,8 @@ export class ProfileView extends React.Component {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
-        this.getUser({
+        this.setState({
+          userData: response.data,
           username: response.data.Username,
           password: response.data.Password,
           email: response.data.Email,
@@ -61,7 +64,9 @@ export class ProfileView extends React.Component {
           "user"
         )}/FavoriteMovies/${favoriteMovie}`,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
         }
       )
       .then(response => {
@@ -97,15 +102,15 @@ export class ProfileView extends React.Component {
                   <ul>
                     {favorites.map(favoriteMovie => (
                       <li key={favoriteMovie}>
-                        <p className="favorites">
+                        {/* <p className="favorites">
                           {
                             JSON.parse(localStorage.getItem("movies")).find(
                               movie => movie._id === favoriteMovie
                             ).Title
                           }
-                        </p>
+                        </p> */}
                         <Button
-                          className="submitButton"
+                          variant="secondary"
                           size="sm"
                           onClick={event =>
                             this.deleteMovieFromFavs(event, favoriteMovie)
