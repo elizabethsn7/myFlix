@@ -28,7 +28,7 @@ export class MainView extends React.Component {
     super();
     this.state = {
       user: null,
-      userInfo: null
+      userInfo: {}
     };
   }
   componentDidMount() {
@@ -111,9 +111,9 @@ export class MainView extends React.Component {
   render() {
     // #2
     let { movies } = this.props;
-    let { user } = this.state;
+    const { userInfo, user, token } = this.state;
     return (
-      <Router basename="/client">
+      <Router basename="client">
         <div className="main-view">
           <Container-fluid>
             <Row className="rowBackground">
@@ -188,7 +188,6 @@ export class MainView extends React.Component {
                   );
                 }}
               />
-
               <Route
                 path="/update/:Username"
                 render={() => (

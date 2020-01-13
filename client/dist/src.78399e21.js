@@ -59821,7 +59821,7 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MainView).call(this));
     _this.state = {
       user: null,
-      userInfo: null
+      userInfo: {}
     };
     return _this;
   }
@@ -59920,9 +59920,12 @@ function (_React$Component) {
 
       // #2
       var movies = this.props.movies;
-      var user = this.state.user;
+      var _this$state = this.state,
+          userInfo = _this$state.userInfo,
+          user = _this$state.user,
+          token = _this$state.token;
       return _react.default.createElement(_reactRouterDom.BrowserRouter, {
-        basename: "/client"
+        basename: "client"
       }, _react.default.createElement("div", {
         className: "main-view"
       }, _react.default.createElement("Container-fluid", null, _react.default.createElement(_Row.default, {
@@ -60209,7 +60212,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57585" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63337" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
