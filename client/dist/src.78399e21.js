@@ -59115,12 +59115,13 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(ProfileView).call(this));
     _this.state = {
+      userData: null,
       username: null,
       password: null,
       email: null,
       birthday: null,
-      userData: null,
-      favorites: []
+      favorites: [],
+      movies: []
     };
     return _this;
   }
@@ -59165,15 +59166,16 @@ function (_React$Component) {
 
       event.preventDefault();
       console.log(favoriteMovie);
+      var localUsername = localStorage.getItem("user");
 
-      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/FavoriteMovies/").concat(favoriteMovie), {
+      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localUsername, "/FavoriteMovies/").concat(favoriteMovie), {
         headers: {
           Authorization: "Bearer ".concat(localStorage.getItem("token"))
         }
       }).then(function (response) {
         _this3.getUser(localStorage.getItem("token"));
       }).catch(function (event) {
-        alert("something went wrong.");
+        alert(event, "something went wrong.");
       });
     }
   }, {
@@ -59191,6 +59193,7 @@ function (_React$Component) {
           email = _this$state.email,
           birthday = _this$state.birthday,
           favorites = _this$state.favorites;
+      console.log(favorites);
       return _react.default.createElement(_Card.default, {
         className: "profile-view",
         style: {
@@ -59205,8 +59208,10 @@ function (_React$Component) {
       }, "No favorites added"), favorites.length > 0 && _react.default.createElement("ul", null, favorites.map(function (favoriteMovie) {
         return _react.default.createElement("li", {
           key: favoriteMovie
-        }, _react.default.createElement(_Button.default, {
-          variant: "secondary",
+        }, _react.default.createElement("p", {
+          className: "favorites"
+        }, favorites), _react.default.createElement(_Button.default, {
+          className: "submitButton",
           size: "sm",
           onClick: function onClick(event) {
             return _this4.deleteMovieFromFavs(event, favoriteMovie);
@@ -60193,7 +60198,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61114" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53973" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

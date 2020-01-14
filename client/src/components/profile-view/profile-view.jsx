@@ -18,12 +18,13 @@ export class ProfileView extends React.Component {
   constructor() {
     super();
     this.state = {
+      userData: null,
       username: null,
       password: null,
       email: null,
       birthday: null,
-      userData: null,
-      favorites: []
+      favorites: [],
+      movies: []
     };
   }
 
@@ -58,11 +59,12 @@ export class ProfileView extends React.Component {
   deleteMovieFromFavs(event, favoriteMovie) {
     event.preventDefault();
     console.log(favoriteMovie);
+
+    let localUsername = localStorage.getItem("user");
+
     axios
       .delete(
-        `https://liz-flix.herokuapp.com/users/${localStorage.getItem(
-          "user"
-        )}/FavoriteMovies/${favoriteMovie}`,
+        `https://liz-flix.herokuapp.com/users/${localUsername}/FavoriteMovies/${favoriteMovie}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -73,7 +75,7 @@ export class ProfileView extends React.Component {
         this.getUser(localStorage.getItem("token"));
       })
       .catch(event => {
-        alert("something went wrong.");
+        alert(event, "something went wrong.");
       });
   }
 
@@ -83,6 +85,8 @@ export class ProfileView extends React.Component {
 
   render() {
     const { username, email, birthday, favorites } = this.state;
+
+    console.log(favorites);
 
     return (
       <Card className="profile-view" style={{ width: "32rem" }}>
@@ -102,15 +106,12 @@ export class ProfileView extends React.Component {
                   <ul>
                     {favorites.map(favoriteMovie => (
                       <li key={favoriteMovie}>
-                        {/* <p className="favorites">
-                          {
-                            JSON.parse(localStorage.getItem("movies")).find(
-                              movie => movie._id === favoriteMovie
-                            ).Title
-                          }
-                        </p> */}
+                        <p className="favorites">
+                          {favorites}
+                          {/* {favorites just returns all of the favorites in order but not on a separate line, however, it will produce as many lines as there are favorites in the array. I need to sync favorites back up to retrieve the movie._id from the movies collection but can't quite get it there. HELP!!!} */}
+                        </p>
                         <Button
-                          variant="secondary"
+                          className="submitButton"
                           size="sm"
                           onClick={event =>
                             this.deleteMovieFromFavs(event, favoriteMovie)
