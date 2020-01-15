@@ -59,23 +59,20 @@ export class ProfileView extends React.Component {
   deleteMovieFromFavs(event, favoriteMovie) {
     event.preventDefault();
     console.log(favoriteMovie);
-
-    let localUsername = localStorage.getItem("user");
-
     axios
       .delete(
-        `https://liz-flix.herokuapp.com/users/${localUsername}/FavoriteMovies/${favoriteMovie}`,
+        `https://liz-flix.herokuapp.com/users/${localStorage.getItem(
+          "user"
+        )}/FavoriteMovies/${favoriteMovie}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         }
       )
       .then(response => {
         this.getUser(localStorage.getItem("token"));
       })
       .catch(event => {
-        alert(event, "something went wrong.");
+        alert("something went wrong.");
       });
   }
 
@@ -86,9 +83,6 @@ export class ProfileView extends React.Component {
   render() {
     const { username, email, birthday, favorites } = this.state;
     const movies = this.props;
-
-    let filteredFavMovie = [];
-
     console.log(favorites);
 
     return (
@@ -100,7 +94,35 @@ export class ProfileView extends React.Component {
             <ListGroup.Item>E-Mail: {email}</ListGroup.Item>
             <ListGroup.Item>Birthday: {birthday}</ListGroup.Item>
             <ListGroup.Item>
-              <div className="favoriteMovies">Favorites:</div>
+              Favorites:
+              <div>
+                {favorites.length === 0 && (
+                  <div className="value">No favorites added</div>
+                )}
+                {favorites.length > 0 && (
+                  <ul>
+                    {favorites.map(favoriteMovie => (
+                      <li key={favoriteMovie}>
+                        {/* <p className="favorites">
+                          {
+                            JSON.parse(localStorage.getItem("movies")).find(
+                              movie => movie._id === favoriteMovie
+                            ).Title
+                          }
+                        </p> */}
+                        <Button
+                          className="submitButton"
+                          size="sm"
+                          onClick={event =>
+                            this.deleteMovieFromFavs(event, favoriteMovie)
+                          }>
+                          Delete
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </ListGroup.Item>
           </ListGroup>
         </Card.Body>

@@ -59166,16 +59166,15 @@ function (_React$Component) {
 
       event.preventDefault();
       console.log(favoriteMovie);
-      var localUsername = localStorage.getItem("user");
 
-      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localUsername, "/FavoriteMovies/").concat(favoriteMovie), {
+      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/FavoriteMovies/").concat(favoriteMovie), {
         headers: {
           Authorization: "Bearer ".concat(localStorage.getItem("token"))
         }
       }).then(function (response) {
         _this3.getUser(localStorage.getItem("token"));
       }).catch(function (event) {
-        alert(event, "something went wrong.");
+        alert("something went wrong.");
       });
     }
   }, {
@@ -59186,13 +59185,14 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
+      var _this4 = this;
+
       var _this$state = this.state,
           username = _this$state.username,
           email = _this$state.email,
           birthday = _this$state.birthday,
           favorites = _this$state.favorites;
       var movies = this.props;
-      var filteredFavMovie = [];
       console.log(favorites);
       return _react.default.createElement(_Card.default, {
         className: "profile-view",
@@ -59203,9 +59203,19 @@ function (_React$Component) {
         className: "profile-title"
       }, "Profile"), _react.default.createElement(_ListGroup.default, {
         className: "user-name"
-      }, _react.default.createElement(_ListGroup.default.Item, null, "Username: ", username), _react.default.createElement(_ListGroup.default.Item, null, "E-Mail: ", email), _react.default.createElement(_ListGroup.default.Item, null, "Birthday: ", birthday), _react.default.createElement(_ListGroup.default.Item, null, _react.default.createElement("div", {
-        className: "favoriteMovies"
-      }, "Favorites:")))), _react.default.createElement("div", null, _react.default.createElement(_reactRouterDom.Link, {
+      }, _react.default.createElement(_ListGroup.default.Item, null, "Username: ", username), _react.default.createElement(_ListGroup.default.Item, null, "E-Mail: ", email), _react.default.createElement(_ListGroup.default.Item, null, "Birthday: ", birthday), _react.default.createElement(_ListGroup.default.Item, null, "Favorites:", _react.default.createElement("div", null, favorites.length === 0 && _react.default.createElement("div", {
+        className: "value"
+      }, "No favorites added"), favorites.length > 0 && _react.default.createElement("ul", null, favorites.map(function (favoriteMovie) {
+        return _react.default.createElement("li", {
+          key: favoriteMovie
+        }, _react.default.createElement(_Button.default, {
+          className: "submitButton",
+          size: "sm",
+          onClick: function onClick(event) {
+            return _this4.deleteMovieFromFavs(event, favoriteMovie);
+          }
+        }, "Delete"));
+      })))))), _react.default.createElement("div", null, _react.default.createElement(_reactRouterDom.Link, {
         to: "/"
       }, _react.default.createElement(_Button.default, {
         className: "submitButton"
@@ -60185,7 +60195,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58373" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55447" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

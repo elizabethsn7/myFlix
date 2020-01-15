@@ -189,7 +189,7 @@ app.get(
 
 // Add a movie to a users list of  favorites
 app.post(
-  "/users/:Username/Movies/:MovieID",
+  "/users/:Username/:FavoriteMovies/:MovieID",
   passport.authenticate("jwt", { session: false }),
   function(req, res) {
     Users.findOneAndUpdate(
@@ -287,7 +287,26 @@ app.get(
   "/movies/:Title",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    Movies.findOne({ Title: req.params.Title })
+    Movies.findOne({
+      Title: req.params.Title
+    })
+      .then(movie => {
+        res.json(movie);
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send("Error " + err);
+      });
+  }
+);
+// Get movie by Title
+app.get(
+  "/movies/:Title",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Movies.findOne({
+      Title: req.params.Title
+    })
       .then(movie => {
         res.json(movie);
       })
