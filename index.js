@@ -286,20 +286,15 @@ app.get("/movies", passport.authenticate("jwt", { session: false }), function(
 app.get(
   "/movies/:Title",
   passport.authenticate("jwt", { session: false }),
-  function(req, res) {
-    Movies.findOne(
-      {
-        Title: req.params.Title
-      },
-      function(err, oneMovie) {
-        if (err) {
-          console.error(err);
-          res.status(500).send("Movies.findOneError: " + err);
-        } else {
-          res.json(oneMovie);
-        }
-      }
-    );
+  (req, res) => {
+    Movies.findOne({ Title: req.params.Title })
+      .then(movie => {
+        res.json(movie);
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send("Error " + err);
+      });
   }
 );
 

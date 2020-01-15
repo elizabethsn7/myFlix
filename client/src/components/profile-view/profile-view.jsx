@@ -85,6 +85,9 @@ export class ProfileView extends React.Component {
 
   render() {
     const { username, email, birthday, favorites } = this.state;
+    const movies = this.props;
+
+    let filteredFavMovie = [];
 
     console.log(favorites);
 
@@ -97,32 +100,7 @@ export class ProfileView extends React.Component {
             <ListGroup.Item>E-Mail: {email}</ListGroup.Item>
             <ListGroup.Item>Birthday: {birthday}</ListGroup.Item>
             <ListGroup.Item>
-              Favorites:
-              <div>
-                {favorites.length === 0 && (
-                  <div className="value">No favorites added</div>
-                )}
-                {favorites.length > 0 && (
-                  <ul>
-                    {favorites.map(favoriteMovie => (
-                      <li key={favoriteMovie}>
-                        <p className="favorites">
-                          {favorites}
-                          {/* {favorites just returns all of the favorites in order but not on a separate line, however, it will produce as many lines as there are favorites in the array. I need to sync favorites back up to retrieve the movie._id from the movies collection but can't quite get it there. HELP!!!} */}
-                        </p>
-                        <Button
-                          className="submitButton"
-                          size="sm"
-                          onClick={event =>
-                            this.deleteMovieFromFavs(event, favoriteMovie)
-                          }>
-                          Delete
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <div className="favoriteMovies">Favorites:</div>
             </ListGroup.Item>
           </ListGroup>
         </Card.Body>

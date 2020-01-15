@@ -47,7 +47,6 @@ export class MainView extends React.Component {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
-        // #1
         this.props.setMovies(response.data);
       })
       .catch(function(error) {
