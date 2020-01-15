@@ -59167,7 +59167,7 @@ function (_React$Component) {
       event.preventDefault();
       console.log(favoriteMovie);
 
-      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/FavoriteMovies/").concat(favoriteMovie), {
+      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/movies/").concat(favoriteMovie), {
         headers: {
           Authorization: "Bearer ".concat(localStorage.getItem("token"))
         }
@@ -59208,7 +59208,7 @@ function (_React$Component) {
       }, "No favorites added"), favorites.length > 0 && _react.default.createElement("ul", null, favorites.map(function (favoriteMovie) {
         return _react.default.createElement("li", {
           key: favoriteMovie
-        }, _react.default.createElement(_Button.default, {
+        }, movies.Title, _react.default.createElement(_Button.default, {
           className: "submitButton",
           size: "sm",
           onClick: function onClick(event) {
@@ -59273,7 +59273,7 @@ function MovieView(props) {
   function handleSubmit(event) {
     event.preventDefault();
 
-    _axios.default.post("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/FavoriteMovies/").concat(movie._id), {
+    _axios.default.post("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/movies/").concat(movie._id), {
       Username: localStorage.getItem("user")
     }, {
       headers: {
@@ -60195,7 +60195,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55447" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57154" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -63,7 +63,7 @@ export class ProfileView extends React.Component {
       .delete(
         `https://liz-flix.herokuapp.com/users/${localStorage.getItem(
           "user"
-        )}/FavoriteMovies/${favoriteMovie}`,
+        )}/movies/${favoriteMovie}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         }
@@ -103,13 +103,7 @@ export class ProfileView extends React.Component {
                   <ul>
                     {favorites.map(favoriteMovie => (
                       <li key={favoriteMovie}>
-                        {/* <p className="favorites">
-                          {
-                            JSON.parse(localStorage.getItem("movies")).find(
-                              movie => movie._id === favoriteMovie
-                            ).Title
-                          }
-                        </p> */}
+                        {movies.Title}
                         <Button
                           className="submitButton"
                           size="sm"

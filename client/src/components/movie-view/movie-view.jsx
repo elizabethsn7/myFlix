@@ -17,7 +17,7 @@ export function MovieView(props) {
       .post(
         `https://liz-flix.herokuapp.com/users/${localStorage.getItem(
           "user"
-        )}/FavoriteMovies/${movie._id}`,
+        )}/movies/${movie._id}`,
         {
           Username: localStorage.getItem("user")
         },
