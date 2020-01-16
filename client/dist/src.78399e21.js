@@ -59433,7 +59433,7 @@ function ProfileUpdate(props) {
       alert("Your account has been deleted");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.open("/", "_self");
+      window.open("/client", "_self");
     }).catch(function (e) {
       alert("Error deleting your account");
     });
@@ -59857,7 +59857,7 @@ function (_React$Component) {
           user = _this$state.user,
           token = _this$state.token;
       return _react.default.createElement(_reactRouterDom.BrowserRouter, {
-        basename: "client"
+        basename: "/client"
       }, _react.default.createElement("div", {
         className: "main-view"
       }, _react.default.createElement("Container-fluid", null, _react.default.createElement(_Row.default, {
@@ -60044,7 +60044,12 @@ var moviesApp = (0, _redux.combineReducers)({
 });
 var _default = moviesApp;
 exports.default = _default;
-},{"redux":"../node_modules/redux/es/redux.js","../actions/actions":"actions/actions.js"}],"index.jsx":[function(require,module,exports) {
+},{"redux":"../node_modules/redux/es/redux.js","../actions/actions":"actions/actions.js"}],"index.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 require("bootstrap/dist/css/bootstrap.min.css");
@@ -60066,6 +60071,8 @@ var _reactRedux = require("react-redux");
 var _mainView = _interopRequireDefault(require("./components/main-view/main-view"));
 
 var _reducers = _interopRequireDefault(require("./reducers/reducers"));
+
+require("./index.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -60116,7 +60123,7 @@ function (_React$Component) {
 var container = document.getElementsByClassName("app-container")[0]; // Tell React to render our app in the root DOM element
 
 _reactDom.default.render(_react.default.createElement(MyFlixApplication), container);
-},{"bootstrap/dist/css/bootstrap.min.css":"../node_modules/bootstrap/dist/css/bootstrap.min.css","jquery":"../node_modules/jquery/dist/jquery.js","popper.js":"../node_modules/popper.js/dist/esm/popper.js","bootstrap/dist/js/bootstrap.bundle.min":"../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","./components/main-view/main-view":"components/main-view/main-view.jsx","./reducers/reducers":"reducers/reducers.js"}],"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"bootstrap/dist/css/bootstrap.min.css":"../node_modules/bootstrap/dist/css/bootstrap.min.css","jquery":"../node_modules/jquery/dist/jquery.js","popper.js":"../node_modules/popper.js/dist/esm/popper.js","bootstrap/dist/js/bootstrap.bundle.min":"../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","./components/main-view/main-view":"components/main-view/main-view.jsx","./reducers/reducers":"reducers/reducers.js","./index.scss":"index.scss"}],"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -60144,7 +60151,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60810" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57828" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
