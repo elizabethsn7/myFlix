@@ -1,20 +1,25 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 
 import { setFilter } from "../../actions/actions";
 
 function VisibilityFilterInput(props) {
   return (
-    <Form.Control
-      onChange={e => props.setFilter(e.target.value)}
-      value={props.visibilityFilter}
-      placeholder="filter"
-    />
+    <Container>
+      <Row>
+        <Col md={4}>
+          <Form.Control
+            onChange={e => props.setFilter(e.target.value)}
+            value={props.visibilityFilter}
+            placeholder="filter"
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 }
-// Notice that it, (VisibilityFilterInput), already has visibilityFilter in its props. This is because you’ll be passing the same visibilityFilter prop you have in the MoviesList component—something only possible because the VisibilityFilterInput component you just created will be used as a sub-component of MoviesList
-
 export default connect(null, { setFilter })(VisibilityFilterInput);

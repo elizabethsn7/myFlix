@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import { RegistrationView } from "../registration-view/registration-view";
 import Container from "react-bootstrap/Container";
@@ -7,7 +8,6 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 
 import "./login-view.scss";
-import axios from "axios";
 
 export function LoginView(props) {
   const [username, setUsername] = useState("");

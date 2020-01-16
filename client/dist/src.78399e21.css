@@ -54,27 +54,6 @@ h1 {
   background-color: #ffffff;
   color: #202020;
 }
-.profile-title {
-  font-family: "Poiret One";
-  font-size: 2em;
-}
-
-.submitButton {
-  font-size: 1.25em;
-  font-family: "Poiret One";
-  background-color: #202020;
-  margin: 2px;
-  border: none;
-}
-
-.submitButton:hover {
-  background-color: #ffffff;
-  color: #202020;
-}
-
-.card {
-  color: #202020;
-}
 .movie-view {
   font-family: "Open Sans", sans-serif;
 }
@@ -105,6 +84,27 @@ h1 {
 
 .movie-director {
   width: 50%;
+}
+.profile-title {
+  font-family: "Poiret One";
+  font-size: 2em;
+}
+
+.submitButton {
+  font-size: 1.25em;
+  font-family: "Poiret One";
+  background-color: #202020;
+  margin: 2px;
+  border: none;
+}
+
+.submitButton:hover {
+  background-color: #ffffff;
+  color: #202020;
+}
+
+.card {
+  color: #202020;
 }
 .director-name {
   font-size: 2em;
@@ -144,7 +144,7 @@ h1 {
 }
 .row {
   margin: 0 0 0 0;
-  padding: 10px;
+  padding: 5px;
   justify-content: center;
 }
 
@@ -170,9 +170,6 @@ h1 {
   .branding {
     display: none;
   }
-}
-.my-flix {
-  color: steelblue;
 }
 
 /*# sourceMappingURL=/src.78399e21.css.map */

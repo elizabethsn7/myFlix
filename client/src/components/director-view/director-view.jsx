@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes, { checkPropTypes } from "prop-types";
 import { Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";

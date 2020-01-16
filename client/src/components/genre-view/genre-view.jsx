@@ -35,9 +35,3 @@ export class GenreView extends React.Component {
     );
   }
 }
-
-// <Card.Title>{genre.Name}</Card.Title>
-//                   <Card.Text>Genre Description: {genre.Description}</Card.Text>
-//                   <Link to={`/`}>
-//                     <Button variant="link">Back</Button>
-//                   </Link>

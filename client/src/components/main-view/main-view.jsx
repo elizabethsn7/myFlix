@@ -2,15 +2,13 @@ import React from "react";
 import axios from "axios";
 import { connect } from "react-redux";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-// #0
-import { setMovies, setUser, toggleFavorites } from "../../actions/actions";
+import { setMovies, setUser } from "../../actions/actions";
 import MoviesList from "../movies-list/movies-list";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { LoginView } from "../login-view/login-view";
-import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { RegistrationView } from "../registration-view/registration-view";
 import { ProfileView } from "../profile-view/profile-view";
@@ -48,6 +46,7 @@ export class MainView extends React.Component {
       })
       .then(response => {
         this.props.setMovies(response.data);
+        localStorage.setItem("movies", JSON.stringify(response.data));
       })
       .catch(function(error) {
         console.log(error);
@@ -78,20 +77,6 @@ export class MainView extends React.Component {
       });
   }
 
-  // getFavorites(token) {
-  //   axios
-  //     .get("https://liz-flix.herokuapp.com/users/FavoriteMovies", {
-  //       headers: { Authorization: `Bearer ${token}` }
-  //     })
-  //     .then(response => {
-  //       // #1
-  //       this.props.toggleFavorites(response.data);
-  //     })
-  //     .catch(function(error) {
-  //       console.log(error);
-  //     });
-  // }
-
   updateUser(data) {
     this.setState({
       userInfo: data
@@ -121,7 +106,6 @@ export class MainView extends React.Component {
   }
 
   render() {
-    // #2
     let { movies } = this.props;
 
     const { userInfo, user, token } = this.state;
@@ -219,7 +203,7 @@ export class MainView extends React.Component {
     );
   }
 }
-// #3
+
 let mapStateToProps = state => {
   return {
     movies: state.movies,
@@ -227,9 +211,7 @@ let mapStateToProps = state => {
   };
 };
 
-// #4
 export default connect(mapStateToProps, {
   setMovies,
-  setUser,
-  toggleFavorites
+  setUser
 })(MainView);

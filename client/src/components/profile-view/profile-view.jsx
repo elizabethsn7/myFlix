@@ -103,7 +103,17 @@ export class ProfileView extends React.Component {
                   <ul>
                     {favorites.map(favoriteMovie => (
                       <li key={favoriteMovie}>
-                        {movies.Title}
+                        <p>
+                          <Link to={`/movies/${favoriteMovie}`}>
+                            <h5 className="movie-link link">
+                              {
+                                JSON.parse(localStorage.getItem("movies")).find(
+                                  movie => movie._id === favoriteMovie
+                                ).Title
+                              }
+                            </h5>
+                          </Link>
+                        </p>
                         <Button
                           className="submitButton"
                           size="sm"
