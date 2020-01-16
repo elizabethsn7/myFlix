@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import MainView from "./components/main-view/main-view";
 import moviesApp from "./reducers/reducers";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.scss";
 
 const store = createStore(moviesApp);
 

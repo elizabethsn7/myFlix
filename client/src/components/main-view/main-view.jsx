@@ -110,7 +110,7 @@ export class MainView extends React.Component {
 
     const { userInfo, user, token } = this.state;
     return (
-      <Router basename="client">
+      <Router basename="/client">
         <div className="main-view">
           <Container-fluid>
             <Row className="rowBackground">
