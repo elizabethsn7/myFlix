@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main-view.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main-view.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable react/prop-types */
+/* eslint-disable no-shadow */
+/* eslint-disable react/no-unused-state */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable no-console */
+import React from 'react';
+import axios from 'axios';
+import {connect} from 'react-redux';
+import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import MoviesList from '../movies-list/movies-list';
+
+import {setMovies, setUser} from '../../actions/actions';
+import {LoginView} from '../login-view/login-view';
+import {MovieView} from '../movie-view/movie-view';
+import {RegistrationView} from '../registration-view/registration-view';
+import {ProfileView} from '../profile-view/profile-view';
+import {ProfileUpdate} from '../profile-view/profile-update';
+import {DirectorView} from '../director-view/director-view';
+import {GenreView} from '../genre-view/genre-view';
+
+
+import './main-view.scss';
+
+export class MainView extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      movies: [],
+      user: null,
+      userInfo: {},
+    };
+  }
+
+  componentDidMount() {
+    const accessToken = localStorage.getItem('token');
+    if (accessToken !== null) {
+      this.setState({
+        user: localStorage.getItem('user'),
+      });
+      this.getMovies(accessToken);
+    }
+  }
+
+  /**
+  * info is sent to post from LoginView
+  * @function onLoggedIn
+  * @param {object} authData from LoginView
+  * @returns {state}
+  * @returns {localStorage}
+  */
+
+  onLoggedIn(authData) {
+    console.log(authData);
+    this.setState({
+      user: authData.user.Username,
+    });
+    localStorage.setItem('token', authData.token);
+    localStorage.setItem('user', authData.user.Username);
+    this.getMovies(authData.token);
+  }
+
+  onMovieClick(movie) {
+    window.location.hash = `#${movie._id}`;
+    this.setState({
+      selectedMovieId: movie._id,
+    });
+  }
+
+  /**
+   * when logged in submits a get request for movie list
+   * @function getMovies
+   * @param {number} token
+   * @returns {array} movies
+   */
+  getMovies(token) {
+    axios
+      .get('https://liz-flix.herokuapp.com/movies', {
+        headers: {Authorization: `Bearer ${token}`},
+      })
+      .then((response) => {
+        this.props.setMovies(response.data);
+        localStorage.setItem('movies', JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  /**
+   * @function getUser
+   * @param {string} user
+   * @param {string} token
+   * @returns {object} user info
+   */
+  getUser(token) {
+    axios
+      .get('https://liz-flix.herokuapp.com/users/', {
+        headers: {Authorization: `Bearer ${token}`},
+      })
+      .then((response) => {
+        // Assign the result to the state
+        this.props.setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  updateUser(data) {
+    this.setState({
+      userInfo: data,
+    });
+    localStorage.setItem('user', data.Username);
+  }
+
+  handleLogOut(authData) {
+    this.setState({
+      user: null,
+    });
+    window.open('/client', '_self');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('movies');
+    this.setState({
+      user: null,
+    });
+  }
+
+  render() {
+    const {movies} = this.props;
+
+    const {userInfo, user, token} = this.state;
+    return (
+      &lt;Router basename="/client">
+        &lt;div className="main-view">
+          &lt;Container fluid>
+            &lt;Row className="rowBackground">
+              &lt;Col md={4}>
+                {!!user &amp;&amp; (
+                  &lt;Button
+                    className="fonts"
+                    variant="link"
+                    onClick={() => this.handleLogOut()}
+                  >
+                    Logout
+                  &lt;/Button>
+                )}
+                &lt;Link to={`/users/${user}`}>
+                  {!!user &amp;&amp; (
+                    &lt;Button className="fonts" variant="link">
+                      Profile
+                    &lt;/Button>
+                  )}
+                  &lt;Route path={`/users/${user}`} component={ProfileView} />
+                &lt;/Link>
+              &lt;/Col>
+              &lt;Col md={{span: 2, offset: 6}} className="branding">
+                myFlix
+              &lt;/Col>
+            &lt;/Row>
+            &lt;Row>
+              &lt;Route
+                exact
+                path="/"
+                render={() => {
+                  if (!user) {
+                    return (
+                      &lt;LoginView onLoggedIn={(user) => this.onLoggedIn(user)} />
+                    );
+                  }
+                  return &lt;MoviesList movies={movies} />;
+                }}
+              />
+              &lt;Route path="/register" render={() => &lt;RegistrationView />} />
+              &lt;Route
+                path="/movies/:movieId"
+                render={({match}) => (
+                  &lt;MovieView
+                    movie={movies.find((m) => m._id === match.params.movieId)}
+                  />
+                )}
+              />
+              &lt;Route
+                path="/genres/:name"
+                render={({match}) => {
+                  if (!movies) return &lt;div className="main-view" />;
+                  return (
+                    &lt;GenreView
+                      genre={
+                        movies.find((m) => m.Genre.Name === match.params.name)
+                          .Genre
+                      }
+                    />
+                  );
+                }}
+              />
+              &lt;Route
+                path="/directors/:name"
+                render={({match}) => {
+                  if (!movies) return &lt;div className="main-view" />;
+                  return (
+                    &lt;DirectorView
+                      director={
+                        movies.find((m) => m.Director.Name === match.params.name)
+                          .Director
+                      }
+                    />
+                  );
+                }}
+              />
+              &lt;Route
+                path="/update/:Username"
+                render={() => (
+                  &lt;ProfileUpdate
+                    userInfo={userInfo}
+                    user={user}
+                    token={token}
+                    updateUser={(data) => this.updateUser(data)}
+                  />
+                )}
+              />
+            &lt;/Row>
+          &lt;/Container>
+        &lt;/div>
+      &lt;/Router>
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  movies: state.movies,
+  user: state.user,
+});
+
+export default connect(mapStateToProps, {
+  setMovies,
+  setUser,
+})(MainView);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#getMovies">getMovies</a></li><li><a href="global.html#getUser">getUser</a></li><li><a href="global.html#onLoggedIn">onLoggedIn</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri May 29 2020 14:50:36 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

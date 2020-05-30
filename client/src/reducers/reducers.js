@@ -1,13 +1,13 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
 import {
   SET_FILTER,
   SET_MOVIES,
   SET_USER,
-  TOGGLE_FAVORITES
-} from "../actions/actions";
+  TOGGLE_FAVORITE,
+} from '../actions/actions';
 
-function visibilityFilter(state = "", action) {
+function visibilityFilter(state = '', action) {
   switch (action.type) {
     case SET_FILTER:
       return action.value;
@@ -36,7 +36,7 @@ function loggedInUser(state = [], action) {
 
 function toggleFavorites(state = [], action) {
   switch (action.type) {
-    case TOGGLE_FAVORITES:
+    case TOGGLE_FAVORITE:
       return action.value;
     default:
       return state;
@@ -47,7 +47,7 @@ const moviesApp = combineReducers({
   visibilityFilter,
   movies,
   loggedInUser,
-  toggleFavorites
+  toggleFavorites,
 });
 
 export default moviesApp;

@@ -1,34 +1,33 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
-import "./registration-view.scss";
+import './registration-view.scss';
 
-export function RegistrationView(props) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthday, setBirthday] = useState("");
+export function RegistrationView() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthday, setBirthday] = useState('');
 
-  const handleRegister = e => {
+  const handleRegister = (e) => {
     e.preventDefault();
     axios
-      .post("https://liz-flix.herokuapp.com/users", {
+      .post('https://liz-flix.herokuapp.com/users', {
         Username: username,
         Password: password,
         Email: email,
-        Birthday: birthday
+        Birthday: birthday,
       })
-      .then(response => {
-        const data = response.data;
+      .then((response) => {
+        const { data } = response;
         console.log(data);
-        window.open("/client", "_self");
+        window.open('/client', '_self');
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e.response);
       });
   };
@@ -42,7 +41,7 @@ export function RegistrationView(props) {
             type="text"
             name="username"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </Form.Group>
 
@@ -52,7 +51,7 @@ export function RegistrationView(props) {
             type="password"
             name="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
 
@@ -62,7 +61,7 @@ export function RegistrationView(props) {
             type="date"
             name="birthday"
             value={birthday}
-            onChange={e => setBirthday(e.target.value)}
+            onChange={(e) => setBirthday(e.target.value)}
           />
         </Form.Group>
 
@@ -72,20 +71,22 @@ export function RegistrationView(props) {
             type="email"
             name="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
 
         <Button
           className="registerButton"
           type="submit"
-          onClick={handleRegister}>
+          onClick={handleRegister}
+        >
           Register
         </Button>
-        <Link to={`/`}>
+        <Link to="/">
           <Button className="submitButton">Cancel</Button>
         </Link>
       </Form>
     </Container>
   );
 }
+export default RegistrationView;

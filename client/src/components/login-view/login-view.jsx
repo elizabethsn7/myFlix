@@ -1,31 +1,39 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import { RegistrationView } from "../registration-view/registration-view";
-import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
+/* eslint-disable no-console */
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import './login-view.scss';
 
-import "./login-view.scss";
 
 export function LoginView(props) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = e => {
+  /**
+   * post username to login
+   * @function handleSubmit
+   * @param {event}
+   * @return {object} User info
+   */
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("https://liz-flix.herokuapp.com/login", {
+      .post('https://liz-flix.herokuapp.com/login', {
         Username: username,
-        Password: password
+        Password: password,
       })
-      .then(response => {
-        const data = response.data;
+      .then((response) => {
+        const { data } = response;
         props.onLoggedIn(data);
       })
-      .catch(e => {
-        console.log("no_such_user");
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -45,7 +53,7 @@ export function LoginView(props) {
                 type="text"
                 placeholder="Enter username"
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </Form.Group>
             <Form.Group controlId="formBasicPassword" as={Col}>
@@ -54,14 +62,14 @@ export function LoginView(props) {
                 type="password"
                 placeholder="Password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
           </Form.Row>
           <Button className="submitButton" type="button" onClick={handleSubmit}>
             Submit
           </Button>
-          <Link to={`/register`}>
+          <Link to="/register">
             <Button className="submitButton">Register</Button>
           </Link>
         </Form>
@@ -69,5 +77,7 @@ export function LoginView(props) {
     </div>
   );
 }
-{
-}
+LoginView.propTypes = {
+  onLoggedIn: PropTypes.func.isRequired,
+};
+export default LoginView;

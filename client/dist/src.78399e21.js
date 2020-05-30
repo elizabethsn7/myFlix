@@ -13629,7 +13629,7 @@ exports.default = _default;
 },{}],"../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js":[function(require,module,exports) {
 var define;
 var global = arguments[3];
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function (obj) { return typeof obj; }; } else { _typeof = function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function (obj) { return typeof obj; }; } else { _typeof = function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /*!
   * Bootstrap v4.4.1 (https://getbootstrap.com/)
@@ -26450,7 +26450,7 @@ if ("development" !== "production") {
       }
 
       var eventName = 'on' + eventNameSuffix;
-      var isSupported = eventName in document;
+      var isSupported = (eventName in document);
 
       if (!isSupported) {
         var element = document.createElement('div');
@@ -49856,9 +49856,14 @@ var _react = _interopRequireDefault(require("react"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ReactReduxContext = _react.default.createContext(null);
+var ReactReduxContext = /*#__PURE__*/_react.default.createContext(null);
 
 exports.ReactReduxContext = ReactReduxContext;
+
+if ("development" !== 'production') {
+  ReactReduxContext.displayName = 'ReactRedux';
+}
+
 var _default = ReactReduxContext;
 exports.default = _default;
 },{"react":"../node_modules/react/index.js"}],"../node_modules/react-redux/es/utils/batch.js":[function(require,module,exports) {
@@ -49901,50 +49906,75 @@ var _batch = require("./batch");
 // encapsulates the subscription logic for connecting a component to the redux store, as
 // well as nesting subscriptions of descendant components, so that we can ensure the
 // ancestor components re-render before descendants
-var CLEARED = null;
 var nullListeners = {
   notify: function notify() {}
 };
 
 function createListenerCollection() {
-  var batch = (0, _batch.getBatch)(); // the current/next pattern is copied from redux's createStore code.
-  // TODO: refactor+expose that code to be reusable here?
-
-  var current = [];
-  var next = [];
+  var batch = (0, _batch.getBatch)();
+  var first = null;
+  var last = null;
   return {
     clear: function clear() {
-      next = CLEARED;
-      current = CLEARED;
+      first = null;
+      last = null;
     },
     notify: function notify() {
-      var listeners = current = next;
       batch(function () {
-        for (var i = 0; i < listeners.length; i++) {
-          listeners[i]();
+        var listener = first;
+
+        while (listener) {
+          listener.callback();
+          listener = listener.next;
         }
       });
     },
     get: function get() {
-      return next;
+      var listeners = [];
+      var listener = first;
+
+      while (listener) {
+        listeners.push(listener);
+        listener = listener.next;
+      }
+
+      return listeners;
     },
-    subscribe: function subscribe(listener) {
+    subscribe: function subscribe(callback) {
       var isSubscribed = true;
-      if (next === current) next = current.slice();
-      next.push(listener);
+      var listener = last = {
+        callback: callback,
+        next: null,
+        prev: last
+      };
+
+      if (listener.prev) {
+        listener.prev.next = listener;
+      } else {
+        first = listener;
+      }
+
       return function unsubscribe() {
-        if (!isSubscribed || current === CLEARED) return;
+        if (!isSubscribed || first === null) return;
         isSubscribed = false;
-        if (next === current) next = current.slice();
-        next.splice(next.indexOf(listener), 1);
+
+        if (listener.next) {
+          listener.next.prev = listener.prev;
+        } else {
+          last = listener.prev;
+        }
+
+        if (listener.prev) {
+          listener.prev.next = listener.next;
+        } else {
+          first = listener.next;
+        }
       };
     }
   };
 }
 
-var Subscription =
-/*#__PURE__*/
-function () {
+var Subscription = /*#__PURE__*/function () {
   function Subscription(store, parentSub) {
     this.store = store;
     this.parentSub = parentSub;
@@ -50050,15 +50080,18 @@ function Provider(_ref) {
   }, children);
 }
 
-Provider.propTypes = {
-  store: _propTypes.default.shape({
-    subscribe: _propTypes.default.func.isRequired,
-    dispatch: _propTypes.default.func.isRequired,
-    getState: _propTypes.default.func.isRequired
-  }),
-  context: _propTypes.default.object,
-  children: _propTypes.default.any
-};
+if ("development" !== 'production') {
+  Provider.propTypes = {
+    store: _propTypes.default.shape({
+      subscribe: _propTypes.default.func.isRequired,
+      dispatch: _propTypes.default.func.isRequired,
+      getState: _propTypes.default.func.isRequired
+    }),
+    context: _propTypes.default.object,
+    children: _propTypes.default.any
+  };
+}
+
 var _default = Provider;
 exports.default = _default;
 },{"react":"../node_modules/react/index.js","prop-types":"../node_modules/prop-types/index.js","./Context":"../node_modules/react-redux/es/components/Context.js","../utils/Subscription":"../node_modules/react-redux/es/utils/Subscription.js"}],"../node_modules/@babel/runtime/helpers/esm/extends.js":[function(require,module,exports) {
@@ -50156,11 +50189,14 @@ var MEMO_STATICS = {
 };
 var TYPE_STATICS = {};
 TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
+TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
 
 function getStatics(component) {
+  // React v16.11 and below
   if (reactIs.isMemo(component)) {
     return MEMO_STATICS;
-  }
+  } // React v16.12 and above
+
 
   return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
 }
@@ -50210,54 +50246,7 @@ function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
 
 module.exports = hoistNonReactStatics;
 
-},{"react-is":"../node_modules/react-is/index.js"}],"../node_modules/invariant/browser.js":[function(require,module,exports) {
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-'use strict';
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var invariant = function (condition, format, a, b, c, d, e, f) {
-  if ("development" !== 'production') {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  }
-
-  if (!condition) {
-    var error;
-
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
-      error.name = 'Invariant Violation';
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-
-    throw error;
-  }
-};
-
-module.exports = invariant;
-},{}],"../node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js":[function(require,module,exports) {
+},{"react-is":"../node_modules/react-is/index.js"}],"../node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50275,8 +50264,7 @@ var _react = require("react");
 // which may cause missed updates; we also must ensure the store subscription
 // is created synchronously, otherwise a store update may occur before the
 // subscription is created and an inconsistent state may be observed
-var isHopefullyDomEnvironment = typeof window !== 'undefined' && typeof window.document !== 'undefined' && typeof window.document.createElement !== 'undefined';
-var useIsomorphicLayoutEffect = isHopefullyDomEnvironment ? _react.useLayoutEffect : _react.useEffect;
+var useIsomorphicLayoutEffect = typeof window !== 'undefined' && typeof window.document !== 'undefined' && typeof window.document.createElement !== 'undefined' ? _react.useLayoutEffect : _react.useEffect;
 exports.useIsomorphicLayoutEffect = useIsomorphicLayoutEffect;
 },{"react":"../node_modules/react/index.js"}],"../node_modules/react-redux/es/components/connectAdvanced.js":[function(require,module,exports) {
 "use strict";
@@ -50291,8 +50279,6 @@ var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/exten
 var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
 
 var _hoistNonReactStatics = _interopRequireDefault(require("hoist-non-react-statics"));
-
-var _invariant = _interopRequireDefault(require("invariant"));
 
 var _react = _interopRequireWildcard(require("react"));
 
@@ -50325,6 +50311,102 @@ var stringifyComponent = function stringifyComponent(Comp) {
 function storeStateUpdatesReducer(state, action) {
   var updateCount = state[1];
   return [action.payload, updateCount + 1];
+}
+
+function useIsomorphicLayoutEffectWithArgs(effectFunc, effectArgs, dependencies) {
+  (0, _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect)(function () {
+    return effectFunc.apply(void 0, effectArgs);
+  }, dependencies);
+}
+
+function captureWrapperProps(lastWrapperProps, lastChildProps, renderIsScheduled, wrapperProps, actualChildProps, childPropsFromStoreUpdate, notifyNestedSubs) {
+  // We want to capture the wrapper props and child props we used for later comparisons
+  lastWrapperProps.current = wrapperProps;
+  lastChildProps.current = actualChildProps;
+  renderIsScheduled.current = false; // If the render was from a store update, clear out that reference and cascade the subscriber update
+
+  if (childPropsFromStoreUpdate.current) {
+    childPropsFromStoreUpdate.current = null;
+    notifyNestedSubs();
+  }
+}
+
+function subscribeUpdates(shouldHandleStateChanges, store, subscription, childPropsSelector, lastWrapperProps, lastChildProps, renderIsScheduled, childPropsFromStoreUpdate, notifyNestedSubs, forceComponentUpdateDispatch) {
+  // If we're not subscribed to the store, nothing to do here
+  if (!shouldHandleStateChanges) return; // Capture values for checking if and when this component unmounts
+
+  var didUnsubscribe = false;
+  var lastThrownError = null; // We'll run this callback every time a store subscription update propagates to this component
+
+  var checkForUpdates = function checkForUpdates() {
+    if (didUnsubscribe) {
+      // Don't run stale listeners.
+      // Redux doesn't guarantee unsubscriptions happen until next dispatch.
+      return;
+    }
+
+    var latestStoreState = store.getState();
+    var newChildProps, error;
+
+    try {
+      // Actually run the selector with the most recent store state and wrapper props
+      // to determine what the child props should be
+      newChildProps = childPropsSelector(latestStoreState, lastWrapperProps.current);
+    } catch (e) {
+      error = e;
+      lastThrownError = e;
+    }
+
+    if (!error) {
+      lastThrownError = null;
+    } // If the child props haven't changed, nothing to do here - cascade the subscription update
+
+
+    if (newChildProps === lastChildProps.current) {
+      if (!renderIsScheduled.current) {
+        notifyNestedSubs();
+      }
+    } else {
+      // Save references to the new child props.  Note that we track the "child props from store update"
+      // as a ref instead of a useState/useReducer because we need a way to determine if that value has
+      // been processed.  If this went into useState/useReducer, we couldn't clear out the value without
+      // forcing another re-render, which we don't want.
+      lastChildProps.current = newChildProps;
+      childPropsFromStoreUpdate.current = newChildProps;
+      renderIsScheduled.current = true; // If the child props _did_ change (or we caught an error), this wrapper component needs to re-render
+
+      forceComponentUpdateDispatch({
+        type: 'STORE_UPDATED',
+        payload: {
+          error: error
+        }
+      });
+    }
+  }; // Actually subscribe to the nearest connected ancestor (or store)
+
+
+  subscription.onStateChange = checkForUpdates;
+  subscription.trySubscribe(); // Pull data from the store after first render in case the store has
+  // changed since we began.
+
+  checkForUpdates();
+
+  var unsubscribeWrapper = function unsubscribeWrapper() {
+    didUnsubscribe = true;
+    subscription.tryUnsubscribe();
+    subscription.onStateChange = null;
+
+    if (lastThrownError) {
+      // It's possible that we caught an error due to a bad mapState function, but the
+      // parent re-rendered without this component and we're about to unmount.
+      // This shouldn't happen as long as we do top-down subscriptions correctly, but
+      // if we ever do those wrong, this throw will surface the error in our tests.
+      // In that case, throw the error from here so it doesn't get lost.
+      throw lastThrownError;
+    }
+  };
+
+  return unsubscribeWrapper;
 }
 
 var initStateUpdates = function initStateUpdates() {
@@ -50372,14 +50454,27 @@ _ref) {
       _ref2$context = _ref2.context,
       context = _ref2$context === void 0 ? _Context.ReactReduxContext : _ref2$context,
       connectOptions = (0, _objectWithoutPropertiesLoose2.default)(_ref2, ["getDisplayName", "methodName", "renderCountProp", "shouldHandleStateChanges", "storeKey", "withRef", "forwardRef", "context"]);
-  (0, _invariant.default)(renderCountProp === undefined, "renderCountProp is removed. render counting is built into the latest React Dev Tools profiling extension");
-  (0, _invariant.default)(!withRef, 'withRef is removed. To access the wrapped instance, use a ref on the connected component');
-  var customStoreWarningMessage = 'To use a custom Redux store for specific components, create a custom React context with ' + "React.createContext(), and pass the context object to React Redux's Provider and specific components" + ' like: <Provider context={MyContext}><ConnectedComponent context={MyContext} /></Provider>. ' + 'You may also pass a {context : MyContext} option to connect';
-  (0, _invariant.default)(storeKey === 'store', 'storeKey has been removed and does not do anything. ' + customStoreWarningMessage);
+
+  if ("development" !== 'production') {
+    if (renderCountProp !== undefined) {
+      throw new Error("renderCountProp is removed. render counting is built into the latest React Dev Tools profiling extension");
+    }
+
+    if (withRef) {
+      throw new Error('withRef is removed. To access the wrapped instance, use a ref on the connected component');
+    }
+
+    var customStoreWarningMessage = 'To use a custom Redux store for specific components, create a custom React context with ' + "React.createContext(), and pass the context object to React Redux's Provider and specific components" + ' like: <Provider context={MyContext}><ConnectedComponent context={MyContext} /></Provider>. ' + 'You may also pass a {context : MyContext} option to connect';
+
+    if (storeKey !== 'store') {
+      throw new Error('storeKey has been removed and does not do anything. ' + customStoreWarningMessage);
+    }
+  }
+
   var Context = context;
   return function wrapWithConnect(WrappedComponent) {
-    if ("development" !== 'production') {
-      (0, _invariant.default)((0, _reactIs.isValidElementType)(WrappedComponent), "You must pass a component to the function returned by " + (methodName + ". Instead received " + stringifyComponent(WrappedComponent)));
+    if ("development" !== 'production' && !(0, _reactIs.isValidElementType)(WrappedComponent)) {
+      throw new Error("You must pass a component to the function returned by " + (methodName + ". Instead received " + stringifyComponent(WrappedComponent)));
     }
 
     var wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
@@ -50432,7 +50527,11 @@ _ref) {
 
       var didStoreComeFromProps = Boolean(props.store) && Boolean(props.store.getState) && Boolean(props.store.dispatch);
       var didStoreComeFromContext = Boolean(contextValue) && Boolean(contextValue.store);
-      (0, _invariant.default)(didStoreComeFromProps || didStoreComeFromContext, "Could not find \"store\" in the context of " + ("\"" + displayName + "\". Either wrap the root component in a <Provider>, ") + "or pass a custom React context provider to <Provider> and the corresponding " + ("React context consumer to " + displayName + " in connect options.")); // Based on the previous check, one of these must be true
+
+      if ("development" !== 'production' && !didStoreComeFromProps && !didStoreComeFromContext) {
+        throw new Error("Could not find \"store\" in the context of " + ("\"" + displayName + "\". Either wrap the root component in a <Provider>, ") + "or pass a custom React context provider to <Provider> and the corresponding " + ("React context consumer to " + displayName + " in connect options."));
+      } // Based on the previous check, one of these must be true
+
 
       var store = didStoreComeFromProps ? props.store : contextValue.store;
       var childPropsSelector = (0, _react.useMemo)(function () {
@@ -50509,95 +50608,9 @@ _ref) {
       // about useLayoutEffect in SSR, so we try to detect environment and fall back to
       // just useEffect instead to avoid the warning, since neither will run anyway.
 
-      (0, _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect)(function () {
-        // We want to capture the wrapper props and child props we used for later comparisons
-        lastWrapperProps.current = wrapperProps;
-        lastChildProps.current = actualChildProps;
-        renderIsScheduled.current = false; // If the render was from a store update, clear out that reference and cascade the subscriber update
+      useIsomorphicLayoutEffectWithArgs(captureWrapperProps, [lastWrapperProps, lastChildProps, renderIsScheduled, wrapperProps, actualChildProps, childPropsFromStoreUpdate, notifyNestedSubs]); // Our re-subscribe logic only runs when the store/subscription setup changes
 
-        if (childPropsFromStoreUpdate.current) {
-          childPropsFromStoreUpdate.current = null;
-          notifyNestedSubs();
-        }
-      }); // Our re-subscribe logic only runs when the store/subscription setup changes
-
-      (0, _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect)(function () {
-        // If we're not subscribed to the store, nothing to do here
-        if (!shouldHandleStateChanges) return; // Capture values for checking if and when this component unmounts
-
-        var didUnsubscribe = false;
-        var lastThrownError = null; // We'll run this callback every time a store subscription update propagates to this component
-
-        var checkForUpdates = function checkForUpdates() {
-          if (didUnsubscribe) {
-            // Don't run stale listeners.
-            // Redux doesn't guarantee unsubscriptions happen until next dispatch.
-            return;
-          }
-
-          var latestStoreState = store.getState();
-          var newChildProps, error;
-
-          try {
-            // Actually run the selector with the most recent store state and wrapper props
-            // to determine what the child props should be
-            newChildProps = childPropsSelector(latestStoreState, lastWrapperProps.current);
-          } catch (e) {
-            error = e;
-            lastThrownError = e;
-          }
-
-          if (!error) {
-            lastThrownError = null;
-          } // If the child props haven't changed, nothing to do here - cascade the subscription update
-
-
-          if (newChildProps === lastChildProps.current) {
-            if (!renderIsScheduled.current) {
-              notifyNestedSubs();
-            }
-          } else {
-            // Save references to the new child props.  Note that we track the "child props from store update"
-            // as a ref instead of a useState/useReducer because we need a way to determine if that value has
-            // been processed.  If this went into useState/useReducer, we couldn't clear out the value without
-            // forcing another re-render, which we don't want.
-            lastChildProps.current = newChildProps;
-            childPropsFromStoreUpdate.current = newChildProps;
-            renderIsScheduled.current = true; // If the child props _did_ change (or we caught an error), this wrapper component needs to re-render
-
-            forceComponentUpdateDispatch({
-              type: 'STORE_UPDATED',
-              payload: {
-                error: error
-              }
-            });
-          }
-        }; // Actually subscribe to the nearest connected ancestor (or store)
-
-
-        subscription.onStateChange = checkForUpdates;
-        subscription.trySubscribe(); // Pull data from the store after first render in case the store has
-        // changed since we began.
-
-        checkForUpdates();
-
-        var unsubscribeWrapper = function unsubscribeWrapper() {
-          didUnsubscribe = true;
-          subscription.tryUnsubscribe();
-          subscription.onStateChange = null;
-
-          if (lastThrownError) {
-            // It's possible that we caught an error due to a bad mapState function, but the
-            // parent re-rendered without this component and we're about to unmount.
-            // This shouldn't happen as long as we do top-down subscriptions correctly, but
-            // if we ever do those wrong, this throw will surface the error in our tests.
-            // In that case, throw the error from here so it doesn't get lost.
-            throw lastThrownError;
-          }
-        };
-
-        return unsubscribeWrapper;
-      }, [store, subscription, childPropsSelector]); // Now that all that's done, we can finally try to actually render the child component.
+      useIsomorphicLayoutEffectWithArgs(subscribeUpdates, [shouldHandleStateChanges, store, subscription, childPropsSelector, lastWrapperProps, lastChildProps, renderIsScheduled, childPropsFromStoreUpdate, notifyNestedSubs, forceComponentUpdateDispatch], [store, subscription, childPropsSelector]); // Now that all that's done, we can finally try to actually render the child component.
       // We memoize the elements for the rendered child component as an optimization.
 
       var renderedWrappedComponent = (0, _react.useMemo)(function () {
@@ -50642,14 +50655,13 @@ _ref) {
     return (0, _hoistNonReactStatics.default)(Connect, WrappedComponent);
   };
 }
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","hoist-non-react-statics":"../node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js","invariant":"../node_modules/invariant/browser.js","react":"../node_modules/react/index.js","react-is":"../node_modules/react-is/index.js","../utils/Subscription":"../node_modules/react-redux/es/utils/Subscription.js","../utils/useIsomorphicLayoutEffect":"../node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js","./Context":"../node_modules/react-redux/es/components/Context.js"}],"../node_modules/react-redux/es/utils/shallowEqual.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","hoist-non-react-statics":"../node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js","react":"../node_modules/react/index.js","react-is":"../node_modules/react-is/index.js","../utils/Subscription":"../node_modules/react-redux/es/utils/Subscription.js","../utils/useIsomorphicLayoutEffect":"../node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js","./Context":"../node_modules/react-redux/es/components/Context.js"}],"../node_modules/react-redux/es/utils/shallowEqual.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = shallowEqual;
-var hasOwn = Object.prototype.hasOwnProperty;
 
 function is(x, y) {
   if (x === y) {
@@ -50671,7 +50683,7 @@ function shallowEqual(objA, objB) {
   if (keysA.length !== keysB.length) return false;
 
   for (var i = 0; i < keysA.length; i++) {
-    if (!hasOwn.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
+    if (!Object.prototype.hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
       return false;
     }
   }
@@ -51192,7 +51204,7 @@ function createConnect(_temp) {
   };
 }
 
-var _default = createConnect();
+var _default = /*#__PURE__*/createConnect();
 
 exports.default = _default;
 },{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","../components/connectAdvanced":"../node_modules/react-redux/es/components/connectAdvanced.js","../utils/shallowEqual":"../node_modules/react-redux/es/utils/shallowEqual.js","./mapDispatchToProps":"../node_modules/react-redux/es/connect/mapDispatchToProps.js","./mapStateToProps":"../node_modules/react-redux/es/connect/mapStateToProps.js","./mergeProps":"../node_modules/react-redux/es/connect/mergeProps.js","./selectorFactory":"../node_modules/react-redux/es/connect/selectorFactory.js"}],"../node_modules/react-redux/es/hooks/useReduxContext.js":[function(require,module,exports) {
@@ -51205,11 +51217,7 @@ exports.useReduxContext = useReduxContext;
 
 var _react = require("react");
 
-var _invariant = _interopRequireDefault(require("invariant"));
-
 var _Context = require("../components/Context");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * A hook to access the value of the `ReactReduxContext`. This is a low-level
@@ -51229,10 +51237,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 function useReduxContext() {
   var contextValue = (0, _react.useContext)(_Context.ReactReduxContext);
-  (0, _invariant.default)(contextValue, 'could not find react-redux context value; please ensure the component is wrapped in a <Provider>');
+
+  if ("development" !== 'production' && !contextValue) {
+    throw new Error('could not find react-redux context value; please ensure the component is wrapped in a <Provider>');
+  }
+
   return contextValue;
 }
-},{"react":"../node_modules/react/index.js","invariant":"../node_modules/invariant/browser.js","../components/Context":"../node_modules/react-redux/es/components/Context.js"}],"../node_modules/react-redux/es/hooks/useStore.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../components/Context":"../node_modules/react-redux/es/components/Context.js"}],"../node_modules/react-redux/es/hooks/useStore.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51250,7 +51262,7 @@ var _useReduxContext2 = require("./useReduxContext");
 /**
  * Hook factory, which creates a `useStore` hook bound to a given context.
  *
- * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
+ * @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
  * @returns {Function} A `useStore` hook bound to the specified context.
  */
 function createStoreHook(context) {
@@ -51285,7 +51297,7 @@ function createStoreHook(context) {
  */
 
 
-var useStore = createStoreHook();
+var useStore = /*#__PURE__*/createStoreHook();
 exports.useStore = useStore;
 },{"react":"../node_modules/react/index.js","../components/Context":"../node_modules/react-redux/es/components/Context.js","./useReduxContext":"../node_modules/react-redux/es/hooks/useReduxContext.js"}],"../node_modules/react-redux/es/hooks/useDispatch.js":[function(require,module,exports) {
 "use strict";
@@ -51303,7 +51315,7 @@ var _useStore = require("./useStore");
 /**
  * Hook factory, which creates a `useDispatch` hook bound to a given context.
  *
- * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
+ * @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
  * @returns {Function} A `useDispatch` hook bound to the specified context.
  */
 function createDispatchHook(context) {
@@ -51340,7 +51352,7 @@ function createDispatchHook(context) {
  */
 
 
-var useDispatch = createDispatchHook();
+var useDispatch = /*#__PURE__*/createDispatchHook();
 exports.useDispatch = useDispatch;
 },{"../components/Context":"../node_modules/react-redux/es/components/Context.js","./useStore":"../node_modules/react-redux/es/hooks/useStore.js"}],"../node_modules/react-redux/es/hooks/useSelector.js":[function(require,module,exports) {
 "use strict";
@@ -51352,8 +51364,6 @@ exports.createSelectorHook = createSelectorHook;
 exports.useSelector = void 0;
 
 var _react = require("react");
-
-var _invariant = _interopRequireDefault(require("invariant"));
 
 var _useReduxContext2 = require("./useReduxContext");
 
@@ -51390,13 +51400,11 @@ function useSelectorWithStoreAndSubscription(selector, equalityFn, store, contex
       selectedState = latestSelectedState.current;
     }
   } catch (err) {
-    var errorMessage = "An error occurred while selecting the store state: " + err.message + ".";
-
     if (latestSubscriptionCallbackError.current) {
-      errorMessage += "\nThe error may be correlated with this previous error:\n" + latestSubscriptionCallbackError.current.stack + "\n\nOriginal stack trace:";
+      err.message += "\nThe error may be correlated with this previous error:\n" + latestSubscriptionCallbackError.current.stack + "\n\n";
     }
 
-    throw new Error(errorMessage);
+    throw err;
   }
 
   (0, _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect)(function () {
@@ -51437,7 +51445,7 @@ function useSelectorWithStoreAndSubscription(selector, equalityFn, store, contex
 /**
  * Hook factory, which creates a `useSelector` hook bound to a given context.
  *
- * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
+ * @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
  * @returns {Function} A `useSelector` hook bound to the specified context.
  */
 
@@ -51455,7 +51463,9 @@ function createSelectorHook(context) {
       equalityFn = refEquality;
     }
 
-    (0, _invariant.default)(selector, "You must pass a selector to useSelectors");
+    if ("development" !== 'production' && !selector) {
+      throw new Error("You must pass a selector to useSelectors");
+    }
 
     var _useReduxContext = useReduxContext(),
         store = _useReduxContext.store,
@@ -51489,9 +51499,9 @@ function createSelectorHook(context) {
  */
 
 
-var useSelector = createSelectorHook();
+var useSelector = /*#__PURE__*/createSelectorHook();
 exports.useSelector = useSelector;
-},{"react":"../node_modules/react/index.js","invariant":"../node_modules/invariant/browser.js","./useReduxContext":"../node_modules/react-redux/es/hooks/useReduxContext.js","../utils/Subscription":"../node_modules/react-redux/es/utils/Subscription.js","../utils/useIsomorphicLayoutEffect":"../node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js","../components/Context":"../node_modules/react-redux/es/components/Context.js"}],"../node_modules/react-redux/es/utils/reactBatchedUpdates.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./useReduxContext":"../node_modules/react-redux/es/hooks/useReduxContext.js","../utils/Subscription":"../node_modules/react-redux/es/utils/Subscription.js","../utils/useIsomorphicLayoutEffect":"../node_modules/react-redux/es/utils/useIsomorphicLayoutEffect.js","../components/Context":"../node_modules/react-redux/es/components/Context.js"}],"../node_modules/react-redux/es/utils/reactBatchedUpdates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53282,9 +53292,9 @@ function invariant(condition, message) {
 
   if (isProduction) {
     throw new Error(prefix);
-  } else {
-    throw new Error(prefix + ": " + (message || ''));
   }
+
+  throw new Error(prefix + ": " + (message || ''));
 }
 
 var _default = invariant;
@@ -54235,24 +54245,8 @@ function createMemoryHistory(props) {
   };
   return history;
 }
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","resolve-pathname":"../node_modules/resolve-pathname/esm/resolve-pathname.js","value-equal":"../node_modules/value-equal/esm/value-equal.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js","tiny-invariant":"../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../node_modules/@babel/runtime/helpers/inheritsLoose.js":[function(require,module,exports) {
-function _inheritsLoose(subClass, superClass) {
-  subClass.prototype = Object.create(superClass.prototype);
-  subClass.prototype.constructor = subClass;
-  subClass.__proto__ = superClass;
-}
-
-module.exports = _inheritsLoose;
-},{}],"../node_modules/gud/index.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","resolve-pathname":"../node_modules/resolve-pathname/esm/resolve-pathname.js","value-equal":"../node_modules/value-equal/esm/value-equal.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js","tiny-invariant":"../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../node_modules/mini-create-react-context/dist/esm/index.js":[function(require,module,exports) {
 var global = arguments[3];
-'use strict';
-
-var key = '__global_unique_id__';
-
-module.exports = function () {
-  return global[key] = (global[key] || 0) + 1;
-};
-},{}],"../node_modules/mini-create-react-context/dist/esm/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54262,11 +54256,9 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/inheritsLoose"));
+var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/inheritsLoose"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _gud = _interopRequireDefault(require("gud"));
 
 var _tinyWarning = _interopRequireDefault(require("tiny-warning"));
 
@@ -54277,6 +54269,12 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 var MAX_SIGNED_31_BIT_INT = 1073741823;
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : {};
+
+function getUniqueId() {
+  var key = '__global_unique_id__';
+  return commonjsGlobal[key] = (commonjsGlobal[key] || 0) + 1;
+}
 
 function objectIs(x, y) {
   if (x === y) {
@@ -54316,11 +54314,9 @@ function onlyChild(children) {
 function createReactContext(defaultValue, calculateChangedBits) {
   var _Provider$childContex, _Consumer$contextType;
 
-  var contextProp = '__create-react-context-' + (0, _gud.default)() + '__';
+  var contextProp = '__create-react-context-' + getUniqueId() + '__';
 
-  var Provider =
-  /*#__PURE__*/
-  function (_Component) {
+  var Provider = /*#__PURE__*/function (_Component) {
     (0, _inheritsLoose2.default)(Provider, _Component);
 
     function Provider() {
@@ -54372,9 +54368,7 @@ function createReactContext(defaultValue, calculateChangedBits) {
 
   Provider.childContextTypes = (_Provider$childContex = {}, _Provider$childContex[contextProp] = _propTypes.default.object.isRequired, _Provider$childContex);
 
-  var Consumer =
-  /*#__PURE__*/
-  function (_Component2) {
+  var Consumer = /*#__PURE__*/function (_Component2) {
     (0, _inheritsLoose2.default)(Consumer, _Component2);
 
     function Consumer() {
@@ -54445,7 +54439,7 @@ function createReactContext(defaultValue, calculateChangedBits) {
 var index = _react.default.createContext || createReactContext;
 var _default = index;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","@babel/runtime/helpers/inheritsLoose":"../node_modules/@babel/runtime/helpers/inheritsLoose.js","prop-types":"../node_modules/prop-types/index.js","gud":"../node_modules/gud/index.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js"}],"../node_modules/isarray/index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","@babel/runtime/helpers/esm/inheritsLoose":"../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","prop-types":"../node_modules/prop-types/index.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js"}],"../node_modules/isarray/index.js":[function(require,module,exports) {
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
@@ -54894,7 +54888,7 @@ exports.useLocation = useLocation;
 exports.useParams = useParams;
 exports.useRouteMatch = useRouteMatch;
 exports.withRouter = withRouter;
-exports.__RouterContext = exports.Switch = exports.StaticRouter = exports.Router = exports.Route = exports.MemoryRouter = void 0;
+exports.__RouterContext = exports.__HistoryContext = exports.Switch = exports.StaticRouter = exports.Router = exports.Route = exports.MemoryRouter = void 0;
 
 var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/inheritsLoose"));
 
@@ -54929,18 +54923,24 @@ var createNamedContext = function createNamedContext(name) {
   return context;
 };
 
-var context =
-/*#__PURE__*/
-createNamedContext("Router");
+var historyContext = /*#__PURE__*/createNamedContext("Router-History"); // TODO: Replace with React.createContext once we can assume React 16+
+
+exports.__HistoryContext = historyContext;
+
+var createNamedContext$1 = function createNamedContext(name) {
+  var context = (0, _miniCreateReactContext.default)();
+  context.displayName = name;
+  return context;
+};
+
+var context = /*#__PURE__*/createNamedContext$1("Router");
 /**
  * The public API for putting history on context.
  */
 
 exports.__RouterContext = context;
 
-var Router =
-/*#__PURE__*/
-function (_React$Component) {
+var Router = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(Router, _React$Component);
 
   Router.computeRootMatch = function computeRootMatch(pathname) {
@@ -55000,14 +55000,16 @@ function (_React$Component) {
 
   _proto.render = function render() {
     return _react.default.createElement(context.Provider, {
-      children: this.props.children || null,
       value: {
         history: this.props.history,
         location: this.state.location,
         match: Router.computeRootMatch(this.state.location.pathname),
         staticContext: this.props.staticContext
       }
-    });
+    }, _react.default.createElement(historyContext.Provider, {
+      children: this.props.children || null,
+      value: this.props.history
+    }));
   };
 
   return Router;
@@ -55031,9 +55033,7 @@ if ("development" !== "production") {
  */
 
 
-var MemoryRouter =
-/*#__PURE__*/
-function (_React$Component) {
+var MemoryRouter = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(MemoryRouter, _React$Component);
 
   function MemoryRouter() {
@@ -55076,9 +55076,7 @@ if ("development" !== "production") {
   };
 }
 
-var Lifecycle =
-/*#__PURE__*/
-function (_React$Component) {
+var Lifecycle = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(Lifecycle, _React$Component);
 
   function Lifecycle() {
@@ -55324,9 +55322,7 @@ function evalChildrenDev(children, props, path) {
  */
 
 
-var Route =
-/*#__PURE__*/
-function (_React$Component) {
+var Route = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(Route, _React$Component);
 
   function Route() {
@@ -55435,9 +55431,7 @@ function noop() {}
  */
 
 
-var StaticRouter =
-/*#__PURE__*/
-function (_React$Component) {
+var StaticRouter = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(StaticRouter, _React$Component);
 
   function StaticRouter() {
@@ -55531,9 +55525,7 @@ if ("development" !== "production") {
  */
 
 
-var Switch =
-/*#__PURE__*/
-function (_React$Component) {
+var Switch = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(Switch, _React$Component);
 
   function Switch() {
@@ -55624,7 +55616,7 @@ function useHistory() {
     !(typeof useContext === "function") ? "development" !== "production" ? (0, _tinyInvariant.default)(false, "You must use React >= 16.8 in order to use useHistory()") : (0, _tinyInvariant.default)(false) : void 0;
   }
 
-  return useContext(context).history;
+  return useContext(historyContext);
 }
 
 function useLocation() {
@@ -55649,7 +55641,9 @@ function useRouteMatch(path) {
     !(typeof useContext === "function") ? "development" !== "production" ? (0, _tinyInvariant.default)(false, "You must use React >= 16.8 in order to use useRouteMatch()") : (0, _tinyInvariant.default)(false) : void 0;
   }
 
-  return path ? matchPath(useLocation().pathname, path) : useContext(context).match;
+  var location = useLocation();
+  var match = useContext(context).match;
+  return path ? matchPath(location.pathname, path) : match;
 }
 
 if ("development" !== "production") {
@@ -55679,26 +55673,93 @@ if ("development" !== "production") {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var _exportNames = {
-  BrowserRouter: true,
-  HashRouter: true,
-  Link: true,
-  NavLink: true
-};
+Object.defineProperty(exports, "MemoryRouter", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.MemoryRouter;
+  }
+});
+Object.defineProperty(exports, "Prompt", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.Prompt;
+  }
+});
+Object.defineProperty(exports, "Redirect", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.Redirect;
+  }
+});
+Object.defineProperty(exports, "Route", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.Route;
+  }
+});
+Object.defineProperty(exports, "Router", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.Router;
+  }
+});
+Object.defineProperty(exports, "StaticRouter", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.StaticRouter;
+  }
+});
+Object.defineProperty(exports, "Switch", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.Switch;
+  }
+});
+Object.defineProperty(exports, "generatePath", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.generatePath;
+  }
+});
+Object.defineProperty(exports, "matchPath", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.matchPath;
+  }
+});
+Object.defineProperty(exports, "useHistory", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.useHistory;
+  }
+});
+Object.defineProperty(exports, "useLocation", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.useLocation;
+  }
+});
+Object.defineProperty(exports, "useParams", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.useParams;
+  }
+});
+Object.defineProperty(exports, "useRouteMatch", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.useRouteMatch;
+  }
+});
+Object.defineProperty(exports, "withRouter", {
+  enumerable: true,
+  get: function () {
+    return _reactRouter.withRouter;
+  }
+});
 exports.NavLink = exports.Link = exports.HashRouter = exports.BrowserRouter = void 0;
 
 var _reactRouter = require("react-router");
-
-Object.keys(_reactRouter).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _reactRouter[key];
-    }
-  });
-});
 
 var _inheritsLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/inheritsLoose"));
 
@@ -55721,9 +55782,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /**
  * The public API for a <Router> that uses HTML5 history.
  */
-var BrowserRouter =
-/*#__PURE__*/
-function (_React$Component) {
+var BrowserRouter = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(BrowserRouter, _React$Component);
 
   function BrowserRouter() {
@@ -55770,9 +55829,7 @@ if ("development" !== "production") {
  */
 
 
-var HashRouter =
-/*#__PURE__*/
-function (_React$Component) {
+var HashRouter = /*#__PURE__*/function (_React$Component) {
   (0, _inheritsLoose2.default)(HashRouter, _React$Component);
 
   function HashRouter() {
@@ -55867,6 +55924,8 @@ var LinkAnchor = forwardRef(function (_ref, forwardedRef) {
   } else {
     props.ref = innerRef;
   }
+  /* eslint-disable-next-line jsx-a11y/anchor-has-content */
+
 
   return _react.default.createElement("a", props);
 });
@@ -55962,11 +56021,12 @@ var NavLink = forwardRef$1(function (_ref, forwardedRef) {
       exact = _ref.exact,
       isActiveProp = _ref.isActive,
       locationProp = _ref.location,
+      sensitive = _ref.sensitive,
       strict = _ref.strict,
       styleProp = _ref.style,
       to = _ref.to,
       innerRef = _ref.innerRef,
-      rest = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["aria-current", "activeClassName", "activeStyle", "className", "exact", "isActive", "location", "strict", "style", "to", "innerRef"]);
+      rest = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["aria-current", "activeClassName", "activeStyle", "className", "exact", "isActive", "location", "sensitive", "strict", "style", "to", "innerRef"]);
   return _react.default.createElement(_reactRouter.__RouterContext.Consumer, null, function (context) {
     !context ? "development" !== "production" ? (0, _tinyInvariant.default)(false, "You should not use <NavLink> outside a <Router>") : (0, _tinyInvariant.default)(false) : void 0;
     var currentLocation = locationProp || context.location;
@@ -55977,6 +56037,7 @@ var NavLink = forwardRef$1(function (_ref, forwardedRef) {
     var match = escapedPath ? (0, _reactRouter.matchPath)(currentLocation.pathname, {
       path: escapedPath,
       exact: exact,
+      sensitive: sensitive,
       strict: strict
     }) : null;
     var isActive = !!(isActiveProp ? isActiveProp(match, currentLocation) : match);
@@ -56013,58 +56074,12 @@ if ("development" !== "production") {
     exact: _propTypes.default.bool,
     isActive: _propTypes.default.func,
     location: _propTypes.default.object,
+    sensitive: _propTypes.default.bool,
     strict: _propTypes.default.bool,
     style: _propTypes.default.object
   });
 }
-},{"react-router":"../node_modules/react-router/esm/react-router.js","@babel/runtime/helpers/esm/inheritsLoose":"../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../node_modules/react/index.js","history":"../node_modules/history/esm/history.js","prop-types":"../node_modules/prop-types/index.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"actions/actions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.setMovies = setMovies;
-exports.setFilter = setFilter;
-exports.setUser = setUser;
-exports.toggleFavorite = toggleFavorite;
-exports.TOGGLE_FAVORITE = exports.SET_USER = exports.SET_FILTER = exports.SET_MOVIES = void 0;
-var SET_MOVIES = "SET_MOVIES";
-exports.SET_MOVIES = SET_MOVIES;
-var SET_FILTER = "SET_FILTER";
-exports.SET_FILTER = SET_FILTER;
-var SET_USER = "SET_USER";
-exports.SET_USER = SET_USER;
-var TOGGLE_FAVORITE = "TOGGLE_FAVORITE";
-exports.TOGGLE_FAVORITE = TOGGLE_FAVORITE;
-
-function setMovies(value) {
-  return {
-    type: SET_MOVIES,
-    value: value
-  };
-}
-
-function setFilter(value) {
-  return {
-    type: SET_FILTER,
-    value: value
-  };
-}
-
-function setUser(value) {
-  return {
-    type: SET_USER,
-    value: value
-  };
-}
-
-function toggleFavorite(value) {
-  return {
-    type: TOGGLE_FAVORITE,
-    value: value
-  };
-}
-},{}],"../node_modules/classnames/index.js":[function(require,module,exports) {
+},{"react-router":"../node_modules/react-router/esm/react-router.js","@babel/runtime/helpers/esm/inheritsLoose":"../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../node_modules/react/index.js","history":"../node_modules/history/esm/history.js","prop-types":"../node_modules/prop-types/index.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../node_modules/classnames/index.js":[function(require,module,exports) {
 var define;
 /*!
   Copyright (c) 2017 Jed Watson.
@@ -56219,51 +56234,7 @@ function createBootstrapComponent(Component, opts) {
 
 var _default = ThemeProvider;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@restart/context/forwardRef":"../node_modules/@restart/context/forwardRef.js","react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/esm/Container.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var defaultProps = {
-  fluid: false
-};
-
-var Container = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
-function (_ref, ref) {
-  var bsPrefix = _ref.bsPrefix,
-      fluid = _ref.fluid,
-      _ref$as = _ref.as,
-      Component = _ref$as === void 0 ? 'div' : _ref$as,
-      className = _ref.className,
-      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "fluid", "as", "className"]);
-  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'container');
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    ref: ref
-  }, props, {
-    className: (0, _classnames.default)(className, fluid ? prefix + "-fluid" : prefix)
-  }));
-});
-
-Container.displayName = 'Container';
-Container.defaultProps = defaultProps;
-var _default = Container;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Row.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@restart/context/forwardRef":"../node_modules/@restart/context/forwardRef.js","react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/esm/Row.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -56370,7 +56341,579 @@ function (_ref, ref) {
 Col.displayName = 'Col';
 var _default = Col;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/prop-types-extra/lib/utils/createChainableTypeChecker.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/createChainedFunction.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * Safe chained function
+ *
+ * Will only create a new function if needed,
+ * otherwise will pass back existing functions or null.
+ *
+ * @param {function} functions to chain
+ * @returns {function|null}
+ */
+function createChainedFunction() {
+  for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
+    funcs[_key] = arguments[_key];
+  }
+
+  return funcs.filter(function (f) {
+    return f != null;
+  }).reduce(function (acc, f) {
+    if (typeof f !== 'function') {
+      throw new Error('Invalid Argument Type, must only provide functions, undefined, or null.');
+    }
+
+    if (acc === null) return f;
+    return function chainedFunction() {
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      acc.apply(this, args);
+      f.apply(this, args);
+    };
+  }, null);
+}
+
+var _default = createChainedFunction;
+exports.default = _default;
+},{}],"../node_modules/react-bootstrap/esm/SafeAnchor.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _createChainedFunction = _interopRequireDefault(require("./createChainedFunction"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function isTrivialHref(href) {
+  return !href || href.trim() === '#';
+}
+/**
+ * There are situations due to browser quirks or Bootstrap CSS where
+ * an anchor tag is needed, when semantically a button tag is the
+ * better choice. SafeAnchor ensures that when an anchor is used like a
+ * button its accessible. It also emulates input `disabled` behavior for
+ * links, which is usually desirable for Buttons, NavItems, DropdownItems, etc.
+ */
+
+
+var SafeAnchor = _react.default.forwardRef(function (_ref, ref) {
+  var _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'a' : _ref$as,
+      disabled = _ref.disabled,
+      onKeyDown = _ref.onKeyDown,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["as", "disabled", "onKeyDown"]);
+
+  var handleClick = function handleClick(event) {
+    var href = props.href,
+        onClick = props.onClick;
+
+    if (disabled || isTrivialHref(href)) {
+      event.preventDefault();
+    }
+
+    if (disabled) {
+      event.stopPropagation();
+      return;
+    }
+
+    if (onClick) {
+      onClick(event);
+    }
+  };
+
+  var handleKeyDown = function handleKeyDown(event) {
+    if (event.key === ' ') {
+      event.preventDefault();
+      handleClick(event);
+    }
+  };
+
+  if (isTrivialHref(props.href)) {
+    props.role = props.role || 'button'; // we want to make sure there is a href attribute on the node
+    // otherwise, the cursor incorrectly styled (except with role='button')
+
+    props.href = props.href || '#';
+  }
+
+  if (disabled) {
+    props.tabIndex = -1;
+    props['aria-disabled'] = true;
+  }
+
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref
+  }, props, {
+    onClick: handleClick,
+    onKeyDown: (0, _createChainedFunction.default)(handleKeyDown, onKeyDown)
+  }));
+});
+
+SafeAnchor.displayName = 'SafeAnchor';
+var _default = SafeAnchor;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","react":"../node_modules/react/index.js","./createChainedFunction":"../node_modules/react-bootstrap/esm/createChainedFunction.js"}],"../node_modules/react-bootstrap/esm/Button.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+var _SafeAnchor = _interopRequireDefault(require("./SafeAnchor"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var defaultProps = {
+  variant: 'primary',
+  active: false,
+  disabled: false,
+  type: 'button'
+};
+
+var Button = _react.default.forwardRef(function (_ref, ref) {
+  var bsPrefix = _ref.bsPrefix,
+      variant = _ref.variant,
+      size = _ref.size,
+      active = _ref.active,
+      className = _ref.className,
+      block = _ref.block,
+      type = _ref.type,
+      as = _ref.as,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "variant", "size", "active", "className", "block", "type", "as"]);
+  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'btn');
+  var classes = (0, _classnames.default)(className, prefix, active && 'active', prefix + "-" + variant, block && prefix + "-block", size && prefix + "-" + size);
+
+  if (props.href) {
+    return _react.default.createElement(_SafeAnchor.default, (0, _extends2.default)({}, props, {
+      as: as,
+      ref: ref,
+      className: (0, _classnames.default)(classes, props.disabled && 'disabled')
+    }));
+  }
+
+  if (ref) {
+    props.ref = ref;
+  }
+
+  if (!as) {
+    props.type = type;
+  }
+
+  var Component = as || 'button';
+  return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
+    className: classes
+  }));
+});
+
+Button.displayName = 'Button';
+Button.defaultProps = defaultProps;
+var _default = Button;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./SafeAnchor":"../node_modules/react-bootstrap/esm/SafeAnchor.js"}],"../node_modules/react-bootstrap/esm/Container.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var defaultProps = {
+  fluid: false
+};
+
+var Container = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
+function (_ref, ref) {
+  var bsPrefix = _ref.bsPrefix,
+      fluid = _ref.fluid,
+      _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'div' : _ref$as,
+      className = _ref.className,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "fluid", "as", "className"]);
+  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'container');
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref
+  }, props, {
+    className: (0, _classnames.default)(className, fluid ? prefix + "-fluid" : prefix)
+  }));
+});
+
+Container.displayName = 'Container';
+Container.defaultProps = defaultProps;
+var _default = Container;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/dom-helpers/esm/camelize.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = camelize;
+var rHyphen = /-(.)/g;
+
+function camelize(string) {
+  return string.replace(rHyphen, function (_, chr) {
+    return chr.toUpperCase();
+  });
+}
+},{}],"../node_modules/react-bootstrap/esm/createWithBsPrefix.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = createWithBsPrefix;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _camelize = _interopRequireDefault(require("dom-helpers/camelize"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var pascalCase = function pascalCase(str) {
+  return str[0].toUpperCase() + (0, _camelize.default)(str).slice(1);
+};
+
+function createWithBsPrefix(prefix, _temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
+      _ref$displayName = _ref.displayName,
+      displayName = _ref$displayName === void 0 ? pascalCase(prefix) : _ref$displayName,
+      _ref$Component = _ref.Component,
+      Component = _ref$Component === void 0 ? 'div' : _ref$Component,
+      defaultProps = _ref.defaultProps;
+
+  var BsComponent = _react.default.forwardRef( // eslint-disable-next-line react/prop-types
+  function (_ref2, ref) {
+    var className = _ref2.className,
+        bsPrefix = _ref2.bsPrefix,
+        _ref2$as = _ref2.as,
+        Tag = _ref2$as === void 0 ? Component : _ref2$as,
+        props = (0, _objectWithoutPropertiesLoose2.default)(_ref2, ["className", "bsPrefix", "as"]);
+    var resolvedPrefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, prefix);
+    return _react.default.createElement(Tag, (0, _extends2.default)({
+      ref: ref,
+      className: (0, _classnames.default)(className, resolvedPrefix)
+    }, props));
+  });
+
+  BsComponent.defaultProps = defaultProps;
+  BsComponent.displayName = displayName;
+  return BsComponent;
+}
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","dom-helpers/camelize":"../node_modules/dom-helpers/esm/camelize.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = function _default(className) {
+  return _react.default.forwardRef(function (p, ref) {
+    return _react.default.createElement("div", (0, _extends2.default)({}, p, {
+      ref: ref,
+      className: (0, _classnames.default)(p.className, className)
+    }));
+  });
+};
+
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js"}],"../node_modules/react-bootstrap/esm/CardContext.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = _react.default.createContext(null);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/esm/CardImg.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var defaultProps = {
+  variant: null
+};
+
+var CardImg = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
+function (_ref, ref) {
+  var bsPrefix = _ref.bsPrefix,
+      className = _ref.className,
+      variant = _ref.variant,
+      _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'img' : _ref$as,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "className", "variant", "as"]);
+  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'card-img');
+  return _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref,
+    className: (0, _classnames.default)(variant ? prefix + "-" + variant : prefix, className)
+  }, props));
+});
+
+CardImg.displayName = 'CardImg';
+CardImg.defaultProps = defaultProps;
+var _default = CardImg;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Card.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
+
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _ThemeProvider = require("./ThemeProvider");
+
+var _createWithBsPrefix = _interopRequireDefault(require("./createWithBsPrefix"));
+
+var _divWithClassName = _interopRequireDefault(require("./divWithClassName"));
+
+var _CardContext = _interopRequireDefault(require("./CardContext"));
+
+var _CardImg = _interopRequireDefault(require("./CardImg"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var DivStyledAsH5 = (0, _divWithClassName.default)('h5');
+var DivStyledAsH6 = (0, _divWithClassName.default)('h6');
+var CardBody = (0, _createWithBsPrefix.default)('card-body');
+var defaultProps = {
+  body: false
+};
+
+var Card = _react.default.forwardRef(function (_ref, ref) {
+  var bsPrefix = _ref.bsPrefix,
+      className = _ref.className,
+      bg = _ref.bg,
+      text = _ref.text,
+      border = _ref.border,
+      body = _ref.body,
+      children = _ref.children,
+      _ref$as = _ref.as,
+      Component = _ref$as === void 0 ? 'div' : _ref$as,
+      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "className", "bg", "text", "border", "body", "children", "as"]);
+  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'card');
+  var cardContext = (0, _react.useMemo)(function () {
+    return {
+      cardHeaderBsPrefix: prefix + "-header"
+    };
+  }, [prefix]);
+  return _react.default.createElement(_CardContext.default.Provider, {
+    value: cardContext
+  }, _react.default.createElement(Component, (0, _extends2.default)({
+    ref: ref
+  }, props, {
+    className: (0, _classnames.default)(className, prefix, bg && "bg-" + bg, text && "text-" + text, border && "border-" + border)
+  }), body ? _react.default.createElement(CardBody, null, children) : children));
+});
+
+Card.displayName = 'Card';
+Card.defaultProps = defaultProps;
+Card.Img = _CardImg.default;
+Card.Title = (0, _createWithBsPrefix.default)('card-title', {
+  Component: DivStyledAsH5
+});
+Card.Subtitle = (0, _createWithBsPrefix.default)('card-subtitle', {
+  Component: DivStyledAsH6
+});
+Card.Body = CardBody;
+Card.Link = (0, _createWithBsPrefix.default)('card-link', {
+  Component: 'a'
+});
+Card.Text = (0, _createWithBsPrefix.default)('card-text', {
+  Component: 'p'
+});
+Card.Header = (0, _createWithBsPrefix.default)('card-header');
+Card.Footer = (0, _createWithBsPrefix.default)('card-footer');
+Card.ImgOverlay = (0, _createWithBsPrefix.default)('card-img-overlay');
+var _default = Card;
+exports.default = _default;
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js","./divWithClassName":"../node_modules/react-bootstrap/esm/divWithClassName.js","./CardContext":"../node_modules/react-bootstrap/esm/CardContext.js","./CardImg":"../node_modules/react-bootstrap/esm/CardImg.js"}],"components/movie-card/movie-card.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/movie-card/movie-card.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.MovieCard = void 0;
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
+
+var _Card = _interopRequireDefault(require("react-bootstrap/Card"));
+
+var _reactRouterDom = require("react-router-dom");
+
+require("./movie-card.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var MovieCard = /*#__PURE__*/function (_React$Component) {
+  _inherits(MovieCard, _React$Component);
+
+  var _super = _createSuper(MovieCard);
+
+  function MovieCard() {
+    _classCallCheck(this, MovieCard);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(MovieCard, [{
+    key: "render",
+    value: function render() {
+      var movie = this.props.movie;
+      return _react.default.createElement("div", {
+        className: "card"
+      }, _react.default.createElement(_Card.default, {
+        style: {
+          width: '16rem'
+        }
+      }, _react.default.createElement(_Card.default.Img, {
+        variant: "top",
+        src: movie.ImagePath
+      }), _react.default.createElement(_Card.default.Body, null, _react.default.createElement(_Card.default.Title, {
+        className: "movie-title"
+      }, movie.Title), _react.default.createElement(_Card.default.Text, null, movie.Description), _react.default.createElement(_reactRouterDom.Link, {
+        to: "/movies/".concat(movie._id)
+      }, _react.default.createElement(_Button.default, {
+        variant: "link"
+      }, "Open")))));
+    }
+  }]);
+
+  return MovieCard;
+}(_react.default.Component);
+
+exports.MovieCard = MovieCard;
+MovieCard.propTypes = {
+  movie: _propTypes.default.shape({
+    Title: _propTypes.default.string.isRequired,
+    Description: _propTypes.default.string.isRequired,
+    ImagePath: _propTypes.default.string.isRequired
+  }).isRequired
+};
+var _default = MovieCard;
+exports.default = _default;
+},{"prop-types":"../node_modules/prop-types/index.js","react":"../node_modules/react/index.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./movie-card.scss":"components/movie-card/movie-card.scss"}],"../node_modules/prop-types-extra/lib/utils/createChainableTypeChecker.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -57063,73 +57606,7 @@ Switch.Input = _FormCheck.default.Input;
 Switch.Label = _FormCheck.default.Label;
 var _default = Switch;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","react":"../node_modules/react/index.js","./FormCheck":"../node_modules/react-bootstrap/esm/FormCheck.js"}],"../node_modules/dom-helpers/esm/camelize.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = camelize;
-var rHyphen = /-(.)/g;
-
-function camelize(string) {
-  return string.replace(rHyphen, function (_, chr) {
-    return chr.toUpperCase();
-  });
-}
-},{}],"../node_modules/react-bootstrap/esm/createWithBsPrefix.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = createWithBsPrefix;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _camelize = _interopRequireDefault(require("dom-helpers/camelize"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var pascalCase = function pascalCase(str) {
-  return str[0].toUpperCase() + (0, _camelize.default)(str).slice(1);
-};
-
-function createWithBsPrefix(prefix, _temp) {
-  var _ref = _temp === void 0 ? {} : _temp,
-      _ref$displayName = _ref.displayName,
-      displayName = _ref$displayName === void 0 ? pascalCase(prefix) : _ref$displayName,
-      _ref$Component = _ref.Component,
-      Component = _ref$Component === void 0 ? 'div' : _ref$Component,
-      defaultProps = _ref.defaultProps;
-
-  var BsComponent = _react.default.forwardRef( // eslint-disable-next-line react/prop-types
-  function (_ref2, ref) {
-    var className = _ref2.className,
-        bsPrefix = _ref2.bsPrefix,
-        _ref2$as = _ref2.as,
-        Tag = _ref2$as === void 0 ? Component : _ref2$as,
-        props = (0, _objectWithoutPropertiesLoose2.default)(_ref2, ["className", "bsPrefix", "as"]);
-    var resolvedPrefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, prefix);
-    return _react.default.createElement(Tag, (0, _extends2.default)({
-      ref: ref,
-      className: (0, _classnames.default)(className, resolvedPrefix)
-    }, props));
-  });
-
-  BsComponent.defaultProps = defaultProps;
-  BsComponent.displayName = displayName;
-  return BsComponent;
-}
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","dom-helpers/camelize":"../node_modules/dom-helpers/esm/camelize.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Form.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","react":"../node_modules/react/index.js","./FormCheck":"../node_modules/react-bootstrap/esm/FormCheck.js"}],"../node_modules/react-bootstrap/esm/Form.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57193,7 +57670,54 @@ Form.Label = _FormLabel.default;
 Form.Text = _FormText.default;
 var _default = Form;
 exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./FormCheck":"../node_modules/react-bootstrap/esm/FormCheck.js","./FormControl":"../node_modules/react-bootstrap/esm/FormControl.js","./FormGroup":"../node_modules/react-bootstrap/esm/FormGroup.js","./FormLabel":"../node_modules/react-bootstrap/esm/FormLabel.js","./FormText":"../node_modules/react-bootstrap/esm/FormText.js","./Switch":"../node_modules/react-bootstrap/esm/Switch.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js"}],"components/visibility-filter-input/visibility-filter-input.jsx":[function(require,module,exports) {
+},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./FormCheck":"../node_modules/react-bootstrap/esm/FormCheck.js","./FormControl":"../node_modules/react-bootstrap/esm/FormControl.js","./FormGroup":"../node_modules/react-bootstrap/esm/FormGroup.js","./FormLabel":"../node_modules/react-bootstrap/esm/FormLabel.js","./FormText":"../node_modules/react-bootstrap/esm/FormText.js","./Switch":"../node_modules/react-bootstrap/esm/Switch.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js"}],"actions/actions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setMovies = setMovies;
+exports.setFilter = setFilter;
+exports.setUser = setUser;
+exports.toggleFavorite = toggleFavorite;
+exports.TOGGLE_FAVORITE = exports.SET_USER = exports.SET_FILTER = exports.SET_MOVIES = void 0;
+var SET_MOVIES = 'SET_MOVIES';
+exports.SET_MOVIES = SET_MOVIES;
+var SET_FILTER = 'SET_FILTER';
+exports.SET_FILTER = SET_FILTER;
+var SET_USER = 'SET_USER';
+exports.SET_USER = SET_USER;
+var TOGGLE_FAVORITE = 'TOGGLE_FAVORITE';
+exports.TOGGLE_FAVORITE = TOGGLE_FAVORITE;
+
+function setMovies(value) {
+  return {
+    type: SET_MOVIES,
+    value: value
+  };
+}
+
+function setFilter(value) {
+  return {
+    type: SET_FILTER,
+    value: value
+  };
+}
+
+function setUser(value) {
+  return {
+    type: SET_USER,
+    value: value
+  };
+}
+
+function toggleFavorite(value) {
+  return {
+    type: TOGGLE_FAVORITE,
+    value: value
+  };
+}
+},{}],"components/visibility-filter-input/visibility-filter-input.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57234,454 +57758,7 @@ var _default = (0, _reactRedux.connect)(null, {
 })(VisibilityFilterInput);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","../../actions/actions":"actions/actions.js"}],"../node_modules/react-bootstrap/esm/createChainedFunction.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-/**
- * Safe chained function
- *
- * Will only create a new function if needed,
- * otherwise will pass back existing functions or null.
- *
- * @param {function} functions to chain
- * @returns {function|null}
- */
-function createChainedFunction() {
-  for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
-    funcs[_key] = arguments[_key];
-  }
-
-  return funcs.filter(function (f) {
-    return f != null;
-  }).reduce(function (acc, f) {
-    if (typeof f !== 'function') {
-      throw new Error('Invalid Argument Type, must only provide functions, undefined, or null.');
-    }
-
-    if (acc === null) return f;
-    return function chainedFunction() {
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-
-      acc.apply(this, args);
-      f.apply(this, args);
-    };
-  }, null);
-}
-
-var _default = createChainedFunction;
-exports.default = _default;
-},{}],"../node_modules/react-bootstrap/esm/SafeAnchor.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _createChainedFunction = _interopRequireDefault(require("./createChainedFunction"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function isTrivialHref(href) {
-  return !href || href.trim() === '#';
-}
-/**
- * There are situations due to browser quirks or Bootstrap CSS where
- * an anchor tag is needed, when semantically a button tag is the
- * better choice. SafeAnchor ensures that when an anchor is used like a
- * button its accessible. It also emulates input `disabled` behavior for
- * links, which is usually desirable for Buttons, NavItems, DropdownItems, etc.
- */
-
-
-var SafeAnchor = _react.default.forwardRef(function (_ref, ref) {
-  var _ref$as = _ref.as,
-      Component = _ref$as === void 0 ? 'a' : _ref$as,
-      disabled = _ref.disabled,
-      onKeyDown = _ref.onKeyDown,
-      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["as", "disabled", "onKeyDown"]);
-
-  var handleClick = function handleClick(event) {
-    var href = props.href,
-        onClick = props.onClick;
-
-    if (disabled || isTrivialHref(href)) {
-      event.preventDefault();
-    }
-
-    if (disabled) {
-      event.stopPropagation();
-      return;
-    }
-
-    if (onClick) {
-      onClick(event);
-    }
-  };
-
-  var handleKeyDown = function handleKeyDown(event) {
-    if (event.key === ' ') {
-      event.preventDefault();
-      handleClick(event);
-    }
-  };
-
-  if (isTrivialHref(props.href)) {
-    props.role = props.role || 'button'; // we want to make sure there is a href attribute on the node
-    // otherwise, the cursor incorrectly styled (except with role='button')
-
-    props.href = props.href || '#';
-  }
-
-  if (disabled) {
-    props.tabIndex = -1;
-    props['aria-disabled'] = true;
-  }
-
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    ref: ref
-  }, props, {
-    onClick: handleClick,
-    onKeyDown: (0, _createChainedFunction.default)(handleKeyDown, onKeyDown)
-  }));
-});
-
-SafeAnchor.displayName = 'SafeAnchor';
-var _default = SafeAnchor;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","react":"../node_modules/react/index.js","./createChainedFunction":"../node_modules/react-bootstrap/esm/createChainedFunction.js"}],"../node_modules/react-bootstrap/esm/Button.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-var _SafeAnchor = _interopRequireDefault(require("./SafeAnchor"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var defaultProps = {
-  variant: 'primary',
-  active: false,
-  disabled: false,
-  type: 'button'
-};
-
-var Button = _react.default.forwardRef(function (_ref, ref) {
-  var bsPrefix = _ref.bsPrefix,
-      variant = _ref.variant,
-      size = _ref.size,
-      active = _ref.active,
-      className = _ref.className,
-      block = _ref.block,
-      type = _ref.type,
-      as = _ref.as,
-      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "variant", "size", "active", "className", "block", "type", "as"]);
-  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'btn');
-  var classes = (0, _classnames.default)(className, prefix, active && 'active', prefix + "-" + variant, block && prefix + "-block", size && prefix + "-" + size);
-
-  if (props.href) {
-    return _react.default.createElement(_SafeAnchor.default, (0, _extends2.default)({}, props, {
-      as: as,
-      ref: ref,
-      className: (0, _classnames.default)(classes, props.disabled && 'disabled')
-    }));
-  }
-
-  if (ref) {
-    props.ref = ref;
-  }
-
-  if (!as) {
-    props.type = type;
-  }
-
-  var Component = as || 'button';
-  return _react.default.createElement(Component, (0, _extends2.default)({}, props, {
-    className: classes
-  }));
-});
-
-Button.displayName = 'Button';
-Button.defaultProps = defaultProps;
-var _default = Button;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./SafeAnchor":"../node_modules/react-bootstrap/esm/SafeAnchor.js"}],"../node_modules/react-bootstrap/esm/divWithClassName.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = function _default(className) {
-  return _react.default.forwardRef(function (p, ref) {
-    return _react.default.createElement("div", (0, _extends2.default)({}, p, {
-      ref: ref,
-      className: (0, _classnames.default)(p.className, className)
-    }));
-  });
-};
-
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js"}],"../node_modules/react-bootstrap/esm/CardContext.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = _react.default.createContext(null);
-
-exports.default = _default;
-},{"react":"../node_modules/react/index.js"}],"../node_modules/react-bootstrap/esm/CardImg.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _react = _interopRequireDefault(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var defaultProps = {
-  variant: null
-};
-
-var CardImg = _react.default.forwardRef( // Need to define the default "as" during prop destructuring to be compatible with styled-components github.com/react-bootstrap/react-bootstrap/issues/3595
-function (_ref, ref) {
-  var bsPrefix = _ref.bsPrefix,
-      className = _ref.className,
-      variant = _ref.variant,
-      _ref$as = _ref.as,
-      Component = _ref$as === void 0 ? 'img' : _ref$as,
-      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "className", "variant", "as"]);
-  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'card-img');
-  return _react.default.createElement(Component, (0, _extends2.default)({
-    ref: ref,
-    className: (0, _classnames.default)(variant ? prefix + "-" + variant : prefix, className)
-  }, props));
-});
-
-CardImg.displayName = 'CardImg';
-CardImg.defaultProps = defaultProps;
-var _default = CardImg;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js"}],"../node_modules/react-bootstrap/esm/Card.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/extends"));
-
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutPropertiesLoose"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _react = _interopRequireWildcard(require("react"));
-
-var _ThemeProvider = require("./ThemeProvider");
-
-var _createWithBsPrefix = _interopRequireDefault(require("./createWithBsPrefix"));
-
-var _divWithClassName = _interopRequireDefault(require("./divWithClassName"));
-
-var _CardContext = _interopRequireDefault(require("./CardContext"));
-
-var _CardImg = _interopRequireDefault(require("./CardImg"));
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var DivStyledAsH5 = (0, _divWithClassName.default)('h5');
-var DivStyledAsH6 = (0, _divWithClassName.default)('h6');
-var CardBody = (0, _createWithBsPrefix.default)('card-body');
-var defaultProps = {
-  body: false
-};
-
-var Card = _react.default.forwardRef(function (_ref, ref) {
-  var bsPrefix = _ref.bsPrefix,
-      className = _ref.className,
-      bg = _ref.bg,
-      text = _ref.text,
-      border = _ref.border,
-      body = _ref.body,
-      children = _ref.children,
-      _ref$as = _ref.as,
-      Component = _ref$as === void 0 ? 'div' : _ref$as,
-      props = (0, _objectWithoutPropertiesLoose2.default)(_ref, ["bsPrefix", "className", "bg", "text", "border", "body", "children", "as"]);
-  var prefix = (0, _ThemeProvider.useBootstrapPrefix)(bsPrefix, 'card');
-  var cardContext = (0, _react.useMemo)(function () {
-    return {
-      cardHeaderBsPrefix: prefix + "-header"
-    };
-  }, [prefix]);
-  return _react.default.createElement(_CardContext.default.Provider, {
-    value: cardContext
-  }, _react.default.createElement(Component, (0, _extends2.default)({
-    ref: ref
-  }, props, {
-    className: (0, _classnames.default)(className, prefix, bg && "bg-" + bg, text && "text-" + text, border && "border-" + border)
-  }), body ? _react.default.createElement(CardBody, null, children) : children));
-});
-
-Card.displayName = 'Card';
-Card.defaultProps = defaultProps;
-Card.Img = _CardImg.default;
-Card.Title = (0, _createWithBsPrefix.default)('card-title', {
-  Component: DivStyledAsH5
-});
-Card.Subtitle = (0, _createWithBsPrefix.default)('card-subtitle', {
-  Component: DivStyledAsH6
-});
-Card.Body = CardBody;
-Card.Link = (0, _createWithBsPrefix.default)('card-link', {
-  Component: 'a'
-});
-Card.Text = (0, _createWithBsPrefix.default)('card-text', {
-  Component: 'p'
-});
-Card.Header = (0, _createWithBsPrefix.default)('card-header');
-Card.Footer = (0, _createWithBsPrefix.default)('card-footer');
-Card.ImgOverlay = (0, _createWithBsPrefix.default)('card-img-overlay');
-var _default = Card;
-exports.default = _default;
-},{"@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","classnames":"../node_modules/classnames/index.js","react":"../node_modules/react/index.js","./ThemeProvider":"../node_modules/react-bootstrap/esm/ThemeProvider.js","./createWithBsPrefix":"../node_modules/react-bootstrap/esm/createWithBsPrefix.js","./divWithClassName":"../node_modules/react-bootstrap/esm/divWithClassName.js","./CardContext":"../node_modules/react-bootstrap/esm/CardContext.js","./CardImg":"../node_modules/react-bootstrap/esm/CardImg.js"}],"components/movie-card/movie-card.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/movie-card/movie-card.jsx":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.MovieCard = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
-
-var _Card = _interopRequireDefault(require("react-bootstrap/Card"));
-
-var _reactRouterDom = require("react-router-dom");
-
-require("./movie-card.scss");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var MovieCard =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(MovieCard, _React$Component);
-
-  function MovieCard() {
-    _classCallCheck(this, MovieCard);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(MovieCard).apply(this, arguments));
-  }
-
-  _createClass(MovieCard, [{
-    key: "render",
-    value: function render() {
-      var movie = this.props.movie;
-      return _react.default.createElement("div", {
-        className: "card"
-      }, _react.default.createElement(_Card.default, {
-        style: {
-          width: "16rem"
-        }
-      }, _react.default.createElement(_Card.default.Img, {
-        variant: "top",
-        src: movie.ImagePath
-      }), _react.default.createElement(_Card.default.Body, null, _react.default.createElement(_Card.default.Title, {
-        className: "movie-title"
-      }, movie.Title), _react.default.createElement(_Card.default.Text, null, movie.Description), _react.default.createElement(_reactRouterDom.Link, {
-        to: "/movies/".concat(movie._id)
-      }, _react.default.createElement(_Button.default, {
-        variant: "link"
-      }, "Open")))));
-    }
-  }]);
-
-  return MovieCard;
-}(_react.default.Component);
-
-exports.MovieCard = MovieCard;
-},{"react":"../node_modules/react/index.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./movie-card.scss":"components/movie-card/movie-card.scss"}],"components/movies-list/movies-list.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","../../actions/actions":"actions/actions.js"}],"components/movies-list/movies-list.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -57693,16 +57770,19 @@ var _react = _interopRequireDefault(require("react"));
 
 var _reactRedux = require("react-redux");
 
-var _visibilityFilterInput = _interopRequireDefault(require("../visibility-filter-input/visibility-filter-input"));
-
-var _movieCard = require("../movie-card/movie-card");
-
 var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
 
 var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
 
+var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
+
+var _movieCard = require("../movie-card/movie-card");
+
+var _visibilityFilterInput = _interopRequireDefault(require("../visibility-filter-input/visibility-filter-input"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/* eslint-disable no-underscore-dangle */
 var mapStateToProps = function mapStateToProps(state) {
   var visibilityFilter = state.visibilityFilter;
   return {
@@ -57715,7 +57795,7 @@ function MoviesList(props) {
       visibilityFilter = props.visibilityFilter;
   var filteredMovies = movies;
 
-  if (visibilityFilter !== "") {
+  if (visibilityFilter !== '') {
     filteredMovies = movies.filter(function (m) {
       return m.Title.includes(visibilityFilter);
     });
@@ -57724,14 +57804,16 @@ function MoviesList(props) {
   if (!movies) return _react.default.createElement("div", {
     className: "main-view"
   });
-  return _react.default.createElement("Container-fluid", null, _react.default.createElement("div", {
+  return _react.default.createElement(_Container.default, {
+    fluid: true
+  }, _react.default.createElement("div", {
     className: "movies-list"
   }, _react.default.createElement(_visibilityFilterInput.default, {
     visibilityFilter: visibilityFilter
   })), _react.default.createElement(_Row.default, {
     className: "justify-content-md-center"
   }, filteredMovies.map(function (m) {
-    return _react.default.createElement(_Row.default, {
+    return _react.default.createElement(_Col.default, {
       xs: "auto"
     }, _react.default.createElement(_movieCard.MovieCard, {
       className: "mvLstRow",
@@ -57744,7 +57826,254 @@ function MoviesList(props) {
 var _default = (0, _reactRedux.connect)(mapStateToProps)(MoviesList);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","../visibility-filter-input/visibility-filter-input":"components/visibility-filter-input/visibility-filter-input.jsx","../movie-card/movie-card":"components/movie-card/movie-card.jsx","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js"}],"components/registration-view/registration-view.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-redux":"../node_modules/react-redux/es/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","../movie-card/movie-card":"components/movie-card/movie-card.jsx","../visibility-filter-input/visibility-filter-input":"components/visibility-filter-input/visibility-filter-input.jsx"}],"components/login-view/login-view.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/login-view/login-view.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.LoginView = LoginView;
+exports.default = void 0;
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _reactRouterDom = require("react-router-dom");
+
+var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
+
+var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
+
+var _Form = _interopRequireDefault(require("react-bootstrap/Form"));
+
+var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
+
+require("./login-view.scss");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function LoginView(props) {
+  var _useState = (0, _react.useState)(''),
+      _useState2 = _slicedToArray(_useState, 2),
+      username = _useState2[0],
+      setUsername = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(''),
+      _useState4 = _slicedToArray(_useState3, 2),
+      password = _useState4[0],
+      setPassword = _useState4[1];
+  /**
+   * post username to login
+   * @function handleSubmit
+   * @param {event}
+   * @return {object} User info
+   */
+
+
+  var handleSubmit = function handleSubmit(e) {
+    e.preventDefault();
+
+    _axios.default.post('https://liz-flix.herokuapp.com/login', {
+      Username: username,
+      Password: password
+    }).then(function (response) {
+      var data = response.data;
+      props.onLoggedIn(data);
+    }).catch(function (error) {
+      console.log(error);
+    });
+  };
+
+  return _react.default.createElement("div", null, _react.default.createElement(_Container.default, null, _react.default.createElement("h1", null, "Welcome to myFlix!"), _react.default.createElement("p", {
+    className: "loginView"
+  }, "This is a simple single page app using React"), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Row, null, _react.default.createElement(_Form.default.Group, {
+    controlId: "formBasicUsername",
+    as: _Col.default
+  }, _react.default.createElement(_Form.default.Label, null, "Username:"), _react.default.createElement(_Form.default.Control, {
+    type: "text",
+    placeholder: "Enter username",
+    value: username,
+    onChange: function onChange(e) {
+      return setUsername(e.target.value);
+    }
+  })), _react.default.createElement(_Form.default.Group, {
+    controlId: "formBasicPassword",
+    as: _Col.default
+  }, _react.default.createElement(_Form.default.Label, null, "Password:"), _react.default.createElement(_Form.default.Control, {
+    type: "password",
+    placeholder: "Password",
+    value: password,
+    onChange: function onChange(e) {
+      return setPassword(e.target.value);
+    }
+  }))), _react.default.createElement(_Button.default, {
+    className: "submitButton",
+    type: "button",
+    onClick: handleSubmit
+  }, "Submit"), _react.default.createElement(_reactRouterDom.Link, {
+    to: "/register"
+  }, _react.default.createElement(_Button.default, {
+    className: "submitButton"
+  }, "Register")))));
+}
+
+LoginView.propTypes = {
+  onLoggedIn: _propTypes.default.func.isRequired
+};
+var _default = LoginView;
+exports.default = _default;
+},{"prop-types":"../node_modules/prop-types/index.js","react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","./login-view.scss":"components/login-view/login-view.scss"}],"components/movie-view/movie-view.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/movie-view/movie-view.jsx":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.MovieView = MovieView;
+exports.default = void 0;
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _react = _interopRequireDefault(require("react"));
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
+
+var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
+
+var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
+
+var _reactRouterDom = require("react-router-dom");
+
+require("./movie-view.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable no-console */
+
+/* eslint-disable no-alert */
+
+/* eslint-disable no-underscore-dangle */
+function MovieView(props) {
+  var movie = props.movie;
+  if (!movie) return null;
+  /**
+   * add the current movie to your favorite list
+   * @function handleSubmit
+   * @param {event} onClick
+   * @returns {alert} - movie added to favorites
+   */
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    _axios.default.post("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem('user'), "/movies/").concat(movie._id), {
+      Username: localStorage.getItem('user')
+    }, {
+      headers: {
+        Authorization: "Bearer ".concat(localStorage.getItem('token'))
+      }
+    }).then(function (response) {
+      console.log(response);
+      alert('Movie has been added to your Favorite List!');
+    }).catch(function (event) {
+      console.log('error adding movie to favorites');
+      alert('Movie not added to favorites!');
+    });
+  }
+
+  return _react.default.createElement(_Container.default, null, _react.default.createElement(_Row.default, null, _react.default.createElement("div", {
+    className: "movie-view"
+  }, _react.default.createElement("img", {
+    className: "movie-poster",
+    src: movie.ImagePath,
+    alt: "movie poster"
+  }), _react.default.createElement("div", {
+    className: "movie-title"
+  }, _react.default.createElement("span", {
+    className: "label"
+  }, "Title: "), _react.default.createElement("span", {
+    className: "value"
+  }, movie.Title)), _react.default.createElement("div", {
+    className: "movie-description"
+  }, _react.default.createElement("span", {
+    className: "label"
+  }, "Description: "), _react.default.createElement("span", {
+    className: "value"
+  }, movie.Description)), _react.default.createElement("div", null, _react.default.createElement("span", {
+    className: "label"
+  }, "Genre: "), _react.default.createElement("span", {
+    className: "value"
+  }, movie.Genre.Name)), _react.default.createElement("div", {
+    className: "movie-director"
+  }, _react.default.createElement("span", {
+    className: "label"
+  }, "Director: "), _react.default.createElement("span", {
+    className: "value"
+  }, movie.Director.Name)), _react.default.createElement(_reactRouterDom.Link, {
+    to: "/"
+  }, _react.default.createElement(_Button.default, {
+    className: "movie-view-buttons",
+    size: "sm"
+  }, "Back")), _react.default.createElement(_reactRouterDom.Link, {
+    to: "/directors/".concat(movie.Director.Name)
+  }, _react.default.createElement(_Button.default, {
+    className: "movie-view-buttons",
+    size: "sm"
+  }, "Director")), _react.default.createElement(_reactRouterDom.Link, {
+    to: "/genres/".concat(movie.Genre.Name)
+  }, _react.default.createElement(_Button.default, {
+    className: "movie-view-buttons",
+    size: "sm"
+  }, "Genre")), _react.default.createElement(_Button.default, {
+    className: "movie-view-buttons",
+    size: "sm",
+    onClick: function onClick(event) {
+      return handleSubmit(event);
+    }
+  }, ' ', "Add to Favorites", ' '))));
+}
+
+MovieView.propTypes = {
+  movie: _propTypes.default.shape({
+    _id: _propTypes.default.string.isRequired,
+    Description: _propTypes.default.string.isRequired,
+    Title: _propTypes.default.string.isRequired,
+    ImagePath: _propTypes.default.string.isRequired
+  }).isRequired
+};
+var _default = MovieView;
+exports.default = _default;
+},{"prop-types":"../node_modules/prop-types/index.js","react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./movie-view.scss":"components/movie-view/movie-view.scss"}],"components/registration-view/registration-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -57756,14 +58085,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.RegistrationView = RegistrationView;
+exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
 var _axios = _interopRequireDefault(require("axios"));
 
 var _reactRouterDom = require("react-router-dom");
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
 
@@ -57779,31 +58107,35 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function RegistrationView(props) {
-  var _useState = (0, _react.useState)(""),
+function RegistrationView() {
+  var _useState = (0, _react.useState)(''),
       _useState2 = _slicedToArray(_useState, 2),
       username = _useState2[0],
       setUsername = _useState2[1];
 
-  var _useState3 = (0, _react.useState)(""),
+  var _useState3 = (0, _react.useState)(''),
       _useState4 = _slicedToArray(_useState3, 2),
       password = _useState4[0],
       setPassword = _useState4[1];
 
-  var _useState5 = (0, _react.useState)(""),
+  var _useState5 = (0, _react.useState)(''),
       _useState6 = _slicedToArray(_useState5, 2),
       email = _useState6[0],
       setEmail = _useState6[1];
 
-  var _useState7 = (0, _react.useState)(""),
+  var _useState7 = (0, _react.useState)(''),
       _useState8 = _slicedToArray(_useState7, 2),
       birthday = _useState8[0],
       setBirthday = _useState8[1];
@@ -57811,7 +58143,7 @@ function RegistrationView(props) {
   var handleRegister = function handleRegister(e) {
     e.preventDefault();
 
-    _axios.default.post("https://liz-flix.herokuapp.com/users", {
+    _axios.default.post('https://liz-flix.herokuapp.com/users', {
       Username: username,
       Password: password,
       Email: email,
@@ -57819,7 +58151,7 @@ function RegistrationView(props) {
     }).then(function (response) {
       var data = response.data;
       console.log(data);
-      window.open("/client", "_self");
+      window.open('/client', '_self');
     }).catch(function (e) {
       console.log(e.response);
     });
@@ -57869,212 +58201,57 @@ function RegistrationView(props) {
     className: "submitButton"
   }, "Cancel"))));
 }
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","prop-types":"../node_modules/prop-types/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","./registration-view.scss":"components/registration-view/registration-view.scss"}],"components/login-view/login-view.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
 
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/login-view/login-view.jsx":[function(require,module,exports) {
-"use strict";
+var _default = RegistrationView;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","./registration-view.scss":"components/registration-view/registration-view.scss"}],"../node_modules/invariant/browser.js":[function(require,module,exports) {
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+'use strict';
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.LoginView = LoginView;
-
-var _react = _interopRequireWildcard(require("react"));
-
-var _axios = _interopRequireDefault(require("axios"));
-
-var _reactRouterDom = require("react-router-dom");
-
-var _registrationView = require("../registration-view/registration-view");
-
-var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
-
-var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
-
-var _Form = _interopRequireDefault(require("react-bootstrap/Form"));
-
-var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
-
-require("./login-view.scss");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function LoginView(props) {
-  var _useState = (0, _react.useState)(""),
-      _useState2 = _slicedToArray(_useState, 2),
-      username = _useState2[0],
-      setUsername = _useState2[1];
-
-  var _useState3 = (0, _react.useState)(""),
-      _useState4 = _slicedToArray(_useState3, 2),
-      password = _useState4[0],
-      setPassword = _useState4[1];
-
-  var handleSubmit = function handleSubmit(e) {
-    e.preventDefault();
-
-    _axios.default.post("https://liz-flix.herokuapp.com/login", {
-      Username: username,
-      Password: password
-    }).then(function (response) {
-      var data = response.data;
-      props.onLoggedIn(data);
-    }).catch(function (e) {
-      console.log("no_such_user");
-    });
-  };
-
-  return _react.default.createElement("div", null, _react.default.createElement(_Container.default, null, _react.default.createElement("h1", null, "Welcome to myFlix!"), _react.default.createElement("p", {
-    className: "loginView"
-  }, "This is a simple single page app using React"), _react.default.createElement(_Form.default, null, _react.default.createElement(_Form.default.Row, null, _react.default.createElement(_Form.default.Group, {
-    controlId: "formBasicUsername",
-    as: _Col.default
-  }, _react.default.createElement(_Form.default.Label, null, "Username:"), _react.default.createElement(_Form.default.Control, {
-    type: "text",
-    placeholder: "Enter username",
-    value: username,
-    onChange: function onChange(e) {
-      return setUsername(e.target.value);
+var invariant = function (condition, format, a, b, c, d, e, f) {
+  if ("development" !== 'production') {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
     }
-  })), _react.default.createElement(_Form.default.Group, {
-    controlId: "formBasicPassword",
-    as: _Col.default
-  }, _react.default.createElement(_Form.default.Label, null, "Password:"), _react.default.createElement(_Form.default.Control, {
-    type: "password",
-    placeholder: "Password",
-    value: password,
-    onChange: function onChange(e) {
-      return setPassword(e.target.value);
-    }
-  }))), _react.default.createElement(_Button.default, {
-    className: "submitButton",
-    type: "button",
-    onClick: handleSubmit
-  }, "Submit"), _react.default.createElement(_reactRouterDom.Link, {
-    to: "/register"
-  }, _react.default.createElement(_Button.default, {
-    className: "submitButton"
-  }, "Register")))));
-}
-
-{}
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","../registration-view/registration-view":"components/registration-view/registration-view.jsx","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","./login-view.scss":"components/login-view/login-view.scss"}],"components/movie-view/movie-view.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/movie-view/movie-view.jsx":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.MovieView = MovieView;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _axios = _interopRequireDefault(require("axios"));
-
-var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
-
-var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
-
-var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
-
-var _reactRouterDom = require("react-router-dom");
-
-require("./movie-view.scss");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function MovieView(props) {
-  var movie = props.movie;
-  if (!movie) return null;
-
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    _axios.default.post("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/movies/").concat(movie._id), {
-      Username: localStorage.getItem("user")
-    }, {
-      headers: {
-        Authorization: "Bearer ".concat(localStorage.getItem("token"))
-      }
-    }).then(function (response) {
-      console.log(response);
-      alert("Movie has been added to your Favorite List!");
-    }).catch(function (event) {
-      console.log("error adding movie to favorites");
-      alert("Movie not added to favorites!");
-    });
   }
 
-  return _react.default.createElement(_Container.default, null, _react.default.createElement(_Row.default, null, _react.default.createElement("div", {
-    className: "movie-view"
-  }, _react.default.createElement("img", {
-    className: "movie-poster",
-    src: movie.ImagePath
-  }), _react.default.createElement("div", {
-    className: "movie-title"
-  }, _react.default.createElement("span", {
-    className: "label"
-  }, "Title: "), _react.default.createElement("span", {
-    className: "value"
-  }, movie.Title)), _react.default.createElement("div", {
-    className: "movie-description"
-  }, _react.default.createElement("span", {
-    className: "label"
-  }, "Description: "), _react.default.createElement("span", {
-    className: "value"
-  }, movie.Description)), _react.default.createElement("div", null, _react.default.createElement("span", {
-    className: "label"
-  }, "Genre: "), _react.default.createElement("span", {
-    className: "value"
-  }, movie.Genre.Name)), _react.default.createElement("div", {
-    className: "movie-director"
-  }, _react.default.createElement("span", {
-    className: "label"
-  }, "Director: "), _react.default.createElement("span", {
-    className: "value"
-  }, movie.Director.Name)), _react.default.createElement(_reactRouterDom.Link, {
-    to: "/"
-  }, _react.default.createElement(_Button.default, {
-    className: "movie-view-buttons",
-    size: "sm"
-  }, "Back")), _react.default.createElement(_reactRouterDom.Link, {
-    to: "/directors/".concat(movie.Director.Name)
-  }, _react.default.createElement(_Button.default, {
-    className: "movie-view-buttons",
-    size: "sm"
-  }, "Director")), _react.default.createElement(_reactRouterDom.Link, {
-    to: "/genres/".concat(movie.Genre.Name)
-  }, _react.default.createElement(_Button.default, {
-    className: "movie-view-buttons",
-    size: "sm"
-  }, "Genre")), _react.default.createElement(_Button.default, {
-    className: "movie-view-buttons",
-    size: "sm",
-    onClick: function onClick(event) {
-      return handleSubmit(event);
+  if (!condition) {
+    var error;
+
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
     }
-  }, " ", "Add to Favorites", " "))));
-}
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./movie-view.scss":"components/movie-view/movie-view.scss"}],"../node_modules/uncontrollable/esm/utils.js":[function(require,module,exports) {
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+
+    throw error;
+  }
+};
+
+module.exports = invariant;
+},{}],"../node_modules/uncontrollable/esm/utils.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -58396,9 +58573,7 @@ function uncontrollable(Component, controlledValues, methods) {
   var PROPS_TO_OMIT = controlledProps.map(Utils.defaultKey);
   !(canAcceptRef || !methods.length) ? "development" !== "production" ? (0, _invariant.default)(false, '[uncontrollable] stateless function components cannot pass through methods ' + 'because they have no associated instances. Check component: ' + displayName + ', ' + 'attempting to pass through methods: ' + methods.join(', ')) : (0, _invariant.default)(false) : void 0;
 
-  var UncontrolledComponent =
-  /*#__PURE__*/
-  function (_React$Component) {
+  var UncontrolledComponent = /*#__PURE__*/function (_React$Component) {
     (0, _inheritsLoose2.default)(UncontrolledComponent, _React$Component);
 
     function UncontrolledComponent() {
@@ -59147,8 +59322,6 @@ var _axios = _interopRequireDefault(require("axios"));
 
 var _reactRedux = require("react-redux");
 
-var _actions = require("../../actions/actions");
-
 var _Card = _interopRequireDefault(require("react-bootstrap/Card"));
 
 var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
@@ -59159,7 +59332,7 @@ require("./profile-view.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -59169,15 +59342,19 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var mapStateToProps = function mapStateToProps(state) {
   var movies = state.movies;
@@ -59186,17 +59363,17 @@ var mapStateToProps = function mapStateToProps(state) {
   };
 };
 
-var ProfileView =
-/*#__PURE__*/
-function (_React$Component) {
+var ProfileView = /*#__PURE__*/function (_React$Component) {
   _inherits(ProfileView, _React$Component);
+
+  var _super = _createSuper(ProfileView);
 
   function ProfileView() {
     var _this;
 
     _classCallCheck(this, ProfileView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(ProfileView).call(this));
+    _this = _super.call(this);
     _this.state = {
       userData: null,
       username: null,
@@ -59212,18 +59389,24 @@ function (_React$Component) {
   _createClass(ProfileView, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var accessToken = localStorage.getItem("token");
+      var accessToken = localStorage.getItem('token');
 
       if (accessToken !== null) {
         this.getUser(accessToken);
       }
     }
+    /**
+       * gets user info to display & sets the state
+       * @param {number} token
+       * @return {object} user information
+       */
+
   }, {
     key: "getUser",
     value: function getUser(token) {
       var _this2 = this;
 
-      var username = localStorage.getItem("user");
+      var username = localStorage.getItem('user');
 
       _axios.default.get("https://liz-flix.herokuapp.com/users/".concat(username), {
         headers: {
@@ -59242,6 +59425,12 @@ function (_React$Component) {
         console.log(error);
       });
     }
+    /**
+      * removes favorite movie from list
+      * @param {number} movieId
+      * @return {alert} removed id from favorite list
+    */
+
   }, {
     key: "deleteMovieFromFavs",
     value: function deleteMovieFromFavs(event, favoriteMovie) {
@@ -59250,14 +59439,14 @@ function (_React$Component) {
       event.preventDefault();
       console.log(favoriteMovie);
 
-      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem("user"), "/movies/").concat(favoriteMovie), {
+      _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(localStorage.getItem('user'), "/movies/").concat(favoriteMovie), {
         headers: {
-          Authorization: "Bearer ".concat(localStorage.getItem("token"))
+          Authorization: "Bearer ".concat(localStorage.getItem('token'))
         }
       }).then(function (response) {
-        _this3.getUser(localStorage.getItem("token"));
+        _this3.getUser(localStorage.getItem('token'));
       }).catch(function (event) {
-        alert("something went wrong.");
+        alert('something went wrong.');
       });
     }
   }, {
@@ -59280,13 +59469,13 @@ function (_React$Component) {
       return _react.default.createElement(_Card.default, {
         className: "profile-view",
         style: {
-          width: "32rem"
+          width: '32rem'
         }
       }, _react.default.createElement(_Card.default.Body, null, _react.default.createElement(_Card.default.Title, {
         className: "profile-title"
       }, "Profile"), _react.default.createElement(_ListGroup.default, {
         className: "user-name"
-      }, _react.default.createElement(_ListGroup.default.Item, null, "Username: ", username), _react.default.createElement(_ListGroup.default.Item, null, "E-Mail: ", email), _react.default.createElement(_ListGroup.default.Item, null, "Birthday: ", birthday), _react.default.createElement(_ListGroup.default.Item, null, "Favorites:", _react.default.createElement("div", null, favorites.length === 0 && _react.default.createElement("div", {
+      }, _react.default.createElement(_ListGroup.default.Item, null, "Username:", ' ', username), _react.default.createElement(_ListGroup.default.Item, null, "E-Mail:", ' ', email), _react.default.createElement(_ListGroup.default.Item, null, "Birthday:", ' ', birthday), _react.default.createElement(_ListGroup.default.Item, null, "Favorites:", _react.default.createElement("div", null, favorites.length === 0 && _react.default.createElement("div", {
         className: "value"
       }, "No favorites added"), favorites.length > 0 && _react.default.createElement("ul", null, favorites.map(function (favoriteMovie) {
         return _react.default.createElement("li", {
@@ -59295,7 +59484,7 @@ function (_React$Component) {
           to: "/movies/".concat(favoriteMovie)
         }, _react.default.createElement("h5", {
           className: "movie-link link"
-        }, JSON.parse(localStorage.getItem("movies")).find(function (movie) {
+        }, JSON.parse(localStorage.getItem('movies')).find(function (movie) {
           return movie._id === favoriteMovie;
         }).Title))), _react.default.createElement(_Button.default, {
           className: "submitButton",
@@ -59324,13 +59513,14 @@ exports.ProfileView = ProfileView;
 var _default = (0, _reactRedux.connect)(mapStateToProps)(ProfileView);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","axios":"../node_modules/axios/index.js","react-redux":"../node_modules/react-redux/es/index.js","../../actions/actions":"actions/actions.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/ListGroup":"../node_modules/react-bootstrap/esm/ListGroup.js","./profile-view.scss":"components/profile-view/profile-view.scss"}],"components/profile-view/profile-update.jsx":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","axios":"../node_modules/axios/index.js","react-redux":"../node_modules/react-redux/es/index.js","react-bootstrap/Card":"../node_modules/react-bootstrap/esm/Card.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/ListGroup":"../node_modules/react-bootstrap/esm/ListGroup.js","./profile-view.scss":"components/profile-view/profile-view.scss"}],"components/profile-view/profile-update.jsx":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ProfileUpdate = ProfileUpdate;
+exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
@@ -59352,11 +59542,15 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -59367,22 +59561,22 @@ function ProfileUpdate(props) {
       oldEmail = _props$userInfo.Email,
       oldBirthday = _props$userInfo.Birthday;
 
-  var _useState = (0, _react.useState)(""),
+  var _useState = (0, _react.useState)(''),
       _useState2 = _slicedToArray(_useState, 2),
       username = _useState2[0],
       setUsername = _useState2[1];
 
-  var _useState3 = (0, _react.useState)(""),
+  var _useState3 = (0, _react.useState)(''),
       _useState4 = _slicedToArray(_useState3, 2),
       password = _useState4[0],
       setPassword = _useState4[1];
 
-  var _useState5 = (0, _react.useState)(""),
+  var _useState5 = (0, _react.useState)(''),
       _useState6 = _slicedToArray(_useState5, 2),
       email = _useState6[0],
       setEmail = _useState6[1];
 
-  var _useState7 = (0, _react.useState)(""),
+  var _useState7 = (0, _react.useState)(''),
       _useState8 = _slicedToArray(_useState7, 2),
       birthday = _useState8[0],
       setBirthday = _useState8[1];
@@ -59406,36 +59600,42 @@ function ProfileUpdate(props) {
 
     _axios.default.put("https://liz-flix.herokuapp.com/users/".concat(user), userInfo, {
       headers: {
-        Authorization: "Bearer ".concat(localStorage.getItem("token"))
+        Authorization: "Bearer ".concat(localStorage.getItem('token'))
       }
     }).then(function (response) {
       props.updateUser(userInfo);
-      alert("You successfully updated your profile");
+      alert('You successfully updated your profile');
     }).catch(function (e) {
       var errors = e.response.data.errors || [];
-      var errorMessage = "";
+      var errorMessage = '';
       errors.forEach(function (err) {
         errorMessage += err.msg;
       });
       alert("There was an error ".concat(errorMessage));
-      console.log("Error updating the user info.");
+      console.log('Error updating the user info.');
     });
   };
+  /**
+    * deletes user and user info
+    * @param {event} deleteAccount
+    * @return {alert} removed account
+  */
+
 
   var handleDelete = function handleDelete(e) {
     e.preventDefault();
 
     _axios.default.delete("https://liz-flix.herokuapp.com/users/".concat(user), {
       headers: {
-        Authorization: "Bearer ".concat(localStorage.getItem("token"))
+        Authorization: "Bearer ".concat(localStorage.getItem('token'))
       }
     }).then(function (response) {
-      alert("Your account has been deleted");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.open("/client", "_self");
+      alert('Your account has been deleted');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.open('/client', '_self');
     }).catch(function (e) {
-      alert("Error deleting your account");
+      alert('Error deleting your account');
     });
   };
 
@@ -59497,6 +59697,9 @@ function ProfileUpdate(props) {
     onClick: handleDelete
   }, "Delete profile"))));
 }
+
+var _default = ProfileUpdate;
+exports.default = _default;
 },{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Form":"../node_modules/react-bootstrap/esm/Form.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","./profile-view.scss":"components/profile-view/profile-view.scss"}],"components/director-view/director-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -59508,7 +59711,9 @@ module.hot.accept(reloadCSS);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DirectorView = void 0;
+exports.default = exports.DirectorView = void 0;
+
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _react = _interopRequireDefault(require("react"));
 
@@ -59518,15 +59723,13 @@ var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
 
 var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
 
-var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
-
 var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 
 require("./director-view.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -59534,27 +59737,37 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var DirectorView =
-/*#__PURE__*/
-function (_React$Component) {
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/**
+ * Director information view
+ * @function DirectorView
+ * @param {string} props - movie.director.name props
+ * @returns {DirectorView}
+ */
+var DirectorView = /*#__PURE__*/function (_React$Component) {
   _inherits(DirectorView, _React$Component);
+
+  var _super = _createSuper(DirectorView);
 
   function DirectorView() {
     var _this;
 
     _classCallCheck(this, DirectorView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(DirectorView).call(this));
+    _this = _super.call(this);
     _this.state = {};
     return _this;
   }
@@ -59586,7 +59799,16 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.DirectorView = DirectorView;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","./director-view.scss":"components/director-view/director-view.scss"}],"components/genre-view/genre-view.scss":[function(require,module,exports) {
+DirectorView.propTypes = {
+  director: _propTypes.default.shape({
+    Name: _propTypes.default.string,
+    Bio: _propTypes.default.string,
+    Birth: _propTypes.default.number
+  }).isRequired
+};
+var _default = DirectorView;
+exports.default = _default;
+},{"prop-types":"../node_modules/prop-types/index.js","react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","./director-view.scss":"components/director-view/director-view.scss"}],"components/genre-view/genre-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -59597,7 +59819,7 @@ module.hot.accept(reloadCSS);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.GenreView = void 0;
+exports.default = exports.GenreView = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
@@ -59615,7 +59837,7 @@ require("./genre-view.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -59623,27 +59845,37 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var GenreView =
-/*#__PURE__*/
-function (_React$Component) {
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/**
+ * Genre information of movie
+ * @function GenreView
+ * @param {string} props - movie.genre
+ * @returns {Container} - information about the genre
+ */
+var GenreView = /*#__PURE__*/function (_React$Component) {
   _inherits(GenreView, _React$Component);
+
+  var _super = _createSuper(GenreView);
 
   function GenreView() {
     var _this;
 
     _classCallCheck(this, GenreView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GenreView).call(this));
+    _this = _super.call(this);
     _this.state = {};
     return _this;
   }
@@ -59671,6 +59903,8 @@ function (_React$Component) {
 }(_react.default.Component);
 
 exports.GenreView = GenreView;
+var _default = GenreView;
+exports.default = _default;
 },{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","./genre-view.scss":"components/genre-view/genre-view.scss"}],"components/main-view/main-view.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -59692,17 +59926,17 @@ var _reactRedux = require("react-redux");
 
 var _reactRouterDom = require("react-router-dom");
 
-var _actions = require("../../actions/actions");
+var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
 
-var _moviesList = _interopRequireDefault(require("../movies-list/movies-list"));
+var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
 
 var _Button = _interopRequireDefault(require("react-bootstrap/Button"));
 
 var _Container = _interopRequireDefault(require("react-bootstrap/Container"));
 
-var _Row = _interopRequireDefault(require("react-bootstrap/Row"));
+var _moviesList = _interopRequireDefault(require("../movies-list/movies-list"));
 
-var _Col = _interopRequireDefault(require("react-bootstrap/Col"));
+var _actions = require("../../actions/actions");
 
 var _loginView = require("../login-view/login-view");
 
@@ -59722,7 +59956,7 @@ require("./main-view.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -59730,27 +59964,31 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var MainView =
-/*#__PURE__*/
-function (_React$Component) {
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var MainView = /*#__PURE__*/function (_React$Component) {
   _inherits(MainView, _React$Component);
+
+  var _super = _createSuper(MainView);
 
   function MainView() {
     var _this;
 
     _classCallCheck(this, MainView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainView).call(this));
+    _this = _super.call(this);
     _this.state = {
       movies: [],
       user: null,
@@ -59762,32 +60000,23 @@ function (_React$Component) {
   _createClass(MainView, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var accessToken = localStorage.getItem("token");
+      var accessToken = localStorage.getItem('token');
 
       if (accessToken !== null) {
         this.setState({
-          user: localStorage.getItem("user")
+          user: localStorage.getItem('user')
         });
         this.getMovies(accessToken);
       }
     }
-  }, {
-    key: "getMovies",
-    value: function getMovies(token) {
-      var _this2 = this;
+    /**
+    * info is sent to post from LoginView
+    * @function onLoggedIn
+    * @param {object} authData from LoginView
+    * @returns {state}
+    * @returns {localStorage}
+    */
 
-      _axios.default.get("https://liz-flix.herokuapp.com/movies", {
-        headers: {
-          Authorization: "Bearer ".concat(token)
-        }
-      }).then(function (response) {
-        _this2.props.setMovies(response.data);
-
-        localStorage.setItem("movies", JSON.stringify(response.data));
-      }).catch(function (error) {
-        console.log(error);
-      });
-    }
   }, {
     key: "onLoggedIn",
     value: function onLoggedIn(authData) {
@@ -59795,16 +60024,55 @@ function (_React$Component) {
       this.setState({
         user: authData.user.Username
       });
-      localStorage.setItem("token", authData.token);
-      localStorage.setItem("user", authData.user.Username);
+      localStorage.setItem('token', authData.token);
+      localStorage.setItem('user', authData.user.Username);
       this.getMovies(authData.token);
     }
+  }, {
+    key: "onMovieClick",
+    value: function onMovieClick(movie) {
+      window.location.hash = "#".concat(movie._id);
+      this.setState({
+        selectedMovieId: movie._id
+      });
+    }
+    /**
+     * when logged in submits a get request for movie list
+     * @function getMovies
+     * @param {number} token
+     * @returns {array} movies
+     */
+
+  }, {
+    key: "getMovies",
+    value: function getMovies(token) {
+      var _this2 = this;
+
+      _axios.default.get('https://liz-flix.herokuapp.com/movies', {
+        headers: {
+          Authorization: "Bearer ".concat(token)
+        }
+      }).then(function (response) {
+        _this2.props.setMovies(response.data);
+
+        localStorage.setItem('movies', JSON.stringify(response.data));
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+    /**
+     * @function getUser
+     * @param {string} user
+     * @param {string} token
+     * @returns {object} user info
+     */
+
   }, {
     key: "getUser",
     value: function getUser(token) {
       var _this3 = this;
 
-      _axios.default.get("https://liz-flix.herokuapp.com/users/", {
+      _axios.default.get('https://liz-flix.herokuapp.com/users/', {
         headers: {
           Authorization: "Bearer ".concat(token)
         }
@@ -59821,15 +60089,7 @@ function (_React$Component) {
       this.setState({
         userInfo: data
       });
-      localStorage.setItem("user", data.Username);
-    }
-  }, {
-    key: "onMovieClick",
-    value: function onMovieClick(movie) {
-      window.location.hash = "#" + movie._id;
-      this.setState({
-        selectedMovieId: movie._id
-      });
+      localStorage.setItem('user', data.Username);
     }
   }, {
     key: "handleLogOut",
@@ -59837,14 +60097,13 @@ function (_React$Component) {
       this.setState({
         user: null
       });
-      window.open("/", "_self");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("movies");
+      window.open('/client', '_self');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('movies');
       this.setState({
         user: null
       });
-      window.open("/", "_self");
     }
   }, {
     key: "render",
@@ -59860,7 +60119,9 @@ function (_React$Component) {
         basename: "/client"
       }, _react.default.createElement("div", {
         className: "main-view"
-      }, _react.default.createElement("Container-fluid", null, _react.default.createElement(_Row.default, {
+      }, _react.default.createElement(_Container.default, {
+        fluid: true
+      }, _react.default.createElement(_Row.default, {
         className: "rowBackground"
       }, _react.default.createElement(_Col.default, {
         md: 4
@@ -59888,11 +60149,14 @@ function (_React$Component) {
         exact: true,
         path: "/",
         render: function render() {
-          if (!user) return _react.default.createElement(_loginView.LoginView, {
-            onLoggedIn: function onLoggedIn(user) {
-              return _this4.onLoggedIn(user);
-            }
-          });
+          if (!user) {
+            return _react.default.createElement(_loginView.LoginView, {
+              onLoggedIn: function onLoggedIn(user) {
+                return _this4.onLoggedIn(user);
+              }
+            });
+          }
+
           return _react.default.createElement(_moviesList.default, {
             movies: movies
           });
@@ -59972,7 +60236,7 @@ var _default = (0, _reactRedux.connect)(mapStateToProps, {
 })(MainView);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-redux":"../node_modules/react-redux/es/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","../../actions/actions":"actions/actions.js","../movies-list/movies-list":"components/movies-list/movies-list.jsx","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","../login-view/login-view":"components/login-view/login-view.jsx","../movie-view/movie-view":"components/movie-view/movie-view.jsx","../registration-view/registration-view":"components/registration-view/registration-view.jsx","../profile-view/profile-view":"components/profile-view/profile-view.jsx","../profile-view/profile-update":"components/profile-view/profile-update.jsx","../director-view/director-view":"components/director-view/director-view.jsx","../genre-view/genre-view":"components/genre-view/genre-view.jsx","./main-view.scss":"components/main-view/main-view.scss"}],"reducers/reducers.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","axios":"../node_modules/axios/index.js","react-redux":"../node_modules/react-redux/es/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react-bootstrap/Row":"../node_modules/react-bootstrap/esm/Row.js","react-bootstrap/Col":"../node_modules/react-bootstrap/esm/Col.js","react-bootstrap/Button":"../node_modules/react-bootstrap/esm/Button.js","react-bootstrap/Container":"../node_modules/react-bootstrap/esm/Container.js","../movies-list/movies-list":"components/movies-list/movies-list.jsx","../../actions/actions":"actions/actions.js","../login-view/login-view":"components/login-view/login-view.jsx","../movie-view/movie-view":"components/movie-view/movie-view.jsx","../registration-view/registration-view":"components/registration-view/registration-view.jsx","../profile-view/profile-view":"components/profile-view/profile-view.jsx","../profile-view/profile-update":"components/profile-view/profile-update.jsx","../director-view/director-view":"components/director-view/director-view.jsx","../genre-view/genre-view":"components/genre-view/genre-view.jsx","./main-view.scss":"components/main-view/main-view.scss"}],"reducers/reducers.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -59985,7 +60249,7 @@ var _redux = require("redux");
 var _actions = require("../actions/actions");
 
 function visibilityFilter() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
@@ -60028,7 +60292,7 @@ function toggleFavorites() {
   var action = arguments.length > 1 ? arguments[1] : undefined;
 
   switch (action.type) {
-    case _actions.TOGGLE_FAVORITES:
+    case _actions.TOGGLE_FAVORITE:
       return action.value;
 
     default:
@@ -60076,7 +60340,7 @@ require("./index.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -60084,27 +60348,31 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 var store = (0, _redux.createStore)(_reducers.default); //Main component (will eventually uou all the others)
 
-var MyFlixApplication =
-/*#__PURE__*/
-function (_React$Component) {
+var MyFlixApplication = /*#__PURE__*/function (_React$Component) {
   _inherits(MyFlixApplication, _React$Component);
+
+  var _super = _createSuper(MyFlixApplication);
 
   function MyFlixApplication() {
     _classCallCheck(this, MyFlixApplication);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MyFlixApplication).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(MyFlixApplication, [{
@@ -60151,7 +60419,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57828" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60367" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

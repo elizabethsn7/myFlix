@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
-import "./profile-view.scss";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import './profile-view.scss';
 
 export function ProfileUpdate(props) {
   const {
     Username: oldUsername,
     Password: oldPassword,
     Email: oldEmail,
-    Birthday: oldBirthday
+    Birthday: oldBirthday,
   } = props.userInfo;
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthday, setBirthday] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthday, setBirthday] = useState('');
 
   useEffect(() => {
     setUsername(oldUsername);
@@ -26,48 +26,54 @@ export function ProfileUpdate(props) {
     setBirthday(oldBirthday);
   }, [oldUsername, oldPassword, oldEmail, oldBirthday]);
 
-  const user = props.user;
+  const { user } = props;
 
-  const handleUpdate = e => {
+  const handleUpdate = (e) => {
     e.preventDefault();
     const userInfo = {
       Username: username,
       Password: password,
       Email: email,
-      Birthday: birthday
+      Birthday: birthday,
     };
     axios
       .put(`https://liz-flix.herokuapp.com/users/${user}`, userInfo, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
-      .then(response => {
+      .then((response) => {
         props.updateUser(userInfo);
-        alert("You successfully updated your profile");
+        alert('You successfully updated your profile');
       })
-      .catch(e => {
+      .catch((e) => {
         const errors = e.response.data.errors || [];
-        let errorMessage = "";
-        errors.forEach(err => {
+        let errorMessage = '';
+        errors.forEach((err) => {
           errorMessage += err.msg;
         });
         alert(`There was an error ${errorMessage}`);
-        console.log(`Error updating the user info.`);
+        console.log('Error updating the user info.');
       });
   };
-  const handleDelete = e => {
+
+  /**
+    * deletes user and user info
+    * @param {event} deleteAccount
+    * @return {alert} removed account
+  */
+  const handleDelete = (e) => {
     e.preventDefault();
     axios
       .delete(`https://liz-flix.herokuapp.com/users/${user}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
-      .then(response => {
-        alert("Your account has been deleted");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        window.open("/client", "_self");
+      .then((response) => {
+        alert('Your account has been deleted');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.open('/client', '_self');
       })
-      .catch(e => {
-        alert("Error deleting your account");
+      .catch((e) => {
+        alert('Error deleting your account');
       });
   };
   return (
@@ -82,7 +88,7 @@ export function ProfileUpdate(props) {
             type="text"
             placeholder="Your username"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="formPassword">
@@ -91,7 +97,7 @@ export function ProfileUpdate(props) {
             type="password"
             placeholder="Your Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="formBasicEmail">
@@ -100,7 +106,7 @@ export function ProfileUpdate(props) {
             type="email"
             placeholder="Enter email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
         <Form.Group controlId="formBirthday">
@@ -109,11 +115,11 @@ export function ProfileUpdate(props) {
             type="date"
             placeholder="MM/DD/YYYY"
             value={birthday}
-            onChange={e => setBirthday(e.target.value)}
+            onChange={(e) => setBirthday(e.target.value)}
           />
         </Form.Group>
         <div className="text-center">
-          <Link to={`/`}>
+          <Link to="/">
             <Button className="submitButton">Back to Movies</Button>
           </Link>
           <Button className="submitButton" type="submit" onClick={handleUpdate}>
@@ -127,3 +133,5 @@ export function ProfileUpdate(props) {
     </Form>
   );
 }
+
+export default ProfileUpdate;

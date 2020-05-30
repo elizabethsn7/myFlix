@@ -10,22 +10,6 @@
   display: inline-block;
   padding: 5px;
 }
-.registerButton {
-  font-size: 1.25em;
-  font-family: "Poiret One";
-  background-color: #202020;
-  margin: 2px;
-  border: none;
-}
-
-.registerButton:hover {
-  background-color: #ffffff;
-  color: #202020;
-}
-
-.container {
-  width: 75%;
-}
 h1 {
   font-size: 5em;
   font-family: "Poiret One";
@@ -84,6 +68,22 @@ h1 {
 
 .movie-director {
   width: 50%;
+}
+.registerButton {
+  font-size: 1.25em;
+  font-family: "Poiret One";
+  background-color: #202020;
+  margin: 2px;
+  border: none;
+}
+
+.registerButton:hover {
+  background-color: #ffffff;
+  color: #202020;
+}
+
+.container {
+  width: 75%;
 }
 .profile-title {
   font-family: "Poiret One";

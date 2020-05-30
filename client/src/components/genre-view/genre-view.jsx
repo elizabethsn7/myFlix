@@ -1,19 +1,26 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
+import React from 'react';
+import {Link} from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import './genre-view.scss';
 
-import "./genre-view.scss";
+/**
+ * Genre information of movie
+ * @function GenreView
+ * @param {string} props - movie.genre
+ * @returns {Container} - information about the genre
+ */
 
 export class GenreView extends React.Component {
   constructor() {
     super();
     this.state = {};
   }
+
   render() {
-    const { genre } = this.props;
+    const {genre} = this.props;
     if (!genre) return null;
 
     return (
@@ -25,7 +32,7 @@ export class GenreView extends React.Component {
               <div className="genre-description">
                 <span className="value">{genre.Description}</span>
               </div>
-              <Link to={`/`}>
+              <Link to="/">
                 <Button className="backButton">Back to Movies</Button>
               </Link>
             </div>
@@ -35,3 +42,4 @@ export class GenreView extends React.Component {
     );
   }
 }
+export default GenreView;
